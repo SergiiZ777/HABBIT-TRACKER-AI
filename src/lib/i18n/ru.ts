@@ -44,6 +44,9 @@ export const ru: Dictionary = {
   rangeWeek: 'Неделя',
   rangeMonth: 'Месяц',
   rangeYear: 'Год',
+  heatmapLess: 'Меньше',
+  heatmapMore: 'Больше',
+  heatmapNoHabits: 'Пока нет привычек',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в среднем · ${perfectDays} ${ruPlural(perfectDays, 'идеальный день', 'идеальных дня', 'идеальных дней')}`,
   achievementsHeader: (unlocked, total) => `ДОСТИЖЕНИЯ · ${unlocked}/${total}`,

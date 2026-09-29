@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { TrendChart } from '@/components/trend-chart';
+import { YearHeatmap } from '@/components/year-heatmap';
 import {
   badgeDescription,
   badgeTitle,
@@ -11,6 +12,7 @@ import {
   computeRangeSummary,
   computeStats,
   computeTrend,
+  computeYearHeatmap,
   type TrendRange,
 } from '@/lib/achievements';
 import { useDeviceId } from '@/lib/backup';
@@ -40,7 +42,8 @@ export default function DashboardScreen() {
   const badges = computeBadges(habits, today);
   const rawMotivation = computeMotivation(habits, today);
   const motivation = { emoji: rawMotivation.emoji, ...resolveMotivation(t, rawMotivation) };
-  const trend = computeTrend(habits, range, today, localeTag);
+  const trend = range === 'year' ? [] : computeTrend(habits, range, today, localeTag);
+  const heatmapColumns = range === 'year' ? computeYearHeatmap(habits, today, localeTag) : [];
   const rangeSummary = computeRangeSummary(habits, range, today);
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
@@ -102,7 +105,11 @@ export default function DashboardScreen() {
             {t.trendSummary(Math.round(rangeSummary.averageRate * 100), rangeSummary.perfectDays)}
           </Text>
 
-          <TrendChart points={trend} />
+          {range === 'year' ? (
+            <YearHeatmap columns={heatmapColumns} localeTag={localeTag} />
+          ) : (
+            <TrendChart points={trend} />
+          )}
         </View>
 
         <Text style={[styles.section, { color: theme.textSecondary }]}>

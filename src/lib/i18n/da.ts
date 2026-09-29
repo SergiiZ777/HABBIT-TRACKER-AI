@@ -35,6 +35,9 @@ export const da: Dictionary = {
   rangeWeek: 'Uge',
   rangeMonth: 'Måned',
   rangeYear: 'År',
+  heatmapLess: 'Mindre',
+  heatmapMore: 'Mere',
+  heatmapNoHabits: 'Ingen vaner endnu',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% i gennemsnit · ${perfectDays} ${perfectDays === 1 ? 'perfekt dag' : 'perfekte dage'}`,
   achievementsHeader: (unlocked, total) => `PRÆSTATIONER · ${unlocked}/${total}`,
