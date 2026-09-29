@@ -17,11 +17,15 @@ export type DashboardStats = {
   perfectDaysCount: number;
 };
 
+/** Habits that existed by local day `key` — a habit "exists" once its createdAt's local day is <= key. */
+function existingHabitsOn(habits: Habit[], key: string): Habit[] {
+  return habits.filter((h) => dayKey(new Date(h.createdAt)) <= key);
+}
+
 /**
  * Every local day (as a "YYYY-MM-DD" key) on which every habit that existed by that day
- * was completed. A habit "existed" on day D once its createdAt's local day is <= D, so a
- * habit created mid-streak doesn't retroactively break earlier perfect days.
- * Scans from the earliest habit's creation day through today.
+ * was completed. A habit created mid-streak doesn't retroactively break earlier perfect
+ * days. Scans from the earliest habit's creation day through today.
  */
 function perfectDayKeys(habits: Habit[], today: Date): Set<string> {
   const perfect = new Set<string>();
@@ -38,7 +42,7 @@ function perfectDayKeys(habits: Habit[], today: Date): Set<string> {
   let guard = 0;
   while (dayKey(cursor) <= dayKey(end) && guard < 3660) {
     const key = dayKey(cursor);
-    const existing = habits.filter((h) => dayKey(new Date(h.createdAt)) <= key);
+    const existing = existingHabitsOn(habits, key);
     if (existing.length > 0 && existing.every((h) => h.completions.includes(key))) {
       perfect.add(key);
     }
@@ -46,6 +50,18 @@ function perfectDayKeys(habits: Habit[], today: Date): Set<string> {
     guard++;
   }
   return perfect;
+}
+
+/** Per-day existing/completed counts for the last `days` days, oldest first, ending today. */
+function dailyRange(habits: Habit[], days: number, today: Date): { key: string; done: number; total: number }[] {
+  const result: { key: string; done: number; total: number }[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const key = dayKey(addDays(today, -i));
+    const existing = existingHabitsOn(habits, key);
+    const done = existing.filter((h) => h.completions.includes(key)).length;
+    result.push({ key, done, total: existing.length });
+  }
+  return result;
 }
 
 /** Length of the longest run of consecutive dates present in `days`. */
@@ -76,6 +92,60 @@ export function computeStats(habits: Habit[], today: Date = new Date()): Dashboa
     totalCompletions,
     activeHabitsCount: habits.length,
     perfectDaysCount: perfectDays.size,
+  };
+}
+
+export type TrendRange = 'week' | 'month';
+
+export type TrendPoint = { key: string; label: string; rate: number; done: number; total: number };
+
+export type RangeSummary = { averageRate: number; totalCompletions: number; perfectDays: number };
+
+const WEEK_DAYS = 7;
+const MONTH_DAYS = 28;
+const MONTH_BUCKETS = 4;
+
+/** One bar per day for 'week' (last 7 days), or one bar per 7-day bucket for 'month' (last 4 weeks). */
+export function computeTrend(habits: Habit[], range: TrendRange, today: Date = new Date()): TrendPoint[] {
+  if (range === 'week') {
+    return dailyRange(habits, WEEK_DAYS, today).map(({ key, done, total }) => ({
+      key,
+      label: new Date(`${key}T12:00:00`).toLocaleDateString(undefined, { weekday: 'narrow' }),
+      rate: total ? done / total : 0,
+      done,
+      total,
+    }));
+  }
+
+  const days = dailyRange(habits, MONTH_DAYS, today);
+  const points: TrendPoint[] = [];
+  for (let b = 0; b < MONTH_BUCKETS; b++) {
+    const bucket = days.slice(b * WEEK_DAYS, b * WEEK_DAYS + WEEK_DAYS);
+    const done = bucket.reduce((sum, d) => sum + d.done, 0);
+    const total = bucket.reduce((sum, d) => sum + d.total, 0);
+    const lastKey = bucket[bucket.length - 1].key;
+    points.push({
+      key: lastKey,
+      label: new Date(`${lastKey}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      rate: total ? done / total : 0,
+      done,
+      total,
+    });
+  }
+  return points;
+}
+
+/** Aggregate completion stats over the selected range (last 7 or 28 days). */
+export function computeRangeSummary(habits: Habit[], range: TrendRange, today: Date = new Date()): RangeSummary {
+  const days = dailyRange(habits, range === 'week' ? WEEK_DAYS : MONTH_DAYS, today);
+  const totalCompletions = days.reduce((sum, d) => sum + d.done, 0);
+  const totalPossible = days.reduce((sum, d) => sum + d.total, 0);
+  const perfectDays = days.filter((d) => d.total > 0 && d.done === d.total).length;
+
+  return {
+    averageRate: totalPossible ? totalCompletions / totalPossible : 0,
+    totalCompletions,
+    perfectDays,
   };
 }
 
