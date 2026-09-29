@@ -17,11 +17,23 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <AnimatedSplashOverlay />
       <Stack screenOptions={{ contentStyle: { backgroundColor: colors.background } }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="new-habit"
           options={{
             title: 'New habit',
+            presentation: 'formSheet',
+            sheetAllowedDetents: [0.75, 1],
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 28,
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.background },
+          }}
+        />
+        <Stack.Screen
+          name="edit-habit"
+          options={{
+            title: 'Edit habit',
             presentation: 'formSheet',
             sheetAllowedDetents: [0.75, 1],
             sheetGrabberVisible: true,

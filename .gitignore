@@ -4,6 +4,7 @@ dist/
 web-build/
 *.log
 .DS_Store
+.claude/
 *.orig.*
 expo-env.d.ts
 .env*.local

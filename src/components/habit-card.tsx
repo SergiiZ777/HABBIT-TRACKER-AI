@@ -1,9 +1,11 @@
+import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentStreak, deleteHabit, toggleCompletion, type Habit } from '@/lib/habits';
+import { currentStreak, deleteHabit, formatTime, toggleCompletion, type Habit } from '@/lib/habits';
+import { cancelHabitReminder } from '@/lib/notifications';
 
 type Props = { habit: Habit; day: string };
 
@@ -20,9 +22,17 @@ export function HabitCard({ habit, day }: Props) {
   };
 
   const onLongPress = () => {
-    Alert.alert(habit.name, 'Delete this habit and its history?', [
+    Alert.alert(habit.name, undefined, [
+      { text: 'Edit', onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await cancelHabitReminder(habit.reminderNotificationId);
+          deleteHabit(habit.id);
+        },
+      },
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteHabit(habit.id) },
     ]);
   };
 
@@ -54,6 +64,7 @@ export function HabitCard({ habit, day }: Props) {
         </Text>
         <Text style={[styles.meta, { color: theme.textSecondary }]}>
           {streak > 0 ? `🔥 ${streak} day${streak === 1 ? '' : 's'} streak` : 'Start your streak today'}
+          {habit.reminderTime ? `  ·  ⏰ ${formatTime(habit.reminderTime)}` : ''}
         </Text>
       </View>
 

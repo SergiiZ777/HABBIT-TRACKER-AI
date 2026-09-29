@@ -89,7 +89,7 @@ export default function TodayScreen() {
         </View>
 
         {total > 0 && (
-          <Text style={[styles.hint, { color: theme.textSecondary }]}>Tap to check off · Long-press to delete</Text>
+          <Text style={[styles.hint, { color: theme.textSecondary }]}>Tap to check off · Long-press for more</Text>
         )}
       </ScrollView>
 

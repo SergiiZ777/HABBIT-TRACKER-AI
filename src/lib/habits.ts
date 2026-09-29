@@ -10,6 +10,10 @@ export type Habit = {
   createdAt: string;
   /** Days the habit was completed, as local YYYY-MM-DD keys. */
   completions: string[];
+  /** Daily reminder time as local "HH:mm" (24h), e.g. "08:30". Absent = no reminder. */
+  reminderTime?: string;
+  /** expo-notifications scheduled-notification id backing reminderTime. Absent = not actually scheduled (off, web, or permission denied). */
+  reminderNotificationId?: string;
 };
 
 type State = { habits: Habit[] };
@@ -29,6 +33,26 @@ export function addDays(date: Date, days: number): Date {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
+}
+
+/** Converts a local "HH:mm" time string into a Date (today's date, that time). */
+export function timeToDate(time: string): Date {
+  const [h, m] = time.split(':').map(Number);
+  const date = new Date();
+  date.setHours(Number.isFinite(h) ? h : 8, Number.isFinite(m) ? m : 0, 0, 0);
+  return date;
+}
+
+/** Converts a Date's local time-of-day into an "HH:mm" string. */
+export function dateToTime(date: Date): string {
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
+/** Formats a "HH:mm" time string for display, e.g. "8:00 AM" (locale-aware). */
+export function formatTime(time: string): string {
+  return timeToDate(time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
 /** Consecutive completed days ending today (or yesterday, so a streak isn't "lost" before you've had a chance today). */
@@ -73,7 +97,9 @@ export function useHabits(): Habit[] {
   return useSyncExternalStore(subscribe, () => state.habits);
 }
 
-export function addHabit(input: Pick<Habit, 'name' | 'emoji' | 'color'>) {
+export function addHabit(
+  input: Pick<Habit, 'name' | 'emoji' | 'color'> & Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationId'>>
+): Habit {
   const habit: Habit = {
     ...input,
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -81,6 +107,16 @@ export function addHabit(input: Pick<Habit, 'name' | 'emoji' | 'color'>) {
     completions: [],
   };
   setState({ habits: [...state.habits, habit] });
+  return habit;
+}
+
+export function updateHabit(
+  id: string,
+  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationId'>>
+) {
+  setState({
+    habits: state.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)),
+  });
 }
 
 export function deleteHabit(id: string) {
