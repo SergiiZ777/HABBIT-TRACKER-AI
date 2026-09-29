@@ -5,8 +5,9 @@ import type { Dictionary, Locale } from '@/lib/i18n';
 // n8n workflow "Habit Tracker AI - Coach Chat" — webhook -> AI Agent (Claude) grounded in real habit data.
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c3';
 // Shared secret checked by the workflow's "Check Auth" node — keeps random discoverers of the
-// URL from spending the Anthropic credits behind it. Not a login secret; fine to ship in the app.
-const COACH_WEBHOOK_KEY = 'REDACTED_COACH_KEY';
+// URL from spending the Anthropic credits behind it. Not a login secret; still kept out of git
+// via .env.local (see .env.example) rather than hardcoded, since this repo is public.
+const COACH_WEBHOOK_KEY = process.env.EXPO_PUBLIC_COACH_KEY ?? '';
 
 export type ChatTurn = { role: 'user' | 'coach'; content: string };
 
