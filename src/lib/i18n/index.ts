@@ -1,4 +1,3 @@
-import { getLocales } from 'expo-localization';
 import { useSyncExternalStore } from 'react';
 
 import { da } from './da';
@@ -44,24 +43,14 @@ function isSupportedLocale(code: string | null | undefined): code is Locale {
   return !!code && (SUPPORTED_LOCALES as string[]).includes(code);
 }
 
-function detectDefaultLocale(): Locale {
-  try {
-    const deviceCode = getLocales()[0]?.languageCode;
-    if (isSupportedLocale(deviceCode)) return deviceCode;
-  } catch {
-    // Locale detection unavailable — fall through to English.
-  }
-  return 'en';
-}
-
 function loadLocale(): Locale {
   try {
     const stored = Storage.getItemSync(STORAGE_KEY);
     if (isSupportedLocale(stored)) return stored;
   } catch {
-    // Corrupt or unavailable storage — fall through to device default.
+    // Corrupt or unavailable storage — fall through to the default.
   }
-  return detectDefaultLocale();
+  return 'en';
 }
 
 let locale: Locale = loadLocale();
