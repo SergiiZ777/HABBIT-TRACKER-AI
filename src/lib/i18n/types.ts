@@ -43,6 +43,9 @@ export interface Dictionary {
   rangeWeek: string;
   rangeMonth: string;
   rangeYear: string;
+  heatmapLess: string;
+  heatmapMore: string;
+  heatmapNoHabits: string;
   trendSummary: (avgPct: number, perfectDays: number) => string;
   achievementsHeader: (unlocked: number, total: number) => string;
   perHabit: string;

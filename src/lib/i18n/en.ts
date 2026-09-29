@@ -35,6 +35,9 @@ export const en: Dictionary = {
   rangeWeek: 'Week',
   rangeMonth: 'Month',
   rangeYear: 'Year',
+  heatmapLess: 'Less',
+  heatmapMore: 'More',
+  heatmapNoHabits: 'No habits yet',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% average · ${perfectDays} perfect day${perfectDays === 1 ? '' : 's'}`,
   achievementsHeader: (unlocked, total) => `ACHIEVEMENTS · ${unlocked}/${total}`,

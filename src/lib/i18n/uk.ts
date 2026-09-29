@@ -44,6 +44,9 @@ export const uk: Dictionary = {
   rangeWeek: 'Тиждень',
   rangeMonth: 'Місяць',
   rangeYear: 'Рік',
+  heatmapLess: 'Менше',
+  heatmapMore: 'Більше',
+  heatmapNoHabits: 'Ще немає звичок',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в середньому · ${perfectDays} ${ukPlural(perfectDays, 'ідеальний день', 'ідеальні дні', 'ідеальних днів')}`,
   achievementsHeader: (unlocked, total) => `ДОСЯГНЕННЯ · ${unlocked}/${total}`,
