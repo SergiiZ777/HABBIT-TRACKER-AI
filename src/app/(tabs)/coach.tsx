@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { askCoach, type ChatTurn } from '@/lib/coach';
+import { askCoach } from '@/lib/coach';
 import { useHabits } from '@/lib/habits';
 import { useLocale, useT } from '@/lib/i18n';
 import { computeMotivation, resolveMotivation } from '@/lib/motivation';
@@ -47,16 +47,12 @@ export default function CoachScreen() {
     const question = text.trim();
     if (!question || loading) return;
 
-    const history: ChatTurn[] = messages
-      .filter((m) => !m.seeded)
-      .map((m) => ({ role: m.role === 'user' ? 'user' : 'coach', content: m.content }));
-
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: 'user', content: question }]);
     setInput('');
     setLoading(true);
     scrollRef.current?.scrollToEnd({ animated: true });
 
-    const answer = await askCoach(question, habits, history, locale, t, today);
+    const answer = await askCoach(question, habits, locale, t, today);
 
     setMessages((prev) => [...prev, { id: `c-${Date.now()}`, role: 'coach', content: answer }]);
     setLoading(false);

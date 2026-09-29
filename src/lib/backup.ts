@@ -34,6 +34,11 @@ function loadOrCreateDeviceId(): string {
 let deviceId: string = loadOrCreateDeviceId();
 const listeners = new Set<() => void>();
 
+/** Current device's Backup ID, outside of React (e.g. for the Coach's per-device memory key). */
+export function getDeviceId(): string {
+  return deviceId;
+}
+
 /** The current device's Backup ID — stable across app restarts, used to push/pull backups. */
 export function useDeviceId(): string {
   return useSyncExternalStore(
