@@ -110,47 +110,41 @@ export function computeStats(habits: Habit[], today: Date = new Date()): Dashboa
 
 export type TrendRange = 'week' | 'month';
 
-export type TrendPoint = { key: string; label: string; rate: number; done: number; total: number };
+export type TrendPoint = {
+  key: string;
+  /** Compact axis label (a weekday letter, or a bare day-of-month number). */
+  label: string;
+  /** Full date, for a tapped/selected point's readout. */
+  fullLabel: string;
+  rate: number;
+  done: number;
+  total: number;
+};
 
 export type RangeSummary = { averageRate: number; totalCompletions: number; perfectDays: number };
 
 const WEEK_DAYS = 7;
 const MONTH_DAYS = 28;
-const MONTH_BUCKETS = 4;
 
-/** One bar per day for 'week' (last 7 days), or one bar per 7-day bucket for 'month' (last 4 weeks). */
+/** One bar per day — 7 bars for 'week', 28 for 'month' — so every day's rate is directly visible. */
 export function computeTrend(
   habits: Habit[],
   range: TrendRange,
   today: Date = new Date(),
   localeTag: string = 'en-US'
 ): TrendPoint[] {
-  if (range === 'week') {
-    return dailyRange(habits, WEEK_DAYS, today).map(({ key, done, total }) => ({
+  const days = dailyRange(habits, range === 'week' ? WEEK_DAYS : MONTH_DAYS, today);
+  return days.map(({ key, done, total }) => {
+    const date = new Date(`${key}T12:00:00`);
+    return {
       key,
-      label: new Date(`${key}T12:00:00`).toLocaleDateString(localeTag, { weekday: 'narrow' }),
+      label: date.toLocaleDateString(localeTag, range === 'week' ? { weekday: 'narrow' } : { day: 'numeric' }),
+      fullLabel: date.toLocaleDateString(localeTag, { weekday: 'short', month: 'short', day: 'numeric' }),
       rate: total ? done / total : 0,
       done,
       total,
-    }));
-  }
-
-  const days = dailyRange(habits, MONTH_DAYS, today);
-  const points: TrendPoint[] = [];
-  for (let b = 0; b < MONTH_BUCKETS; b++) {
-    const bucket = days.slice(b * WEEK_DAYS, b * WEEK_DAYS + WEEK_DAYS);
-    const done = bucket.reduce((sum, d) => sum + d.done, 0);
-    const total = bucket.reduce((sum, d) => sum + d.total, 0);
-    const lastKey = bucket[bucket.length - 1].key;
-    points.push({
-      key: lastKey,
-      label: new Date(`${lastKey}T12:00:00`).toLocaleDateString(localeTag, { month: 'short', day: 'numeric' }),
-      rate: total ? done / total : 0,
-      done,
-      total,
-    });
-  }
-  return points;
+    };
+  });
 }
 
 /** Aggregate completion stats over the selected range (last 7 or 28 days). */
