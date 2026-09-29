@@ -47,6 +47,8 @@ export const ru: Dictionary = {
   heatmapLess: 'Меньше',
   heatmapMore: 'Больше',
   heatmapNoHabits: 'Пока нет привычек',
+  yearViewHeatmap: 'Тепловая карта',
+  yearViewGraph: 'График',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в среднем · ${perfectDays} ${ruPlural(perfectDays, 'идеальный день', 'идеальных дня', 'идеальных дней')}`,
   achievementsHeader: (unlocked, total) => `ДОСТИЖЕНИЯ · ${unlocked}/${total}`,

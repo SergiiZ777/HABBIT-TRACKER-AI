@@ -206,44 +206,51 @@ export function computeRangeSummary(habits: Habit[], range: TrendRange, today: D
   };
 }
 
-export type HeatmapCell = { key: string; rate: number; done: number; total: number; future: boolean };
+export type HeatmapCell = { key: string; rate: number; done: number; total: number; inactive: boolean };
 export type HeatmapColumn = { cells: HeatmapCell[]; monthLabel: string | null };
 
-const HEATMAP_WEEKS = 53;
-
 /**
- * A GitHub-style contribution grid for the year view: 53 weeks (columns) x 7 days (Mon..Sun
- * rows), ending on the current week. A `future` cell is a day after today (padding at the end
- * of the current week) — rendered empty, never interactive.
+ * A GitHub-style contribution grid for the year view: the current calendar year, January
+ * through December, as weeks (columns) x 7 days (Mon..Sun rows) — always in Jan-to-Dec order,
+ * regardless of today's date. An `inactive` cell falls before Jan 1, after today, or after Dec
+ * 31 (padding at either end so full weeks line up) — rendered empty, never interactive.
  */
 export function computeYearHeatmap(
   habits: Habit[],
   today: Date = new Date(),
   localeTag: string = 'en-US'
 ): HeatmapColumn[] {
+  const year = today.getFullYear();
+  const jan1 = new Date(year, 0, 1);
+  const dec31 = new Date(year, 11, 31);
   const todayKey = dayKey(today);
-  const dow = (today.getDay() + 6) % 7; // 0=Mon .. 6=Sun
-  const currentMonday = addDays(today, -dow);
-  const startMonday = addDays(currentMonday, -(HEATMAP_WEEKS - 1) * 7);
+  const jan1Key = dayKey(jan1);
+  const dec31Key = dayKey(dec31);
+
+  const startDow = (jan1.getDay() + 6) % 7; // 0=Mon .. 6=Sun
+  const startMonday = addDays(jan1, -startDow);
+  const endDow = (dec31.getDay() + 6) % 7;
+  const totalDays = Math.round((addDays(dec31, 6 - endDow).getTime() - startMonday.getTime()) / 86400000) + 1;
+  const weeks = Math.ceil(totalDays / 7);
 
   const columns: HeatmapColumn[] = [];
   let prevMonthKey = '';
-  for (let c = 0; c < HEATMAP_WEEKS; c++) {
+  for (let c = 0; c < weeks; c++) {
     const cells: HeatmapCell[] = [];
     for (let r = 0; r < 7; r++) {
       const date = addDays(startMonday, c * 7 + r);
       const key = dayKey(date);
-      if (key > todayKey) {
-        cells.push({ key, rate: 0, done: 0, total: 0, future: true });
+      if (key < jan1Key || key > todayKey || key > dec31Key) {
+        cells.push({ key, rate: 0, done: 0, total: 0, inactive: true });
         continue;
       }
       const existing = existingHabitsOn(habits, key);
       const done = existing.filter((h) => h.completions.includes(key)).length;
-      cells.push({ key, rate: existing.length ? done / existing.length : 0, done, total: existing.length, future: false });
+      cells.push({ key, rate: existing.length ? done / existing.length : 0, done, total: existing.length, inactive: false });
     }
     const firstDate = addDays(startMonday, c * 7);
-    const mk = monthKey(firstDate);
-    columns.push({ cells, monthLabel: mk !== prevMonthKey ? firstDate.toLocaleDateString(localeTag, { month: 'short' }) : null });
+    const mk = monthKey(firstDate.getFullYear() === year ? firstDate : jan1);
+    columns.push({ cells, monthLabel: mk !== prevMonthKey ? (firstDate.getFullYear() === year ? firstDate : jan1).toLocaleDateString(localeTag, { month: 'short' }) : null });
     prevMonthKey = mk;
   }
   return columns;

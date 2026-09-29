@@ -38,6 +38,8 @@ export const da: Dictionary = {
   heatmapLess: 'Mindre',
   heatmapMore: 'Mere',
   heatmapNoHabits: 'Ingen vaner endnu',
+  yearViewHeatmap: 'Varmekort',
+  yearViewGraph: 'Graf',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% i gennemsnit · ${perfectDays} ${perfectDays === 1 ? 'perfekt dag' : 'perfekte dage'}`,
   achievementsHeader: (unlocked, total) => `PRÆSTATIONER · ${unlocked}/${total}`,
