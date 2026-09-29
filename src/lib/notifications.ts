@@ -1,6 +1,8 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
+import type { Dictionary } from '@/lib/i18n';
+
 const CHANNEL_ID = 'habit-reminders';
 
 if (Platform.OS !== 'web') {
@@ -29,11 +31,11 @@ export async function requestReminderPermission(): Promise<boolean> {
   }
 }
 
-async function ensureAndroidChannel(): Promise<void> {
+async function ensureAndroidChannel(name: string): Promise<void> {
   if (Platform.OS !== 'android') return;
   try {
     await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Habit Reminders',
+      name,
       importance: Notifications.AndroidImportance.HIGH,
     });
   } catch {
@@ -42,13 +44,15 @@ async function ensureAndroidChannel(): Promise<void> {
 }
 
 /**
- * Schedules a daily local reminder for a habit at the given "HH:mm" local time.
- * Returns the scheduled notification id on success, or undefined if permission was
- * denied, the platform doesn't support it (web), or scheduling otherwise failed.
+ * Schedules a daily local reminder for a habit at the given "HH:mm" local time, with the
+ * notification text in the app's current language. Returns the scheduled notification id on
+ * success, or undefined if permission was denied, the platform doesn't support it (web), or
+ * scheduling otherwise failed.
  */
 export async function scheduleHabitReminder(
   habit: { id: string; name: string; emoji: string },
-  time: string
+  time: string,
+  t: Dictionary
 ): Promise<string | undefined> {
   if (Platform.OS === 'web') return undefined;
 
@@ -60,13 +64,13 @@ export async function scheduleHabitReminder(
   const minute = Number(minuteStr);
   if (!Number.isFinite(hour) || !Number.isFinite(minute)) return undefined;
 
-  await ensureAndroidChannel();
+  await ensureAndroidChannel(t.notifChannelName);
 
   try {
     return await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Habit reminder',
-        body: `Time for ${habit.emoji} ${habit.name}`,
+        title: t.notifTitle,
+        body: t.notifBody(habit.emoji, habit.name),
         data: { habitId: habit.id },
       },
       trigger: {

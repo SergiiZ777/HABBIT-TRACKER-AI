@@ -1,12 +1,25 @@
+import type { Dictionary } from '@/lib/i18n';
 import { addDays, currentStreak, dayKey, type Habit } from '@/lib/habits';
 
+export type BadgeId =
+  | 'first-step'
+  | 'streak-3'
+  | 'streak-7'
+  | 'streak-30'
+  | 'streak-100'
+  | 'completions-10'
+  | 'completions-100'
+  | 'completions-500'
+  | 'perfect-day'
+  | 'perfect-week'
+  | 'five-habits';
+
 export type Badge = {
-  id: string;
+  id: BadgeId;
   emoji: string;
-  title: string;
-  description: string;
   unlocked: boolean;
-  /** Present for milestone badges that can be shown "in progress" while locked. */
+  /** Present for milestone badges that can be shown "in progress" while locked. Display text
+   * (title/description) is looked up from the i18n dictionary by id, not stored here. */
   progress?: { current: number; target: number };
 };
 
@@ -106,11 +119,16 @@ const MONTH_DAYS = 28;
 const MONTH_BUCKETS = 4;
 
 /** One bar per day for 'week' (last 7 days), or one bar per 7-day bucket for 'month' (last 4 weeks). */
-export function computeTrend(habits: Habit[], range: TrendRange, today: Date = new Date()): TrendPoint[] {
+export function computeTrend(
+  habits: Habit[],
+  range: TrendRange,
+  today: Date = new Date(),
+  localeTag: string = 'en-US'
+): TrendPoint[] {
   if (range === 'week') {
     return dailyRange(habits, WEEK_DAYS, today).map(({ key, done, total }) => ({
       key,
-      label: new Date(`${key}T12:00:00`).toLocaleDateString(undefined, { weekday: 'narrow' }),
+      label: new Date(`${key}T12:00:00`).toLocaleDateString(localeTag, { weekday: 'narrow' }),
       rate: total ? done / total : 0,
       done,
       total,
@@ -126,7 +144,7 @@ export function computeTrend(habits: Habit[], range: TrendRange, today: Date = n
     const lastKey = bucket[bucket.length - 1].key;
     points.push({
       key: lastKey,
-      label: new Date(`${lastKey}T12:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      label: new Date(`${lastKey}T12:00:00`).toLocaleDateString(localeTag, { month: 'short', day: 'numeric' }),
       rate: total ? done / total : 0,
       done,
       total,
@@ -154,59 +172,81 @@ export function computeBadges(habits: Habit[], today: Date = new Date()): Badge[
   const perfectDays = perfectDayKeys(habits, today);
   const longestPerfectRun = longestConsecutiveRun(perfectDays);
 
-  const milestone = (
-    id: string,
-    emoji: string,
-    title: string,
-    description: string,
-    current: number,
-    target: number
-  ): Badge => ({
+  const milestone = (id: BadgeId, emoji: string, current: number, target: number): Badge => ({
     id,
     emoji,
-    title,
-    description,
     unlocked: current >= target,
     progress: { current: Math.min(current, target), target },
   });
 
   return [
-    {
-      id: 'first-step',
-      emoji: '🌱',
-      title: 'First Step',
-      description: 'Complete a habit for the first time',
-      unlocked: stats.totalCompletions >= 1,
-    },
-    milestone('streak-3', '🔥', '3-Day Streak', 'Reach a 3-day streak on any habit', stats.bestStreak, 3),
-    milestone('streak-7', '🔥', 'Week Warrior', 'Reach a 7-day streak on any habit', stats.bestStreak, 7),
-    milestone(
-      'streak-30',
-      '🔥',
-      'Consistency Master',
-      'Reach a 30-day streak on any habit',
-      stats.bestStreak,
-      30
-    ),
-    milestone('streak-100', '💯', 'Centurion', 'Reach a 100-day streak on any habit', stats.bestStreak, 100),
-    milestone('completions-10', '⭐', 'Getting Started', 'Log 10 total completions', stats.totalCompletions, 10),
-    milestone('completions-100', '🌟', 'Habit Builder', 'Log 100 total completions', stats.totalCompletions, 100),
-    milestone('completions-500', '🏆', 'Dedicated', 'Log 500 total completions', stats.totalCompletions, 500),
-    {
-      id: 'perfect-day',
-      emoji: '☀️',
-      title: 'Perfect Day',
-      description: 'Complete every habit on the same day',
-      unlocked: stats.perfectDaysCount >= 1,
-    },
+    { id: 'first-step', emoji: '🌱', unlocked: stats.totalCompletions >= 1 },
+    milestone('streak-3', '🔥', stats.bestStreak, 3),
+    milestone('streak-7', '🔥', stats.bestStreak, 7),
+    milestone('streak-30', '🔥', stats.bestStreak, 30),
+    milestone('streak-100', '💯', stats.bestStreak, 100),
+    milestone('completions-10', '⭐', stats.totalCompletions, 10),
+    milestone('completions-100', '🌟', stats.totalCompletions, 100),
+    milestone('completions-500', '🏆', stats.totalCompletions, 500),
+    { id: 'perfect-day', emoji: '☀️', unlocked: stats.perfectDaysCount >= 1 },
     {
       id: 'perfect-week',
       emoji: '🗓️',
-      title: 'Perfect Week',
-      description: '7 consecutive perfect days',
       unlocked: longestPerfectRun >= 7,
       progress: { current: Math.min(longestPerfectRun, 7), target: 7 },
     },
-    milestone('five-habits', '🧩', 'Habit Collector', 'Create 5 or more habits', habits.length, 5),
+    milestone('five-habits', '🧩', habits.length, 5),
   ];
+}
+
+/** Looks up a badge's translated title from the current dictionary. */
+export function badgeTitle(t: Dictionary, id: BadgeId): string {
+  switch (id) {
+    case 'first-step':
+      return t.badgeTitleFirstStep;
+    case 'streak-3':
+      return t.badgeTitleStreak3;
+    case 'streak-7':
+      return t.badgeTitleStreak7;
+    case 'streak-30':
+      return t.badgeTitleStreak30;
+    case 'streak-100':
+      return t.badgeTitleStreak100;
+    case 'completions-10':
+      return t.badgeTitleCompletions10;
+    case 'completions-100':
+      return t.badgeTitleCompletions100;
+    case 'completions-500':
+      return t.badgeTitleCompletions500;
+    case 'perfect-day':
+      return t.badgeTitlePerfectDay;
+    case 'perfect-week':
+      return t.badgeTitlePerfectWeek;
+    case 'five-habits':
+      return t.badgeTitleFiveHabits;
+  }
+}
+
+/** Looks up a badge's translated description from the current dictionary, filling in the
+ * milestone number (streak length / completion count) for badges that have one. */
+export function badgeDescription(t: Dictionary, badge: Badge): string {
+  switch (badge.id) {
+    case 'first-step':
+      return t.badgeDescFirstStep;
+    case 'streak-3':
+    case 'streak-7':
+    case 'streak-30':
+    case 'streak-100':
+      return t.badgeDescStreak(badge.progress!.target);
+    case 'completions-10':
+    case 'completions-100':
+    case 'completions-500':
+      return t.badgeDescCompletions(badge.progress!.target);
+    case 'perfect-day':
+      return t.badgeDescPerfectDay;
+    case 'perfect-week':
+      return t.badgeDescPerfectWeek;
+    case 'five-habits':
+      return t.badgeDescFiveHabits;
+  }
 }

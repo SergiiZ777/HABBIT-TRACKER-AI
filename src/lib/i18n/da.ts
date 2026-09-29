@@ -1,0 +1,131 @@
+import type { Dictionary } from './types';
+
+const COLOR_NAMES = ['Indigo', 'Orange', 'Grøn', 'Rød', 'Blå', 'Lilla', 'Gul'];
+
+export const da: Dictionary = {
+  tabToday: 'I dag',
+  tabCoach: 'Coach',
+  tabDashboard: 'Oversigt',
+
+  screenNewHabit: 'Ny vane',
+  screenEditHabit: 'Rediger vane',
+
+  greetingMorning: 'Godmorgen',
+  greetingAfternoon: 'God eftermiddag',
+  greetingEvening: 'God aften',
+  lookingBack: 'Et kig tilbage',
+  encouragementEmpty: 'Tilføj din første vane for at komme i gang.',
+  encouragementAllDone: 'Alt er klaret. Flot arbejde! 🎉',
+  encouragementNoneDone: 'Små skridt tæller. Vælg én for at starte.',
+  encouragementRemaining: (n) => `${n} tilbage. Bare fortsæt!`,
+  doneOfTotal: (done, total) => `${done} af ${total} klaret`,
+  sectionHabits: 'VANER',
+  emptyNoHabits: (fabLabel) => `Ingen vaner endnu. Tryk på "${fabLabel}" nedenfor for at oprette en.`,
+  hintTapLongPress: 'Tryk for at afkrydse · Langt tryk for mere',
+  fabNewHabit: '＋ Ny vane',
+  languageButtonLabel: 'Skift sprog',
+
+  eyebrowProgress: 'DIN FREMGANG',
+  dashboardTitle: 'Oversigt',
+  statBestStreak: 'Bedste stime',
+  statCompletions: 'Gennemførelser',
+  statHabits: 'Vaner',
+  statPerfectDays: 'Perfekte dage',
+  trendsTitle: 'Tendenser',
+  rangeWeek: 'Uge',
+  rangeMonth: 'Måned',
+  trendSummary: (avgPct, perfectDays) =>
+    `${avgPct}% i gennemsnit · ${perfectDays} ${perfectDays === 1 ? 'perfekt dag' : 'perfekte dage'}`,
+  achievementsHeader: (unlocked, total) => `PRÆSTATIONER · ${unlocked}/${total}`,
+  perHabit: 'PR. VANE',
+  dashboardEmpty: 'Tilføj en vane under fanen I dag for at begynde at låse præstationer op.',
+
+  aiRecommendations: 'AI-ANBEFALINGER',
+  coachTitle: 'Coach',
+  coachThinking: 'Coachen tænker…',
+  coachPlaceholder: 'Spørg din coach om hvad som helst…',
+  coachSend: 'Send',
+  coachSuggestion1: 'Hvilken vane skal jeg fokusere på i dag?',
+  coachSuggestion2: 'Hvordan bygger jeg en bedre stime?',
+  coachSuggestion3: 'Hvordan er denne app sammenlignet med andre?',
+  marketBlurb:
+    'Hurtigt kig på markedet: Habitica gør vaner til et spil med point og niveauer, Streaks ' +
+    'holder sig bevidst minimalistisk uden AI overhovedet, og nyere apps som BeeDone eller ' +
+    'Beyond Time bruger AI til at foreslå det bedste tidspunkt på dagen for en vane. De fleste ' +
+    'af dem viser dog kun grafer — meget få lader dig faktisk stille en coach et spørgsmål ' +
+    'baseret på dine egne data. Det er det, denne chat er til. Spørg mig om hvad som helst — ' +
+    'dine vaner, læsning, træning, kost, disciplin, motivation, hvad end du arbejder på.',
+  coachFallbackError: 'Kunne ikke nå coachen lige nu — tjek din forbindelse og prøv igen om lidt.',
+
+  suggestionDrinkWater: 'Drik 2L vand',
+  suggestionReadPages: 'Læs 10 sider',
+  suggestionWalkSteps: 'Gå 8.000 skridt',
+  suggestionMeditate: 'Mediter i 5 min',
+  suggestionNoSugar: 'Ingen sukker',
+  yourNewHabit: 'Din nye vane',
+  placeholderHabitName: 'f.eks. Drik vand',
+  labelIcon: 'IKON',
+  labelColor: 'FARVE',
+  labelReminder: 'PÅMINDELSE',
+  dailyReminder: 'Daglig påmindelse',
+  colorName: (i) => COLOR_NAMES[i] ?? 'Farve',
+  remindMeAt: 'Påmind mig kl.',
+  done: 'Færdig',
+  createHabit: 'Opret vane',
+  saveChanges: 'Gem ændringer',
+  newHabitTitle: 'Ny vane',
+  editHabitTitle: 'Rediger vane',
+
+  actionEdit: 'Rediger',
+  actionDelete: 'Slet',
+  actionCancel: 'Annuller',
+  startStreakToday: 'Start din stime i dag',
+  daysStreak: (n) => `🔥 ${n} ${n === 1 ? 'dags' : 'dages'} stime`,
+
+  remindersDisabledTitle: 'Påmindelser deaktiveret',
+  remindersDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få en daglig påmindelse til denne vane.',
+
+  notifChannelName: 'Vanepåmindelser',
+  notifTitle: 'Vanepåmindelse',
+  notifBody: (emoji, name) => `Tid til ${emoji} ${name}`,
+
+  motivFallback: [
+    { headline: 'Små skridt lægger sig oveni hinanden', detail: 'Vælg én vane og start nu — momentum bygges hurtigt op.' },
+    { headline: 'Konsistens slår intensitet', detail: 'Bare mød op i dag. Det er hele opgaven.' },
+    { headline: 'Din fremtidige jeg regner med dette', detail: 'Et minut i dag sparer en meget større indsats senere.' },
+    { headline: 'Fremskridt, ikke perfektion', detail: 'Enhver vane afkrydset i dag er en sejr.' },
+    { headline: 'Én vane ad gangen', detail: 'Du behøver ikke gøre alt — bare det næste.' },
+  ],
+  motivReadyHeadline: 'Klar når du er',
+  motivReadyDetail: 'Tilføj din første vane under fanen I dag for at begynde at opbygge momentum.',
+  motivPerfectHeadline: 'Perfekt dag!',
+  motivPerfectDetail: 'Du har gennemført alle dine vaner i dag. Sådan bygger man stimer.',
+  motivCloseHeadline: 'Så tæt på!',
+  motivCloseDetail: (emoji, name, target) =>
+    `Gennemfør ${emoji} ${name} i dag, så rammer du en ${target}-dages stime.`,
+  motivNeglectedHeadline: 'Mist ikke momentum',
+  motivNeglectedDetail: (emoji, name, gap) =>
+    `${emoji} ${name} er ikke blevet afkrydset i ${gap} dage. Et lille skridt i dag holder den i live.`,
+  motivKeepGoingHeadline: 'Bliv ved',
+  motivKeepGoingDetail: (n) => `${n} vane${n === 1 ? '' : 'r'} tilbage i dag. Du klarer det!`,
+
+  badgeTitleFirstStep: 'Første skridt',
+  badgeTitleStreak3: '3-dages stime',
+  badgeTitleStreak7: 'Ugekriger',
+  badgeTitleStreak30: 'Konsistensmester',
+  badgeTitleStreak100: 'Centurion',
+  badgeTitleCompletions10: 'Godt i gang',
+  badgeTitleCompletions100: 'Vanebygger',
+  badgeTitleCompletions500: 'Dedikeret',
+  badgeTitlePerfectDay: 'Perfekt dag',
+  badgeTitlePerfectWeek: 'Perfekt uge',
+  badgeTitleFiveHabits: 'Vanesamler',
+  badgeDescFirstStep: 'Gennemfør en vane for første gang',
+  badgeDescStreak: (n) => `Nå en ${n}-dages stime på en vilkårlig vane`,
+  badgeDescCompletions: (n) => `Log ${n} gennemførelser i alt`,
+  badgeDescPerfectDay: 'Gennemfør alle vaner på samme dag',
+  badgeDescPerfectWeek: '7 perfekte dage i træk',
+  badgeDescFiveHabits: 'Opret 5 eller flere vaner',
+
+  languagePickerTitle: 'Sprog',
+};

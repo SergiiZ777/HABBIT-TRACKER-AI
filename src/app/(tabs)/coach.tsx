@@ -15,35 +15,33 @@ import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { askCoach, type ChatTurn } from '@/lib/coach';
 import { useHabits } from '@/lib/habits';
-import { computeMotivation } from '@/lib/motivation';
+import { useLocale, useT } from '@/lib/i18n';
+import { computeMotivation, resolveMotivation } from '@/lib/motivation';
 
 type Message = { id: string; role: 'user' | 'coach'; content: string; seeded?: boolean };
 
-const MARKET_BLURB =
-  "Quick look at the market: Habitica gamifies habits with points and levels, Streaks stays deliberately minimal with " +
-  'no AI at all, and newer apps like BeeDone or Beyond Time use AI to suggest the best time of day for a habit. ' +
-  "Most of them only show you charts, though — very few let you actually ask a coach a question grounded in your " +
-  'own data. That’s what this chat is for. Ask me anything about your habits, or how to improve.';
-
-const SUGGESTIONS = ['Which habit should I focus on today?', 'How do I build a better streak?', 'How does this app compare to others?'];
-
 export default function CoachScreen() {
   const theme = useTheme();
+  const t = useT();
+  const locale = useLocale();
   const habits = useHabits();
   const today = new Date();
   const scrollRef = useRef<ScrollView>(null);
 
-  // Lazy initializer: seed the thread once on mount with today's recommendation + the market blurb,
-  // without re-seeding (and duplicating messages) whenever habits change later.
+  // Lazy initializer: seed the thread once on mount with today's recommendation + the market
+  // blurb, in the language active at that moment — like any chat history, earlier messages
+  // don't retroactively translate if the language is switched mid-session.
   const [messages, setMessages] = useState<Message[]>(() => {
-    const motivation = computeMotivation(habits, today);
+    const motivation = resolveMotivation(t, computeMotivation(habits, today));
     return [
-      { id: 'seed-1', role: 'coach', seeded: true, content: `${motivation.emoji} ${motivation.headline} — ${motivation.detail}` },
-      { id: 'seed-2', role: 'coach', seeded: true, content: MARKET_BLURB },
+      { id: 'seed-1', role: 'coach', seeded: true, content: `${motivation.headline} — ${motivation.detail}` },
+      { id: 'seed-2', role: 'coach', seeded: true, content: t.marketBlurb },
     ];
   });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const suggestions = [t.coachSuggestion1, t.coachSuggestion2, t.coachSuggestion3];
 
   const send = async (text: string) => {
     const question = text.trim();
@@ -58,7 +56,7 @@ export default function CoachScreen() {
     setLoading(true);
     scrollRef.current?.scrollToEnd({ animated: true });
 
-    const answer = await askCoach(question, habits, history, today);
+    const answer = await askCoach(question, habits, history, locale, t, today);
 
     setMessages((prev) => [...prev, { id: `c-${Date.now()}`, role: 'coach', content: answer }]);
     setLoading(false);
@@ -72,8 +70,8 @@ export default function CoachScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         <View style={styles.header}>
-          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>AI RECOMMENDATIONS</Text>
-          <Text style={[styles.title, { color: theme.text }]}>Coach</Text>
+          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t.aiRecommendations}</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{t.coachTitle}</Text>
         </View>
 
         <ScrollView
@@ -95,13 +93,13 @@ export default function CoachScreen() {
 
           {loading && (
             <View style={[styles.bubble, styles.loadingBubble, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-              <Text style={[styles.bubbleText, { color: theme.textSecondary }]}>Coach is thinking…</Text>
+              <Text style={[styles.bubbleText, { color: theme.textSecondary }]}>{t.coachThinking}</Text>
             </View>
           )}
 
           {messages.length <= 2 && (
             <View style={styles.suggestions}>
-              {SUGGESTIONS.map((s) => (
+              {suggestions.map((s) => (
                 <Pressable
                   key={s}
                   onPress={() => send(s)}
@@ -117,7 +115,7 @@ export default function CoachScreen() {
           <TextInput
             value={input}
             onChangeText={setInput}
-            placeholder="Ask your coach anything…"
+            placeholder={t.coachPlaceholder}
             placeholderTextColor={theme.textSecondary}
             style={[styles.input, { color: theme.text }]}
             multiline
@@ -129,7 +127,7 @@ export default function CoachScreen() {
             onPress={() => send(input)}
             disabled={!input.trim() || loading}
             style={[styles.sendButton, { backgroundColor: theme.accent, opacity: !input.trim() || loading ? 0.4 : 1 }]}>
-            <Text style={[styles.sendText, { color: theme.onAccent }]}>Send</Text>
+            <Text style={[styles.sendText, { color: theme.onAccent }]}>{t.coachSend}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>

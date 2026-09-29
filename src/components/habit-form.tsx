@@ -4,8 +4,8 @@ import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from
 import { TimePickerField } from '@/components/time-picker-field';
 import { HabitColors, HabitEmojis, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useT } from '@/lib/i18n';
 
-const SUGGESTIONS = ['Drink 2L water', 'Read 10 pages', 'Walk 8k steps', 'Meditate 5 min', 'No sugar'];
 const DEFAULT_REMINDER_TIME = '08:00';
 
 export type HabitFormValues = {
@@ -25,11 +25,20 @@ type Props = {
 
 export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props) {
   const theme = useTheme();
+  const t = useT();
   const [name, setName] = useState(initialValues?.name ?? '');
   const [emoji, setEmoji] = useState<string>(initialValues?.emoji ?? HabitEmojis[0]);
   const [color, setColor] = useState<string>(initialValues?.color ?? HabitColors[0]);
   const [reminderEnabled, setReminderEnabled] = useState(initialValues?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? DEFAULT_REMINDER_TIME);
+
+  const suggestions = [
+    t.suggestionDrinkWater,
+    t.suggestionReadPages,
+    t.suggestionWalkSteps,
+    t.suggestionMeditate,
+    t.suggestionNoSugar,
+  ];
 
   const canSave = name.trim().length > 0;
 
@@ -48,14 +57,14 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
           <Text style={{ fontSize: 26 }}>{emoji}</Text>
         </View>
         <Text numberOfLines={1} style={[styles.previewName, { color: name ? theme.text : theme.textSecondary }]}>
-          {name || 'Your new habit'}
+          {name || t.yourNewHabit}
         </Text>
       </View>
 
       <TextInput
         value={name}
         onChangeText={setName}
-        placeholder="e.g. Drink water"
+        placeholder={t.placeholderHabitName}
         placeholderTextColor={theme.textSecondary}
         autoFocus={!initialValues}
         maxLength={40}
@@ -65,7 +74,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
       />
 
       <View style={styles.wrap}>
-        {SUGGESTIONS.map((s) => (
+        {suggestions.map((s) => (
           <Pressable
             key={s}
             onPress={() => setName(s)}
@@ -75,7 +84,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         ))}
       </View>
 
-      <Text style={[styles.label, { color: theme.textSecondary }]}>ICON</Text>
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelIcon}</Text>
       <View style={styles.wrap}>
         {HabitEmojis.map((e) => (
           <Pressable
@@ -90,22 +99,22 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         ))}
       </View>
 
-      <Text style={[styles.label, { color: theme.textSecondary }]}>COLOR</Text>
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelColor}</Text>
       <View style={styles.wrap}>
-        {HabitColors.map((c) => (
+        {HabitColors.map((c, i) => (
           <Pressable
             key={c}
             onPress={() => setColor(c)}
-            accessibilityLabel={`Color ${c}`}
+            accessibilityLabel={t.colorName(i)}
             style={[styles.swatchRing, { borderColor: c === color ? c : 'transparent' }]}>
             <View style={[styles.swatch, { backgroundColor: c }]} />
           </Pressable>
         ))}
       </View>
 
-      <Text style={[styles.label, { color: theme.textSecondary }]}>REMINDER</Text>
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelReminder}</Text>
       <View style={[styles.reminderRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-        <Text style={[styles.reminderLabel, { color: theme.text }]}>Daily reminder</Text>
+        <Text style={[styles.reminderLabel, { color: theme.text }]}>{t.dailyReminder}</Text>
         <Switch
           value={reminderEnabled}
           onValueChange={setReminderEnabled}

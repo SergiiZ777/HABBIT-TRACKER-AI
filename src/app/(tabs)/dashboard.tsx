@@ -3,40 +3,52 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { TrendChart } from '@/components/trend-chart';
-import { computeBadges, computeRangeSummary, computeStats, computeTrend, type TrendRange } from '@/lib/achievements';
+import {
+  badgeDescription,
+  badgeTitle,
+  computeBadges,
+  computeRangeSummary,
+  computeStats,
+  computeTrend,
+  type TrendRange,
+} from '@/lib/achievements';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, useHabits } from '@/lib/habits';
-import { computeMotivation } from '@/lib/motivation';
+import { useLocaleTag, useT } from '@/lib/i18n';
+import { computeMotivation, resolveMotivation } from '@/lib/motivation';
 
 export default function DashboardScreen() {
   const theme = useTheme();
+  const t = useT();
+  const localeTag = useLocaleTag();
   const habits = useHabits();
   const today = new Date();
   const [range, setRange] = useState<TrendRange>('week');
 
   const stats = computeStats(habits, today);
   const badges = computeBadges(habits, today);
-  const motivation = computeMotivation(habits, today);
-  const trend = computeTrend(habits, range, today);
+  const rawMotivation = computeMotivation(habits, today);
+  const motivation = { emoji: rawMotivation.emoji, ...resolveMotivation(t, rawMotivation) };
+  const trend = computeTrend(habits, range, today, localeTag);
   const rangeSummary = computeRangeSummary(habits, range, today);
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
   const topHabits = [...habits].sort((a, b) => currentStreak(b, today) - currentStreak(a, today));
 
   const statTiles = [
-    { emoji: '🔥', value: stats.bestStreak, label: 'Best streak' },
-    { emoji: '✅', value: stats.totalCompletions, label: 'Completions' },
-    { emoji: '🧩', value: stats.activeHabitsCount, label: 'Habits' },
-    { emoji: '☀️', value: stats.perfectDaysCount, label: 'Perfect days' },
+    { emoji: '🔥', value: stats.bestStreak, label: t.statBestStreak },
+    { emoji: '✅', value: stats.totalCompletions, label: t.statCompletions },
+    { emoji: '🧩', value: stats.activeHabitsCount, label: t.statHabits },
+    { emoji: '☀️', value: stats.perfectDaysCount, label: t.statPerfectDays },
   ];
 
   return (
     <SafeAreaView style={[styles.flex, { backgroundColor: theme.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         <View>
-          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>YOUR PROGRESS</Text>
-          <Text style={[styles.title, { color: theme.text }]}>Dashboard</Text>
+          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t.eyebrowProgress}</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{t.dashboardTitle}</Text>
         </View>
 
         <View style={[styles.motivationCard, { backgroundColor: theme.accent + '14', borderColor: theme.accent }]}>
@@ -61,7 +73,7 @@ export default function DashboardScreen() {
 
         <View style={[styles.trendCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
           <View style={styles.trendHeader}>
-            <Text style={[styles.summaryTitle, { color: theme.text }]}>Trends</Text>
+            <Text style={[styles.summaryTitle, { color: theme.text }]}>{t.trendsTitle}</Text>
             <View style={[styles.segmented, { backgroundColor: theme.backgroundSelected }]}>
               {(['week', 'month'] as const).map((r) => (
                 <Pressable
@@ -69,7 +81,7 @@ export default function DashboardScreen() {
                   onPress={() => setRange(r)}
                   style={[styles.segment, range === r && { backgroundColor: theme.backgroundElement }]}>
                   <Text style={[styles.segmentText, { color: range === r ? theme.text : theme.textSecondary }]}>
-                    {r === 'week' ? 'Week' : 'Month'}
+                    {r === 'week' ? t.rangeWeek : t.rangeMonth}
                   </Text>
                 </Pressable>
               ))}
@@ -77,15 +89,14 @@ export default function DashboardScreen() {
           </View>
 
           <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
-            {Math.round(rangeSummary.averageRate * 100)}% average · {rangeSummary.perfectDays} perfect day
-            {rangeSummary.perfectDays === 1 ? '' : 's'}
+            {t.trendSummary(Math.round(rangeSummary.averageRate * 100), rangeSummary.perfectDays)}
           </Text>
 
           <TrendChart points={trend} />
         </View>
 
         <Text style={[styles.section, { color: theme.textSecondary }]}>
-          ACHIEVEMENTS · {unlockedCount}/{badges.length}
+          {t.achievementsHeader(unlockedCount, badges.length)}
         </Text>
 
         <View style={styles.badgeGrid}>
@@ -102,10 +113,10 @@ export default function DashboardScreen() {
               ]}>
               <Text style={styles.badgeEmoji}>{b.emoji}</Text>
               <Text numberOfLines={1} style={[styles.badgeTitle, { color: theme.text }]}>
-                {b.title}
+                {badgeTitle(t, b.id)}
               </Text>
               <Text numberOfLines={2} style={[styles.badgeDescription, { color: theme.textSecondary }]}>
-                {b.description}
+                {badgeDescription(t, b)}
               </Text>
               {b.progress && !b.unlocked && (
                 <View style={[styles.progressTrack, { backgroundColor: theme.backgroundSelected }]}>
@@ -126,7 +137,7 @@ export default function DashboardScreen() {
 
         {topHabits.length > 0 && (
           <>
-            <Text style={[styles.section, { color: theme.textSecondary }]}>PER HABIT</Text>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.perHabit}</Text>
             <View style={styles.list}>
               {topHabits.map((h) => {
                 const streak = currentStreak(h, today);
@@ -154,7 +165,7 @@ export default function DashboardScreen() {
           <View style={[styles.empty, { borderColor: theme.border }]}>
             <Text style={styles.emptyEmoji}>🏆</Text>
             <Text style={[styles.summaryText, { color: theme.textSecondary, textAlign: 'center' }]}>
-              Add a habit on the Today tab to start unlocking achievements.
+              {t.dashboardEmpty}
             </Text>
           </View>
         )}

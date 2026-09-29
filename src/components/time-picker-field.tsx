@@ -5,12 +5,15 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { dateToTime, formatTime, timeToDate } from '@/lib/habits';
+import { useLocaleTag, useT } from '@/lib/i18n';
 
 type Props = { time: string; color: string; onChange: (time: string) => void };
 
 /** Native (iOS/Android) time field: a tappable row that reveals the platform's own time picker. */
 export function TimePickerField({ time, color, onChange }: Props) {
   const theme = useTheme();
+  const t = useT();
+  const localeTag = useLocaleTag();
   const [showPicker, setShowPicker] = useState(false);
 
   const onTimeChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -27,8 +30,8 @@ export function TimePickerField({ time, color, onChange }: Props) {
       <Pressable
         onPress={() => setShowPicker((v) => !v)}
         style={[styles.row, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-        <Text style={[styles.label, { color: theme.text }]}>Remind me at</Text>
-        <Text style={[styles.time, { color }]}>{formatTime(time)}</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{t.remindMeAt}</Text>
+        <Text style={[styles.time, { color }]}>{formatTime(time, localeTag)}</Text>
       </Pressable>
 
       {showPicker && (
@@ -41,7 +44,7 @@ export function TimePickerField({ time, color, onChange }: Props) {
           />
           {Platform.OS === 'ios' && (
             <Pressable onPress={() => setShowPicker(false)} style={styles.done}>
-              <Text style={[styles.doneText, { color }]}>Done</Text>
+              <Text style={[styles.doneText, { color }]}>{t.done}</Text>
             </Pressable>
           )}
         </View>
