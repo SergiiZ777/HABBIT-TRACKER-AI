@@ -97,6 +97,28 @@ export function useHabits(): Habit[] {
   return useSyncExternalStore(subscribe, () => state.habits);
 }
 
+/** Current habits, outside of React (e.g. for a background subscriber like backup.ts). */
+export function getHabits(): Habit[] {
+  return state.habits;
+}
+
+/**
+ * Registers a plain (non-React) listener that fires on every habits change, in addition to
+ * `useHabits`'s React subscribers — used by backup.ts to trigger an auto-backup push. Returns
+ * an unsubscribe function.
+ */
+export function onHabitsChange(listener: () => void): () => void {
+  return subscribe(listener);
+}
+
+/**
+ * Replaces the entire habits list wholesale — used only by the restore-from-backup flow, and
+ * only ever called when the local list is empty (enforced by the caller, not here).
+ */
+export function restoreHabits(habits: Habit[]) {
+  setState({ habits });
+}
+
 export function addHabit(
   input: Pick<Habit, 'name' | 'emoji' | 'color'> & Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationId'>>
 ): Habit {

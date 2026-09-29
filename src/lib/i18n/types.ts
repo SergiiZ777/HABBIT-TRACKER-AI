@@ -129,4 +129,31 @@ export interface Dictionary {
   badgeDescFiveHabits: string;
 
   languagePickerTitle: string;
+
+  // Onboarding
+  onboardWelcomeTitle: string;
+  onboardWelcomeTagline: string;
+  onboardFeatureHabitsTitle: string;
+  onboardFeatureHabitsDesc: string;
+  onboardFeatureCoachTitle: string;
+  onboardFeatureCoachDesc: string;
+  onboardFeatureAchievementsTitle: string;
+  onboardFeatureAchievementsDesc: string;
+  onboardGetStartedTitle: string;
+  onboardGetStartedSubtitle: string;
+  onboardContinue: string;
+  onboardSkip: string;
+  onboardNext: string;
+  onboardRestoreLink: string;
+  onboardRestorePlaceholder: string;
+  onboardRestoreButton: string;
+  onboardRestoreSuccess: string;
+  onboardRestoreNotFound: string;
+  onboardRestoreError: string;
+
+  // Backup
+  backupIdLabel: string;
+  backupIdHint: string;
+  backupIdCopied: string;
+  copyButton: string;
 }
