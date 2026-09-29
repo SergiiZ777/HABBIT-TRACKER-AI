@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { LanguageSwitcher } from '@/components/language-switcher';
 import { HabitColors, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { addHabit, restoreHabits } from '@/lib/habits';
@@ -67,6 +68,9 @@ export function OnboardingFlow() {
 
   return (
     <SafeAreaView style={[styles.flex, { backgroundColor: theme.background }]}>
+      <View style={styles.languageBar}>
+        <LanguageSwitcher />
+      </View>
       <ScrollView contentContainerStyle={styles.content}>
         {step === 0 && (
           <View style={styles.center}>
@@ -189,6 +193,7 @@ export function OnboardingFlow() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  languageBar: { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: Spacing.four, paddingTop: Spacing.two },
   content: {
     flexGrow: 1,
     padding: Spacing.five,
