@@ -4,9 +4,11 @@ import { Alert } from 'react-native';
 
 import { HabitForm, type HabitFormValues } from '@/components/habit-form';
 import { updateHabit, useHabits } from '@/lib/habits';
+import { useT } from '@/lib/i18n';
 import { cancelHabitReminder, scheduleHabitReminder } from '@/lib/notifications';
 
 export default function EditHabitScreen() {
+  const t = useT();
   const { id } = useLocalSearchParams<{ id: string }>();
   const habits = useHabits();
   const habit = habits.find((h) => h.id === id);
@@ -25,10 +27,11 @@ export default function EditHabitScreen() {
     if (values.reminderEnabled) {
       reminderNotificationId = await scheduleHabitReminder(
         { id: habit.id, name: values.name, emoji: values.emoji },
-        values.reminderTime
+        values.reminderTime,
+        t
       );
       if (!reminderNotificationId) {
-        Alert.alert('Reminders disabled', 'Enable notifications in Settings to get a daily reminder for this habit.');
+        Alert.alert(t.remindersDisabledTitle, t.remindersDisabledMessage);
       }
     }
 
@@ -45,8 +48,8 @@ export default function EditHabitScreen() {
 
   return (
     <HabitForm
-      title="Edit habit"
-      submitLabel="Save changes"
+      title={t.editHabitTitle}
+      submitLabel={t.saveChanges}
       initialValues={{
         name: habit.name,
         emoji: habit.emoji,

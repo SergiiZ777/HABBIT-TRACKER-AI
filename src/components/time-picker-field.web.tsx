@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useT } from '@/lib/i18n';
 
 type Props = { time: string; color: string; onChange: (time: string) => void };
 
@@ -12,10 +13,11 @@ type Props = { time: string; color: string; onChange: (time: string) => void };
  */
 export function TimePickerField({ time, color, onChange }: Props) {
   const theme = useTheme();
+  const t = useT();
 
   return (
     <View style={[styles.row, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-      <Text style={[styles.label, { color: theme.text }]}>Remind me at</Text>
+      <Text style={[styles.label, { color: theme.text }]}>{t.remindMeAt}</Text>
       {/* Plain DOM element: react-native-web renders on top of ReactDOM, so a host tag works here. */}
       <input
         type="time"

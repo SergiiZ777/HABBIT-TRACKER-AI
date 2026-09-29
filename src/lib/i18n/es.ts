@@ -1,0 +1,132 @@
+import type { Dictionary } from './types';
+
+const COLOR_NAMES = ['Índigo', 'Naranja', 'Verde', 'Rojo', 'Azul', 'Morado', 'Amarillo'];
+
+export const es: Dictionary = {
+  tabToday: 'Hoy',
+  tabCoach: 'Coach',
+  tabDashboard: 'Panel',
+
+  screenNewHabit: 'Nuevo hábito',
+  screenEditHabit: 'Editar hábito',
+
+  greetingMorning: 'Buenos días',
+  greetingAfternoon: 'Buenas tardes',
+  greetingEvening: 'Buenas noches',
+  lookingBack: 'Mirando atrás',
+  encouragementEmpty: 'Añade tu primer hábito para empezar.',
+  encouragementAllDone: '¡Todo completado! Gran trabajo 🎉',
+  encouragementNoneDone: 'Los pequeños pasos cuentan. Elige uno para empezar.',
+  encouragementRemaining: (n) => `Te quedan ${n}. ¡Sigue así!`,
+  doneOfTotal: (done, total) => `${done} de ${total} completados`,
+  sectionHabits: 'HÁBITOS',
+  emptyNoHabits: (fabLabel) => `Aún no tienes hábitos. Toca «${fabLabel}» abajo para crear uno.`,
+  hintTapLongPress: 'Toca para marcar · Mantén pulsado para más opciones',
+  fabNewHabit: '＋ Nuevo hábito',
+  languageButtonLabel: 'Cambiar idioma',
+
+  eyebrowProgress: 'TU PROGRESO',
+  dashboardTitle: 'Panel',
+  statBestStreak: 'Mejor racha',
+  statCompletions: 'Completados',
+  statHabits: 'Hábitos',
+  statPerfectDays: 'Días perfectos',
+  trendsTitle: 'Tendencias',
+  rangeWeek: 'Semana',
+  rangeMonth: 'Mes',
+  trendSummary: (avgPct, perfectDays) =>
+    `${avgPct}% de media · ${perfectDays} día${perfectDays === 1 ? '' : 's'} perfecto${perfectDays === 1 ? '' : 's'}`,
+  achievementsHeader: (unlocked, total) => `LOGROS · ${unlocked}/${total}`,
+  perHabit: 'POR HÁBITO',
+  dashboardEmpty: 'Añade un hábito en la pestaña Hoy para empezar a desbloquear logros.',
+
+  aiRecommendations: 'RECOMENDACIONES IA',
+  coachTitle: 'Coach',
+  coachThinking: 'El coach está pensando…',
+  coachPlaceholder: 'Pregúntale a tu coach lo que quieras…',
+  coachSend: 'Enviar',
+  coachSuggestion1: '¿En qué hábito debería centrarme hoy?',
+  coachSuggestion2: '¿Cómo construyo una racha mejor?',
+  coachSuggestion3: '¿Cómo se compara esta app con otras?',
+  marketBlurb:
+    'Un vistazo rápido al mercado: Habitica convierte los hábitos en un juego con puntos y ' +
+    'niveles, Streaks se mantiene deliberadamente minimalista sin nada de IA, y apps más ' +
+    'nuevas como BeeDone o Beyond Time usan IA para sugerir la mejor hora del día para un ' +
+    'hábito. Sin embargo, la mayoría solo te muestra gráficos — muy pocas te dejan preguntarle ' +
+    'algo a un coach basado en tus propios datos. Para eso está este chat. Pregúntame lo que ' +
+    'quieras — tus hábitos, lectura, ejercicio, alimentación, disciplina, motivación, lo que ' +
+    'sea que estés trabajando.',
+  coachFallbackError: 'No pude conectar con el coach ahora mismo — revisa tu conexión e inténtalo de nuevo en un momento.',
+
+  suggestionDrinkWater: 'Beber 2L de agua',
+  suggestionReadPages: 'Leer 10 páginas',
+  suggestionWalkSteps: 'Caminar 8000 pasos',
+  suggestionMeditate: 'Meditar 5 min',
+  suggestionNoSugar: 'Sin azúcar',
+  yourNewHabit: 'Tu nuevo hábito',
+  placeholderHabitName: 'ej. Beber agua',
+  labelIcon: 'ICONO',
+  labelColor: 'COLOR',
+  labelReminder: 'RECORDATORIO',
+  dailyReminder: 'Recordatorio diario',
+  colorName: (i) => COLOR_NAMES[i] ?? 'Color',
+  remindMeAt: 'Recordarme a las',
+  done: 'Listo',
+  createHabit: 'Crear hábito',
+  saveChanges: 'Guardar cambios',
+  newHabitTitle: 'Nuevo hábito',
+  editHabitTitle: 'Editar hábito',
+
+  actionEdit: 'Editar',
+  actionDelete: 'Eliminar',
+  actionCancel: 'Cancelar',
+  startStreakToday: 'Empieza tu racha hoy',
+  daysStreak: (n) => `🔥 Racha de ${n} día${n === 1 ? '' : 's'}`,
+
+  remindersDisabledTitle: 'Recordatorios desactivados',
+  remindersDisabledMessage: 'Activa las notificaciones en Ajustes para recibir un recordatorio diario de este hábito.',
+
+  notifChannelName: 'Recordatorios de hábitos',
+  notifTitle: 'Recordatorio de hábito',
+  notifBody: (emoji, name) => `Hora de ${emoji} ${name}`,
+
+  motivFallback: [
+    { headline: 'Los pequeños pasos se acumulan', detail: 'Elige un hábito y empieza ahora — el impulso se construye rápido.' },
+    { headline: 'La constancia le gana a la intensidad', detail: 'Solo hazlo hoy. Eso es todo lo que hace falta.' },
+    { headline: 'Tu yo futuro cuenta con esto', detail: 'Un minuto hoy ahorra mucho más esfuerzo después.' },
+    { headline: 'Progreso, no perfección', detail: 'Cualquier hábito marcado hoy es una victoria.' },
+    { headline: 'Un hábito a la vez', detail: 'No necesitas hacerlo todo — solo lo siguiente.' },
+  ],
+  motivReadyHeadline: 'Listo cuando tú lo estés',
+  motivReadyDetail: 'Añade tu primer hábito en la pestaña Hoy para empezar a construir impulso.',
+  motivPerfectHeadline: '¡Día perfecto!',
+  motivPerfectDetail: 'Completaste todos tus hábitos hoy. Así es como se construyen las rachas.',
+  motivCloseHeadline: '¡Tan cerca!',
+  motivCloseDetail: (emoji, name, target) =>
+    `Completa ${emoji} ${name} hoy y alcanzarás una racha de ${target} días.`,
+  motivNeglectedHeadline: 'No pierdas el impulso',
+  motivNeglectedDetail: (emoji, name, gap) =>
+    `No has marcado ${emoji} ${name} en ${gap} día${gap === 1 ? '' : 's'}. Un pequeño paso hoy lo mantiene vivo.`,
+  motivKeepGoingHeadline: 'Sigue así',
+  motivKeepGoingDetail: (n) => `Te queda${n === 1 ? '' : 'n'} ${n} hábito${n === 1 ? '' : 's'} hoy. ¡Tú puedes!`,
+
+  badgeTitleFirstStep: 'Primer paso',
+  badgeTitleStreak3: 'Racha de 3 días',
+  badgeTitleStreak7: 'Guerrero semanal',
+  badgeTitleStreak30: 'Maestro de la constancia',
+  badgeTitleStreak100: 'Centurión',
+  badgeTitleCompletions10: 'Buen comienzo',
+  badgeTitleCompletions100: 'Constructor de hábitos',
+  badgeTitleCompletions500: 'Dedicación',
+  badgeTitlePerfectDay: 'Día perfecto',
+  badgeTitlePerfectWeek: 'Semana perfecta',
+  badgeTitleFiveHabits: 'Coleccionista de hábitos',
+  badgeDescFirstStep: 'Completa un hábito por primera vez',
+  badgeDescStreak: (n) => `Alcanza una racha de ${n} días en cualquier hábito`,
+  badgeDescCompletions: (n) => `Registra ${n} completados en total`,
+  badgeDescPerfectDay: 'Completa todos los hábitos el mismo día',
+  badgeDescPerfectWeek: '7 días perfectos seguidos',
+  badgeDescFiveHabits: 'Crea 5 o más hábitos',
+
+  languagePickerTitle: 'Idioma',
+};

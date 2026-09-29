@@ -51,8 +51,8 @@ export function dateToTime(date: Date): string {
 }
 
 /** Formats a "HH:mm" time string for display, e.g. "8:00 AM" (locale-aware). */
-export function formatTime(time: string): string {
-  return timeToDate(time).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+export function formatTime(time: string, localeTag?: string): string {
+  return timeToDate(time).toLocaleTimeString(localeTag, { hour: 'numeric', minute: '2-digit' });
 }
 
 /** Consecutive completed days ending today (or yesterday, so a streak isn't "lost" before you've had a chance today). */

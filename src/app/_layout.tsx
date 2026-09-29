@@ -5,12 +5,14 @@ import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { Colors } from '@/constants/theme';
+import { useT } from '@/lib/i18n';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colors = Colors[scheme];
+  const t = useT();
 
   return (
     <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -21,7 +23,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="new-habit"
           options={{
-            title: 'New habit',
+            title: t.screenNewHabit,
             presentation: 'formSheet',
             sheetAllowedDetents: [0.75, 1],
             sheetGrabberVisible: true,
@@ -33,7 +35,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="edit-habit"
           options={{
-            title: 'Edit habit',
+            title: t.screenEditHabit,
             presentation: 'formSheet',
             sheetAllowedDetents: [0.75, 1],
             sheetGrabberVisible: true,

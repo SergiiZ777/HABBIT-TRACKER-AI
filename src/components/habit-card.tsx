@@ -5,12 +5,15 @@ import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, deleteHabit, formatTime, toggleCompletion, type Habit } from '@/lib/habits';
+import { useLocaleTag, useT } from '@/lib/i18n';
 import { cancelHabitReminder } from '@/lib/notifications';
 
 type Props = { habit: Habit; day: string };
 
 export function HabitCard({ habit, day }: Props) {
   const theme = useTheme();
+  const t = useT();
+  const localeTag = useLocaleTag();
   const done = habit.completions.includes(day);
   const streak = currentStreak(habit);
 
@@ -23,16 +26,16 @@ export function HabitCard({ habit, day }: Props) {
 
   const onLongPress = () => {
     Alert.alert(habit.name, undefined, [
-      { text: 'Edit', onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
+      { text: t.actionEdit, onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
       {
-        text: 'Delete',
+        text: t.actionDelete,
         style: 'destructive',
         onPress: async () => {
           await cancelHabitReminder(habit.reminderNotificationId);
           deleteHabit(habit.id);
         },
       },
-      { text: 'Cancel', style: 'cancel' },
+      { text: t.actionCancel, style: 'cancel' },
     ]);
   };
 
@@ -63,8 +66,8 @@ export function HabitCard({ habit, day }: Props) {
           {habit.name}
         </Text>
         <Text style={[styles.meta, { color: theme.textSecondary }]}>
-          {streak > 0 ? `🔥 ${streak} day${streak === 1 ? '' : 's'} streak` : 'Start your streak today'}
-          {habit.reminderTime ? `  ·  ⏰ ${formatTime(habit.reminderTime)}` : ''}
+          {streak > 0 ? t.daysStreak(streak) : t.startStreakToday}
+          {habit.reminderTime ? `  ·  ⏰ ${formatTime(habit.reminderTime, localeTag)}` : ''}
         </Text>
       </View>
 

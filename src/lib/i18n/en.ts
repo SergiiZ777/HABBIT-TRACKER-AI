@@ -1,0 +1,131 @@
+import type { Dictionary } from './types';
+
+const COLOR_NAMES = ['Indigo', 'Orange', 'Green', 'Red', 'Blue', 'Purple', 'Yellow'];
+
+export const en: Dictionary = {
+  tabToday: 'Today',
+  tabCoach: 'Coach',
+  tabDashboard: 'Dashboard',
+
+  screenNewHabit: 'New habit',
+  screenEditHabit: 'Edit habit',
+
+  greetingMorning: 'Good morning',
+  greetingAfternoon: 'Good afternoon',
+  greetingEvening: 'Good evening',
+  lookingBack: 'Looking back',
+  encouragementEmpty: 'Add your first habit to get going.',
+  encouragementAllDone: 'Everything done. Great work! 🎉',
+  encouragementNoneDone: 'Small steps count. Pick one to start.',
+  encouragementRemaining: (n) => `${n} to go. Keep it up!`,
+  doneOfTotal: (done, total) => `${done} of ${total} done`,
+  sectionHabits: 'HABITS',
+  emptyNoHabits: (fabLabel) => `No habits yet. Tap "${fabLabel}" below to create one.`,
+  hintTapLongPress: 'Tap to check off · Long-press for more',
+  fabNewHabit: '＋ New habit',
+  languageButtonLabel: 'Change language',
+
+  eyebrowProgress: 'YOUR PROGRESS',
+  dashboardTitle: 'Dashboard',
+  statBestStreak: 'Best streak',
+  statCompletions: 'Completions',
+  statHabits: 'Habits',
+  statPerfectDays: 'Perfect days',
+  trendsTitle: 'Trends',
+  rangeWeek: 'Week',
+  rangeMonth: 'Month',
+  trendSummary: (avgPct, perfectDays) =>
+    `${avgPct}% average · ${perfectDays} perfect day${perfectDays === 1 ? '' : 's'}`,
+  achievementsHeader: (unlocked, total) => `ACHIEVEMENTS · ${unlocked}/${total}`,
+  perHabit: 'PER HABIT',
+  dashboardEmpty: 'Add a habit on the Today tab to start unlocking achievements.',
+
+  aiRecommendations: 'AI RECOMMENDATIONS',
+  coachTitle: 'Coach',
+  coachThinking: 'Coach is thinking…',
+  coachPlaceholder: 'Ask your coach anything…',
+  coachSend: 'Send',
+  coachSuggestion1: 'Which habit should I focus on today?',
+  coachSuggestion2: 'How do I build a better streak?',
+  coachSuggestion3: 'How does this app compare to others?',
+  marketBlurb:
+    'Quick look at the market: Habitica gamifies habits with points and levels, Streaks stays ' +
+    'deliberately minimal with no AI at all, and newer apps like BeeDone or Beyond Time use AI ' +
+    "to suggest the best time of day for a habit. Most of them only show you charts, though — " +
+    'very few let you actually ask a coach a question grounded in your own data. That’s what ' +
+    'this chat is for. Ask me anything — your habits, reading, working out, food, discipline, ' +
+    'motivation, whatever you’re working on.',
+  coachFallbackError: "I couldn't reach the coach just now — check your connection and try again in a moment.",
+
+  suggestionDrinkWater: 'Drink 2L water',
+  suggestionReadPages: 'Read 10 pages',
+  suggestionWalkSteps: 'Walk 8k steps',
+  suggestionMeditate: 'Meditate 5 min',
+  suggestionNoSugar: 'No sugar',
+  yourNewHabit: 'Your new habit',
+  placeholderHabitName: 'e.g. Drink water',
+  labelIcon: 'ICON',
+  labelColor: 'COLOR',
+  labelReminder: 'REMINDER',
+  dailyReminder: 'Daily reminder',
+  colorName: (i) => COLOR_NAMES[i] ?? 'Color',
+  remindMeAt: 'Remind me at',
+  done: 'Done',
+  createHabit: 'Create habit',
+  saveChanges: 'Save changes',
+  newHabitTitle: 'New habit',
+  editHabitTitle: 'Edit habit',
+
+  actionEdit: 'Edit',
+  actionDelete: 'Delete',
+  actionCancel: 'Cancel',
+  startStreakToday: 'Start your streak today',
+  daysStreak: (n) => `🔥 ${n} day${n === 1 ? '' : 's'} streak`,
+
+  remindersDisabledTitle: 'Reminders disabled',
+  remindersDisabledMessage: 'Enable notifications in Settings to get a daily reminder for this habit.',
+
+  notifChannelName: 'Habit Reminders',
+  notifTitle: 'Habit reminder',
+  notifBody: (emoji, name) => `Time for ${emoji} ${name}`,
+
+  motivFallback: [
+    { headline: 'Small steps compound', detail: 'Pick one habit and start now — momentum builds fast.' },
+    { headline: 'Consistency beats intensity', detail: "Just show up today. That's the whole job." },
+    { headline: 'Future you is counting on this', detail: 'A minute today saves a much bigger effort later.' },
+    { headline: 'Progress, not perfection', detail: 'Any habit checked off today is a win.' },
+    { headline: 'One habit at a time', detail: "You don't need to do everything — just the next thing." },
+  ],
+  motivReadyHeadline: 'Ready when you are',
+  motivReadyDetail: 'Add your first habit on the Today tab to start building momentum.',
+  motivPerfectHeadline: 'Perfect day!',
+  motivPerfectDetail: "You completed every habit today. That's exactly how streaks are built.",
+  motivCloseHeadline: 'So close!',
+  motivCloseDetail: (emoji, name, target) =>
+    `Complete ${emoji} ${name} today and you'll hit a ${target}-day streak.`,
+  motivNeglectedHeadline: "Don't lose momentum",
+  motivNeglectedDetail: (emoji, name, gap) =>
+    `${emoji} ${name} hasn't been checked off in ${gap} days. A small step today keeps it alive.`,
+  motivKeepGoingHeadline: 'Keep going',
+  motivKeepGoingDetail: (n) => `${n} habit${n === 1 ? '' : 's'} left today. You've got this.`,
+
+  badgeTitleFirstStep: 'First Step',
+  badgeTitleStreak3: '3-Day Streak',
+  badgeTitleStreak7: 'Week Warrior',
+  badgeTitleStreak30: 'Consistency Master',
+  badgeTitleStreak100: 'Centurion',
+  badgeTitleCompletions10: 'Getting Started',
+  badgeTitleCompletions100: 'Habit Builder',
+  badgeTitleCompletions500: 'Dedicated',
+  badgeTitlePerfectDay: 'Perfect Day',
+  badgeTitlePerfectWeek: 'Perfect Week',
+  badgeTitleFiveHabits: 'Habit Collector',
+  badgeDescFirstStep: 'Complete a habit for the first time',
+  badgeDescStreak: (n) => `Reach a ${n}-day streak on any habit`,
+  badgeDescCompletions: (n) => `Log ${n} total completions`,
+  badgeDescPerfectDay: 'Complete every habit on the same day',
+  badgeDescPerfectWeek: '7 consecutive perfect days',
+  badgeDescFiveHabits: 'Create 5 or more habits',
+
+  languagePickerTitle: 'Language',
+};

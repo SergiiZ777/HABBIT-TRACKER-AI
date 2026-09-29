@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 
 import { useTheme } from '@/hooks/use-theme';
+import { useT } from '@/lib/i18n';
 
 function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>;
@@ -9,6 +10,7 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 
 export default function TabsLayout() {
   const theme = useTheme();
+  const t = useT();
 
   return (
     <Tabs
@@ -20,15 +22,15 @@ export default function TabsLayout() {
       }}>
       <Tabs.Screen
         name="index"
-        options={{ title: 'Today', tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} /> }}
+        options={{ title: t.tabToday, tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} /> }}
       />
       <Tabs.Screen
         name="coach"
-        options={{ title: 'Coach', tabBarIcon: ({ focused }) => <TabIcon emoji="🤖" focused={focused} /> }}
+        options={{ title: t.tabCoach, tabBarIcon: ({ focused }) => <TabIcon emoji="🤖" focused={focused} /> }}
       />
       <Tabs.Screen
         name="dashboard"
-        options={{ title: 'Dashboard', tabBarIcon: ({ focused }) => <TabIcon emoji="🏆" focused={focused} /> }}
+        options={{ title: t.tabDashboard, tabBarIcon: ({ focused }) => <TabIcon emoji="🏆" focused={focused} /> }}
       />
     </Tabs>
   );

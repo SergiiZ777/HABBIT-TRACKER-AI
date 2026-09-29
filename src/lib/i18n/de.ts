@@ -1,0 +1,132 @@
+import type { Dictionary } from './types';
+
+const COLOR_NAMES = ['Indigo', 'Orange', 'Grün', 'Rot', 'Blau', 'Lila', 'Gelb'];
+
+export const de: Dictionary = {
+  tabToday: 'Heute',
+  tabCoach: 'Coach',
+  tabDashboard: 'Übersicht',
+
+  screenNewHabit: 'Neue Gewohnheit',
+  screenEditHabit: 'Gewohnheit bearbeiten',
+
+  greetingMorning: 'Guten Morgen',
+  greetingAfternoon: 'Guten Tag',
+  greetingEvening: 'Guten Abend',
+  lookingBack: 'Rückblick',
+  encouragementEmpty: 'Füge deine erste Gewohnheit hinzu, um loszulegen.',
+  encouragementAllDone: 'Alles erledigt. Super gemacht! 🎉',
+  encouragementNoneDone: 'Kleine Schritte zählen. Wähle eine zum Start.',
+  encouragementRemaining: (n) => `Noch ${n}. Weiter so!`,
+  doneOfTotal: (done, total) => `${done} von ${total} erledigt`,
+  sectionHabits: 'GEWOHNHEITEN',
+  emptyNoHabits: (fabLabel) => `Noch keine Gewohnheiten. Tippe unten auf „${fabLabel}", um eine zu erstellen.`,
+  hintTapLongPress: 'Tippen zum Abhaken · Lange drücken für mehr',
+  fabNewHabit: '＋ Neue Gewohnheit',
+  languageButtonLabel: 'Sprache ändern',
+
+  eyebrowProgress: 'DEIN FORTSCHRITT',
+  dashboardTitle: 'Übersicht',
+  statBestStreak: 'Beste Serie',
+  statCompletions: 'Erledigungen',
+  statHabits: 'Gewohnheiten',
+  statPerfectDays: 'Perfekte Tage',
+  trendsTitle: 'Trends',
+  rangeWeek: 'Woche',
+  rangeMonth: 'Monat',
+  trendSummary: (avgPct, perfectDays) =>
+    `${avgPct}% im Schnitt · ${perfectDays} ${perfectDays === 1 ? 'perfekter Tag' : 'perfekte Tage'}`,
+  achievementsHeader: (unlocked, total) => `ERFOLGE · ${unlocked}/${total}`,
+  perHabit: 'PRO GEWOHNHEIT',
+  dashboardEmpty: 'Füge im Tab Heute eine Gewohnheit hinzu, um Erfolge freizuschalten.',
+
+  aiRecommendations: 'KI-EMPFEHLUNGEN',
+  coachTitle: 'Coach',
+  coachThinking: 'Der Coach überlegt…',
+  coachPlaceholder: 'Frag deinen Coach irgendetwas…',
+  coachSend: 'Senden',
+  coachSuggestion1: 'Auf welche Gewohnheit sollte ich mich heute konzentrieren?',
+  coachSuggestion2: 'Wie baue ich eine bessere Serie auf?',
+  coachSuggestion3: 'Wie schneidet diese App im Vergleich zu anderen ab?',
+  marketBlurb:
+    'Ein kurzer Blick auf den Markt: Habitica macht aus Gewohnheiten ein Spiel mit Punkten und ' +
+    'Levels, Streaks bleibt bewusst minimalistisch ganz ohne KI, und neuere Apps wie BeeDone ' +
+    'oder Beyond Time nutzen KI, um die beste Tageszeit für eine Gewohnheit vorzuschlagen. Die ' +
+    'meisten zeigen dir aber nur Diagramme — nur wenige lassen dich einem Coach tatsächlich ' +
+    'eine Frage stellen, die auf deinen eigenen Daten basiert. Genau dafür ist dieser Chat da. ' +
+    'Frag mich alles — deine Gewohnheiten, Lesen, Training, Ernährung, Disziplin, Motivation, ' +
+    'woran du auch arbeitest.',
+  coachFallbackError: 'Konnte den Coach gerade nicht erreichen — prüfe deine Verbindung und versuche es gleich noch einmal.',
+
+  suggestionDrinkWater: '2L Wasser trinken',
+  suggestionReadPages: '10 Seiten lesen',
+  suggestionWalkSteps: '8.000 Schritte gehen',
+  suggestionMeditate: '5 Min meditieren',
+  suggestionNoSugar: 'Kein Zucker',
+  yourNewHabit: 'Deine neue Gewohnheit',
+  placeholderHabitName: 'z. B. Wasser trinken',
+  labelIcon: 'SYMBOL',
+  labelColor: 'FARBE',
+  labelReminder: 'ERINNERUNG',
+  dailyReminder: 'Tägliche Erinnerung',
+  colorName: (i) => COLOR_NAMES[i] ?? 'Farbe',
+  remindMeAt: 'Erinnere mich um',
+  done: 'Fertig',
+  createHabit: 'Gewohnheit erstellen',
+  saveChanges: 'Änderungen speichern',
+  newHabitTitle: 'Neue Gewohnheit',
+  editHabitTitle: 'Gewohnheit bearbeiten',
+
+  actionEdit: 'Bearbeiten',
+  actionDelete: 'Löschen',
+  actionCancel: 'Abbrechen',
+  startStreakToday: 'Starte deine Serie heute',
+  daysStreak: (n) => `🔥 ${n}-Tage-Serie`,
+
+  remindersDisabledTitle: 'Erinnerungen deaktiviert',
+  remindersDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um eine tägliche Erinnerung für diese Gewohnheit zu erhalten.',
+
+  notifChannelName: 'Gewohnheitserinnerungen',
+  notifTitle: 'Gewohnheitserinnerung',
+  notifBody: (emoji, name) => `Zeit für ${emoji} ${name}`,
+
+  motivFallback: [
+    { headline: 'Kleine Schritte summieren sich', detail: 'Wähle eine Gewohnheit und starte jetzt — die Dynamik baut sich schnell auf.' },
+    { headline: 'Beständigkeit schlägt Intensität', detail: 'Zeig heute einfach auf. Das ist die ganze Aufgabe.' },
+    { headline: 'Dein zukünftiges Ich zählt darauf', detail: 'Eine Minute heute erspart später viel mehr Aufwand.' },
+    { headline: 'Fortschritt, keine Perfektion', detail: 'Jede heute abgehakte Gewohnheit ist ein Erfolg.' },
+    { headline: 'Eine Gewohnheit nach der anderen', detail: 'Du musst nicht alles tun — nur das Nächste.' },
+  ],
+  motivReadyHeadline: 'Bereit, wenn du es bist',
+  motivReadyDetail: 'Füge im Tab Heute deine erste Gewohnheit hinzu, um Schwung aufzubauen.',
+  motivPerfectHeadline: 'Perfekter Tag!',
+  motivPerfectDetail: 'Du hast heute alle Gewohnheiten erledigt. Genau so entstehen Serien.',
+  motivCloseHeadline: 'So nah dran!',
+  motivCloseDetail: (emoji, name, target) =>
+    `Erledige ${emoji} ${name} heute und du erreichst eine ${target}-Tage-Serie.`,
+  motivNeglectedHeadline: 'Verlier nicht den Schwung',
+  motivNeglectedDetail: (emoji, name, gap) =>
+    `${emoji} ${name} wurde seit ${gap} Tagen nicht abgehakt. Ein kleiner Schritt heute hält sie am Leben.`,
+  motivKeepGoingHeadline: 'Weiter so',
+  motivKeepGoingDetail: (n) => `Noch ${n} Gewohnheit${n === 1 ? '' : 'en'} heute übrig. Du schaffst das!`,
+
+  badgeTitleFirstStep: 'Erster Schritt',
+  badgeTitleStreak3: '3-Tage-Serie',
+  badgeTitleStreak7: 'Wochenkrieger',
+  badgeTitleStreak30: 'Meister der Beständigkeit',
+  badgeTitleStreak100: 'Centurio',
+  badgeTitleCompletions10: 'Guter Start',
+  badgeTitleCompletions100: 'Gewohnheits-Baumeister',
+  badgeTitleCompletions500: 'Hingabe',
+  badgeTitlePerfectDay: 'Perfekter Tag',
+  badgeTitlePerfectWeek: 'Perfekte Woche',
+  badgeTitleFiveHabits: 'Gewohnheitssammler',
+  badgeDescFirstStep: 'Erledige eine Gewohnheit zum ersten Mal',
+  badgeDescStreak: (n) => `Erreiche eine ${n}-Tage-Serie bei einer beliebigen Gewohnheit`,
+  badgeDescCompletions: (n) => `Sammle insgesamt ${n} Erledigungen`,
+  badgeDescPerfectDay: 'Erledige alle Gewohnheiten am selben Tag',
+  badgeDescPerfectWeek: '7 perfekte Tage in Folge',
+  badgeDescFiveHabits: 'Erstelle 5 oder mehr Gewohnheiten',
+
+  languagePickerTitle: 'Sprache',
+};

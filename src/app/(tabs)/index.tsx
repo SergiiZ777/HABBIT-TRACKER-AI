@@ -4,28 +4,32 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HabitCard } from '@/components/habit-card';
+import { LanguageSwitcher } from '@/components/language-switcher';
 import { ProgressRing } from '@/components/progress-ring';
 import { WeekStrip } from '@/components/week-strip';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { dayKey, useHabits } from '@/lib/habits';
+import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
 
-function greeting() {
+function greeting(t: Dictionary) {
   const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
+  if (h < 12) return t.greetingMorning;
+  if (h < 18) return t.greetingAfternoon;
+  return t.greetingEvening;
 }
 
-function encouragement(done: number, total: number) {
-  if (total === 0) return 'Add your first habit to get going.';
-  if (done === total) return 'Everything done. Great work! 🎉';
-  if (done === 0) return 'Small steps count. Pick one to start.';
-  return `${total - done} to go. Keep it up!`;
+function encouragement(t: Dictionary, done: number, total: number) {
+  if (total === 0) return t.encouragementEmpty;
+  if (done === total) return t.encouragementAllDone;
+  if (done === 0) return t.encouragementNoneDone;
+  return t.encouragementRemaining(total - done);
 }
 
 export default function TodayScreen() {
   const theme = useTheme();
+  const t = useT();
+  const localeTag = useLocaleTag();
   const habits = useHabits();
   const today = dayKey();
   const [selected, setSelected] = useState(today);
@@ -41,10 +45,11 @@ export default function TodayScreen() {
         <View style={styles.header}>
           <View style={styles.flex}>
             <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>
-              {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+              {selectedDate.toLocaleDateString(localeTag, { weekday: 'long', month: 'long', day: 'numeric' })}
             </Text>
-            <Text style={[styles.title, { color: theme.text }]}>{isToday ? greeting() : 'Looking back'}</Text>
+            <Text style={[styles.title, { color: theme.text }]}>{isToday ? greeting(t) : t.lookingBack}</Text>
           </View>
+          <LanguageSwitcher />
         </View>
 
         <WeekStrip habits={habits} selected={selected} onSelect={setSelected} />
@@ -65,14 +70,12 @@ export default function TodayScreen() {
             </View>
           </View>
           <View style={styles.flex}>
-            <Text style={[styles.summaryTitle, { color: theme.text }]}>
-              {done} of {total} done
-            </Text>
-            <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{encouragement(done, total)}</Text>
+            <Text style={[styles.summaryTitle, { color: theme.text }]}>{t.doneOfTotal(done, total)}</Text>
+            <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{encouragement(t, done, total)}</Text>
           </View>
         </View>
 
-        <Text style={[styles.section, { color: theme.textSecondary }]}>HABITS</Text>
+        <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
 
         <View style={styles.list}>
           {habits.map((h) => (
@@ -82,22 +85,20 @@ export default function TodayScreen() {
             <View style={[styles.empty, { borderColor: theme.border }]}>
               <Text style={styles.emptyEmoji}>🌱</Text>
               <Text style={[styles.summaryText, { color: theme.textSecondary, textAlign: 'center' }]}>
-                No habits yet. Tap “New habit” below to create one.
+                {t.emptyNoHabits(t.fabNewHabit)}
               </Text>
             </View>
           )}
         </View>
 
-        {total > 0 && (
-          <Text style={[styles.hint, { color: theme.textSecondary }]}>Tap to check off · Long-press for more</Text>
-        )}
+        {total > 0 && <Text style={[styles.hint, { color: theme.textSecondary }]}>{t.hintTapLongPress}</Text>}
       </ScrollView>
 
       <SafeAreaView edges={['bottom']} style={styles.fabWrap} pointerEvents="box-none">
         <Pressable
           onPress={() => router.push('/new-habit')}
           style={({ pressed }) => [styles.fab, { backgroundColor: theme.text }, pressed && { opacity: 0.85 }]}>
-          <Text style={[styles.fabText, { color: theme.background }]}>＋ New habit</Text>
+          <Text style={[styles.fabText, { color: theme.background }]}>{t.fabNewHabit}</Text>
         </Pressable>
       </SafeAreaView>
     </SafeAreaView>
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
     alignSelf: 'center',
   },
-  header: { flexDirection: 'row', alignItems: 'center' },
+  header: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.two },
   eyebrow: { fontSize: 14, fontWeight: '600', marginBottom: 2 },
   title: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5 },
   summary: {
