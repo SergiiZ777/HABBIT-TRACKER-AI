@@ -1,3 +1,4 @@
+import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +13,7 @@ import {
   computeTrend,
   type TrendRange,
 } from '@/lib/achievements';
+import { useDeviceId } from '@/lib/backup';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, useHabits } from '@/lib/habits';
@@ -23,8 +25,16 @@ export default function DashboardScreen() {
   const t = useT();
   const localeTag = useLocaleTag();
   const habits = useHabits();
+  const deviceId = useDeviceId();
+  const [copied, setCopied] = useState(false);
   const today = new Date();
   const [range, setRange] = useState<TrendRange>('week');
+
+  const copyBackupId = async () => {
+    await Clipboard.setStringAsync(deviceId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   const stats = computeStats(habits, today);
   const badges = computeBadges(habits, today);
@@ -169,6 +179,17 @@ export default function DashboardScreen() {
             </Text>
           </View>
         )}
+
+        <View style={[styles.backupCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+          <Text style={[styles.section, { color: theme.textSecondary }]}>{t.backupIdLabel}</Text>
+          <Pressable onPress={copyBackupId} style={[styles.backupRow, { borderColor: theme.border }]}>
+            <Text numberOfLines={1} style={[styles.backupIdText, { color: theme.text }]}>
+              {deviceId}
+            </Text>
+            <Text style={[styles.copyButtonText, { color: theme.accent }]}>{copied ? t.backupIdCopied : t.copyButton}</Text>
+          </Pressable>
+          <Text style={[styles.backupHint, { color: theme.textSecondary }]}>{t.backupIdHint}</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -256,4 +277,16 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
   },
   emptyEmoji: { fontSize: 36 },
+  backupCard: { gap: Spacing.two, padding: Spacing.four, borderRadius: Radius.lg, borderWidth: 1 },
+  backupRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.two,
+    paddingVertical: Spacing.two,
+    borderBottomWidth: 1,
+  },
+  backupIdText: { flex: 1, fontSize: 14, fontWeight: '600' },
+  copyButtonText: { fontSize: 14, fontWeight: '700' },
+  backupHint: { fontSize: 12, lineHeight: 17 },
 });
