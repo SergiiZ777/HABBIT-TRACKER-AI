@@ -42,6 +42,7 @@ export interface Dictionary {
   trendsTitle: string;
   rangeWeek: string;
   rangeMonth: string;
+  rangeYear: string;
   trendSummary: (avgPct: number, perfectDays: number) => string;
   achievementsHeader: (unlocked: number, total: number) => string;
   perHabit: string;

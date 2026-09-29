@@ -43,6 +43,7 @@ export const uk: Dictionary = {
   trendsTitle: 'Тенденції',
   rangeWeek: 'Тиждень',
   rangeMonth: 'Місяць',
+  rangeYear: 'Рік',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в середньому · ${perfectDays} ${ukPlural(perfectDays, 'ідеальний день', 'ідеальні дні', 'ідеальних днів')}`,
   achievementsHeader: (unlocked, total) => `ДОСЯГНЕННЯ · ${unlocked}/${total}`,
