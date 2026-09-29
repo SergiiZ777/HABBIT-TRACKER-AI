@@ -15,7 +15,7 @@ type Props = { columns: HeatmapColumn[]; localeTag: string };
 /** Sequential single-hue ramp on the theme accent — light -> dark encodes completion rate, same
  * accent used everywhere else in the app, so no separate categorical palette is introduced. */
 function cellColor(theme: ReturnType<typeof useTheme>, cell: HeatmapCell): string {
-  if (cell.future) return 'transparent';
+  if (cell.inactive) return 'transparent';
   if (cell.total === 0) return theme.backgroundSelected;
   if (cell.rate === 0) return theme.accent + '1F';
   if (cell.rate <= 0.25) return theme.accent + '4D';
@@ -61,7 +61,7 @@ export function YearHeatmap({ columns, localeTag }: Props) {
           ))}
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View>
             <View style={styles.monthRow}>
               {columns.map((col, i) => (
@@ -78,7 +78,7 @@ export function YearHeatmap({ columns, localeTag }: Props) {
                   {col.cells.map((cell) => (
                     <Pressable
                       key={cell.key}
-                      disabled={cell.future}
+                      disabled={cell.inactive}
                       onPress={() => setSelectedKey((k) => (k === cell.key ? null : cell.key))}
                       style={[
                         styles.cell,
@@ -102,7 +102,7 @@ export function YearHeatmap({ columns, localeTag }: Props) {
         {LEGEND_STEPS.map((rate, i) => (
           <View
             key={i}
-            style={[styles.legendSwatch, { backgroundColor: cellColor(theme, { key: '', rate, done: 0, total: 1, future: false }) }]}
+            style={[styles.legendSwatch, { backgroundColor: cellColor(theme, { key: '', rate, done: 0, total: 1, inactive: false }) }]}
           />
         ))}
         <Text style={[styles.legendText, { color: theme.textSecondary }]}>{t.heatmapMore}</Text>
@@ -114,6 +114,7 @@ export function YearHeatmap({ columns, localeTag }: Props) {
 const styles = StyleSheet.create({
   readout: { fontSize: 12, fontWeight: '700', marginBottom: Spacing.one, textAlign: 'center' },
   row: { flexDirection: 'row' },
+  scrollContent: { paddingRight: 30 },
   dayLabels: { marginRight: Spacing.one, marginTop: 18 },
   dayLabel: { fontSize: 9, fontWeight: '600', lineHeight: CELL_SIZE, textAlign: 'right', width: 12 },
   monthRow: { flexDirection: 'row', marginBottom: 4, height: 14 },

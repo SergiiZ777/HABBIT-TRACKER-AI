@@ -47,6 +47,8 @@ export const uk: Dictionary = {
   heatmapLess: 'Менше',
   heatmapMore: 'Більше',
   heatmapNoHabits: 'Ще немає звичок',
+  yearViewHeatmap: 'Теплова карта',
+  yearViewGraph: 'Графік',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в середньому · ${perfectDays} ${ukPlural(perfectDays, 'ідеальний день', 'ідеальні дні', 'ідеальних днів')}`,
   achievementsHeader: (unlocked, total) => `ДОСЯГНЕННЯ · ${unlocked}/${total}`,

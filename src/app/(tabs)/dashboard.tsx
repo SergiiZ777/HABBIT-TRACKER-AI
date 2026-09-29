@@ -31,6 +31,7 @@ export default function DashboardScreen() {
   const [copied, setCopied] = useState(false);
   const today = new Date();
   const [range, setRange] = useState<TrendRange>('week');
+  const [yearView, setYearView] = useState<'heatmap' | 'graph'>('heatmap');
 
   const copyBackupId = async () => {
     await Clipboard.setStringAsync(deviceId);
@@ -42,7 +43,7 @@ export default function DashboardScreen() {
   const badges = computeBadges(habits, today);
   const rawMotivation = computeMotivation(habits, today);
   const motivation = { emoji: rawMotivation.emoji, ...resolveMotivation(t, rawMotivation) };
-  const trend = range === 'year' ? [] : computeTrend(habits, range, today, localeTag);
+  const trend = computeTrend(habits, range, today, localeTag);
   const heatmapColumns = range === 'year' ? computeYearHeatmap(habits, today, localeTag) : [];
   const rangeSummary = computeRangeSummary(habits, range, today);
   const unlockedCount = badges.filter((b) => b.unlocked).length;
@@ -101,11 +102,27 @@ export default function DashboardScreen() {
             </View>
           </View>
 
-          <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
-            {t.trendSummary(Math.round(rangeSummary.averageRate * 100), rangeSummary.perfectDays)}
-          </Text>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
+              {t.trendSummary(Math.round(rangeSummary.averageRate * 100), rangeSummary.perfectDays)}
+            </Text>
+            {range === 'year' && (
+              <View style={[styles.subSegmented, { backgroundColor: theme.backgroundSelected }]}>
+                {(['heatmap', 'graph'] as const).map((v) => (
+                  <Pressable
+                    key={v}
+                    onPress={() => setYearView(v)}
+                    style={[styles.subSegment, yearView === v && { backgroundColor: theme.backgroundElement }]}>
+                    <Text style={[styles.subSegmentText, { color: yearView === v ? theme.text : theme.textSecondary }]}>
+                      {v === 'heatmap' ? t.yearViewHeatmap : t.yearViewGraph}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
 
-          {range === 'year' ? (
+          {range === 'year' && yearView === 'heatmap' ? (
             <YearHeatmap columns={heatmapColumns} localeTag={localeTag} />
           ) : (
             <TrendChart points={trend} />
@@ -247,7 +264,11 @@ const styles = StyleSheet.create({
   segment: { paddingHorizontal: Spacing.three, paddingVertical: 6, borderRadius: Radius.pill },
   segmentText: { fontSize: 13, fontWeight: '700' },
   summaryTitle: { fontSize: 17, fontWeight: '700', marginBottom: 4 },
-  summaryText: { fontSize: 14, lineHeight: 20 },
+  summaryRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: Spacing.two },
+  summaryText: { fontSize: 14, lineHeight: 20, flexShrink: 1 },
+  subSegmented: { flexDirection: 'row', borderRadius: Radius.pill, padding: 2 },
+  subSegment: { paddingHorizontal: Spacing.two, paddingVertical: 4, borderRadius: Radius.pill },
+  subSegmentText: { fontSize: 11, fontWeight: '700' },
   section: { fontSize: 12, fontWeight: '700', letterSpacing: 1.2, marginBottom: -Spacing.two },
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
   badge: {
