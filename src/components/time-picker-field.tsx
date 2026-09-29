@@ -1,4 +1,4 @@
-import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -16,13 +16,9 @@ export function TimePickerField({ time, color, onChange }: Props) {
   const localeTag = useLocaleTag();
   const [showPicker, setShowPicker] = useState(false);
 
-  const onTimeChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-      if (event.type === 'set' && selectedDate) onChange(dateToTime(selectedDate));
-      return;
-    }
-    if (selectedDate) onChange(dateToTime(selectedDate));
+  const onValueChange = (_event: unknown, selectedDate: Date) => {
+    onChange(dateToTime(selectedDate));
+    if (Platform.OS === 'android') setShowPicker(false);
   };
 
   return (
@@ -40,7 +36,8 @@ export function TimePickerField({ time, color, onChange }: Props) {
             value={timeToDate(time)}
             mode="time"
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={onTimeChange}
+            onValueChange={onValueChange}
+            onDismiss={() => setShowPicker(false)}
           />
           {Platform.OS === 'ios' && (
             <Pressable onPress={() => setShowPicker(false)} style={styles.done}>
