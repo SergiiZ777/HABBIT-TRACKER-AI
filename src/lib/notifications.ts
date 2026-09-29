@@ -1,4 +1,18 @@
-import * as Notifications from 'expo-notifications';
+// Deep imports (not `import * as Notifications from 'expo-notifications'`) are deliberate here:
+// expo-notifications' barrel (index.js) unconditionally imports topicSubscription.js, which
+// eagerly calls requireNativeModule('ExpoTopicSubscriptionModule') at module-evaluation time.
+// That native module is push-notification-only and isn't present in Expo Go on Android (Expo Go
+// dropped Android push support in SDK 53+), so merely importing the barrel crashes the app on
+// Android with "Cannot find native module 'ExpoTopicSubscriptionModule'" — even though we only
+// ever use local scheduling, which Expo Go fully supports. Importing each function from its own
+// submodule avoids ever touching topicSubscription.js.
+import { setNotificationChannelAsync } from 'expo-notifications/build/setNotificationChannelAsync';
+import { cancelScheduledNotificationAsync } from 'expo-notifications/build/cancelScheduledNotificationAsync';
+import { AndroidImportance } from 'expo-notifications/build/NotificationChannelManager.types';
+import { getPermissionsAsync, requestPermissionsAsync } from 'expo-notifications/build/NotificationPermissions';
+import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
+import { setNotificationHandler } from 'expo-notifications/build/NotificationsHandler';
+import { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNotificationAsync';
 import { Platform } from 'react-native';
 
 import type { Dictionary } from '@/lib/i18n';
@@ -6,7 +20,7 @@ import type { Dictionary } from '@/lib/i18n';
 const CHANNEL_ID = 'habit-reminders';
 
 if (Platform.OS !== 'web') {
-  Notifications.setNotificationHandler({
+  setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
       shouldSetBadge: false,
@@ -20,9 +34,9 @@ if (Platform.OS !== 'web') {
 export async function requestReminderPermission(): Promise<boolean> {
   if (Platform.OS === 'web') return false;
   try {
-    const existing = await Notifications.getPermissionsAsync();
+    const existing = await getPermissionsAsync();
     if (existing.granted) return true;
-    const requested = await Notifications.requestPermissionsAsync({
+    const requested = await requestPermissionsAsync({
       ios: { allowAlert: true, allowBadge: true, allowSound: true },
     });
     return requested.granted;
@@ -34,9 +48,9 @@ export async function requestReminderPermission(): Promise<boolean> {
 async function ensureAndroidChannel(name: string): Promise<void> {
   if (Platform.OS !== 'android') return;
   try {
-    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    await setNotificationChannelAsync(CHANNEL_ID, {
       name,
-      importance: Notifications.AndroidImportance.HIGH,
+      importance: AndroidImportance.HIGH,
     });
   } catch {
     // Channel setup failing shouldn't block scheduling from surfacing a clear error upstream.
@@ -67,14 +81,14 @@ export async function scheduleHabitReminder(
   await ensureAndroidChannel(t.notifChannelName);
 
   try {
-    return await Notifications.scheduleNotificationAsync({
+    return await scheduleNotificationAsync({
       content: {
         title: t.notifTitle,
         body: t.notifBody(habit.emoji, habit.name),
         data: { habitId: habit.id },
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        type: SchedulableTriggerInputTypes.DAILY,
         hour,
         minute,
         channelId: CHANNEL_ID,
@@ -89,7 +103,7 @@ export async function scheduleHabitReminder(
 export async function cancelHabitReminder(notificationId: string | undefined): Promise<void> {
   if (!notificationId || Platform.OS === 'web') return;
   try {
-    await Notifications.cancelScheduledNotificationAsync(notificationId);
+    await cancelScheduledNotificationAsync(notificationId);
   } catch {
     // Already cancelled/fired or unavailable — nothing more to do.
   }
