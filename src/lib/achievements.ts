@@ -108,13 +108,13 @@ export function computeStats(habits: Habit[], today: Date = new Date()): Dashboa
   };
 }
 
-export type TrendRange = 'week' | 'month';
+export type TrendRange = 'week' | 'month' | 'year';
 
 export type TrendPoint = {
   key: string;
-  /** Compact axis label (a weekday letter, or a bare day-of-month number). */
+  /** Compact axis label (a weekday letter, a bare day-of-month number, or a short month name). */
   label: string;
-  /** Full date, for a tapped/selected point's readout. */
+  /** Full date (or month), for a tapped/selected point's readout. */
   fullLabel: string;
   rate: number;
   done: number;
@@ -125,31 +125,76 @@ export type RangeSummary = { averageRate: number; totalCompletions: number; perf
 
 const WEEK_DAYS = 7;
 const MONTH_DAYS = 28;
+const YEAR_MONTHS = 12;
 
-/** One bar per day — 7 bars for 'week', 28 for 'month' — so every day's rate is directly visible. */
+function monthKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/** Number of days spanning the last 12 full calendar months through today (inclusive). */
+function yearDaySpan(today: Date): number {
+  const startMonth = new Date(today.getFullYear(), today.getMonth() - (YEAR_MONTHS - 1), 1);
+  // Normalize to midnight first — subtracting `today`'s time-of-day from startMonth's midnight
+  // would otherwise round the span up by an extra day depending on what time it is right now.
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((todayMidnight.getTime() - startMonth.getTime()) / 86400000) + 1;
+}
+
+function rangeDayCount(range: TrendRange, today: Date): number {
+  if (range === 'week') return WEEK_DAYS;
+  if (range === 'month') return MONTH_DAYS;
+  return yearDaySpan(today);
+}
+
+/**
+ * One bar per day for 'week' (7 bars) and 'month' (28 bars) so every day's rate is directly
+ * visible. 'year' aggregates into one bar per calendar month (12 bars) — 365 individual daily
+ * bars would be illegible on a phone-width chart.
+ */
 export function computeTrend(
   habits: Habit[],
   range: TrendRange,
   today: Date = new Date(),
   localeTag: string = 'en-US'
 ): TrendPoint[] {
-  const days = dailyRange(habits, range === 'week' ? WEEK_DAYS : MONTH_DAYS, today);
-  return days.map(({ key, done, total }) => {
-    const date = new Date(`${key}T12:00:00`);
-    return {
-      key,
-      label: date.toLocaleDateString(localeTag, range === 'week' ? { weekday: 'narrow' } : { day: 'numeric' }),
-      fullLabel: date.toLocaleDateString(localeTag, { weekday: 'short', month: 'short', day: 'numeric' }),
-      rate: total ? done / total : 0,
-      done,
-      total,
-    };
-  });
+  const days = dailyRange(habits, rangeDayCount(range, today), today);
+
+  if (range !== 'year') {
+    return days.map(({ key, done, total }) => {
+      const date = new Date(`${key}T12:00:00`);
+      return {
+        key,
+        label: date.toLocaleDateString(localeTag, range === 'week' ? { weekday: 'narrow' } : { day: 'numeric' }),
+        fullLabel: date.toLocaleDateString(localeTag, { weekday: 'short', month: 'short', day: 'numeric' }),
+        rate: total ? done / total : 0,
+        done,
+        total,
+      };
+    });
+  }
+
+  const buckets = new Map<string, { date: Date; done: number; total: number }>();
+  for (const d of days) {
+    const date = new Date(`${d.key}T12:00:00`);
+    const key = monthKey(date);
+    const bucket = buckets.get(key) ?? { date, done: 0, total: 0 };
+    bucket.done += d.done;
+    bucket.total += d.total;
+    buckets.set(key, bucket);
+  }
+  return [...buckets.entries()].map(([key, b]) => ({
+    key,
+    label: b.date.toLocaleDateString(localeTag, { month: 'short' }),
+    fullLabel: b.date.toLocaleDateString(localeTag, { month: 'long', year: 'numeric' }),
+    rate: b.total ? b.done / b.total : 0,
+    done: b.done,
+    total: b.total,
+  }));
 }
 
-/** Aggregate completion stats over the selected range (last 7 or 28 days). */
+/** Aggregate completion stats over the selected range (last 7, 28, or ~365 days). */
 export function computeRangeSummary(habits: Habit[], range: TrendRange, today: Date = new Date()): RangeSummary {
-  const days = dailyRange(habits, range === 'week' ? WEEK_DAYS : MONTH_DAYS, today);
+  const days = dailyRange(habits, rangeDayCount(range, today), today);
   const totalCompletions = days.reduce((sum, d) => sum + d.done, 0);
   const totalPossible = days.reduce((sum, d) => sum + d.total, 0);
   const perfectDays = days.filter((d) => d.total > 0 && d.done === d.total).length;

@@ -85,13 +85,13 @@ export default function DashboardScreen() {
           <View style={styles.trendHeader}>
             <Text style={[styles.summaryTitle, { color: theme.text }]}>{t.trendsTitle}</Text>
             <View style={[styles.segmented, { backgroundColor: theme.backgroundSelected }]}>
-              {(['week', 'month'] as const).map((r) => (
+              {(['week', 'month', 'year'] as const).map((r) => (
                 <Pressable
                   key={r}
                   onPress={() => setRange(r)}
                   style={[styles.segment, range === r && { backgroundColor: theme.backgroundElement }]}>
                   <Text style={[styles.segmentText, { color: range === r ? theme.text : theme.textSecondary }]}>
-                    {r === 'week' ? t.rangeWeek : t.rangeMonth}
+                    {r === 'week' ? t.rangeWeek : r === 'month' ? t.rangeMonth : t.rangeYear}
                   </Text>
                 </Pressable>
               ))}

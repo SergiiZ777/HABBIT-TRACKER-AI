@@ -43,6 +43,7 @@ export const ru: Dictionary = {
   trendsTitle: 'Тенденции',
   rangeWeek: 'Неделя',
   rangeMonth: 'Месяц',
+  rangeYear: 'Год',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% в среднем · ${perfectDays} ${ruPlural(perfectDays, 'идеальный день', 'идеальных дня', 'идеальных дней')}`,
   achievementsHeader: (unlocked, total) => `ДОСТИЖЕНИЯ · ${unlocked}/${total}`,

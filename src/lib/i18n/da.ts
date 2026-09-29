@@ -34,6 +34,7 @@ export const da: Dictionary = {
   trendsTitle: 'Tendenser',
   rangeWeek: 'Uge',
   rangeMonth: 'Måned',
+  rangeYear: 'År',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% i gennemsnit · ${perfectDays} ${perfectDays === 1 ? 'perfekt dag' : 'perfekte dage'}`,
   achievementsHeader: (unlocked, total) => `PRÆSTATIONER · ${unlocked}/${total}`,

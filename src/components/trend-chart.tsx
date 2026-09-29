@@ -10,9 +10,10 @@ const VALUE_ROW_HEIGHT = 16;
 const GAP = 2;
 const MAX_BAR_WIDTH = 24;
 const MIN_BAR_WIDTH = 5;
-// Above this many bars (28-day month view), always-on per-bar labels would collide —
-// switch to a single tap-to-reveal readout instead (dataviz: never a number on every point).
-const ALWAYS_LABELED_MAX_POINTS = 7;
+// Week (7 bars) and year (12 monthly bars) both have room for an always-on label per bar.
+// Month (28 daily bars) would collide, so it switches to a single tap-to-reveal readout instead
+// (dataviz: never a number on every point).
+const ALWAYS_LABELED_MAX_POINTS = 12;
 
 type Props = { points: TrendPoint[] };
 

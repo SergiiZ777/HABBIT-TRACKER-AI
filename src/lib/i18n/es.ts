@@ -34,6 +34,7 @@ export const es: Dictionary = {
   trendsTitle: 'Tendencias',
   rangeWeek: 'Semana',
   rangeMonth: 'Mes',
+  rangeYear: 'Año',
   trendSummary: (avgPct, perfectDays) =>
     `${avgPct}% de media · ${perfectDays} día${perfectDays === 1 ? '' : 's'} perfecto${perfectDays === 1 ? '' : 's'}`,
   achievementsHeader: (unlocked, total) => `LOGROS · ${unlocked}/${total}`,
