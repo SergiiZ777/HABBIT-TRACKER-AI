@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useEffect, useRef } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -17,9 +19,23 @@ export function HabitCard({ habit, day }: Props) {
   const done = habit.completions.includes(day);
   const streak = currentStreak(habit);
 
+  const scale = useSharedValue(1);
+  const prevDone = useRef(done);
+  useEffect(() => {
+    if (done && !prevDone.current) {
+      scale.value = withSequence(withTiming(1.25, { duration: 100 }), withSpring(1, { damping: 10, stiffness: 200 }));
+    }
+    prevDone.current = done;
+  }, [done, scale]);
+  const checkAnimStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
   const onToggle = () => {
     if (Platform.OS !== 'web') {
-      Haptics.impactAsync(done ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Medium);
+      if (done) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
     }
     toggleCompletion(habit.id, day);
   };
@@ -71,13 +87,14 @@ export function HabitCard({ habit, day }: Props) {
         </Text>
       </View>
 
-      <View
+      <Animated.View
         style={[
           styles.check,
           done ? { backgroundColor: habit.color, borderColor: habit.color } : { borderColor: theme.border },
+          checkAnimStyle,
         ]}>
         {done && <Text style={styles.checkMark}>✓</Text>}
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }
