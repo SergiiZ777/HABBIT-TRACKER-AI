@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ConfettiBurst } from '@/components/confetti-burst';
 import { HabitCard } from '@/components/habit-card';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { ProgressRing } from '@/components/progress-ring';
@@ -39,6 +40,21 @@ export default function TodayScreen() {
   const isToday = selected === today;
   const selectedDate = new Date(`${selected}T12:00:00`);
 
+  const [showConfetti, setShowConfetti] = useState(false);
+  const wasAllDoneToday = useRef<boolean | null>(null);
+  useEffect(() => {
+    if (!isToday) return;
+    const allDoneNow = total > 0 && done === total;
+    if (wasAllDoneToday.current === null) {
+      wasAllDoneToday.current = allDoneNow;
+      return;
+    }
+    if (allDoneNow && !wasAllDoneToday.current) {
+      setShowConfetti(true);
+    }
+    wasAllDoneToday.current = allDoneNow;
+  }, [isToday, done, total]);
+
   return (
     <SafeAreaView style={[styles.flex, { backgroundColor: theme.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -73,6 +89,7 @@ export default function TodayScreen() {
             <Text style={[styles.summaryTitle, { color: theme.text }]}>{t.doneOfTotal(done, total)}</Text>
             <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{encouragement(t, done, total)}</Text>
           </View>
+          {showConfetti && <ConfettiBurst onDone={() => setShowConfetti(false)} />}
         </View>
 
         <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
@@ -125,6 +142,8 @@ const styles = StyleSheet.create({
     padding: Spacing.four,
     borderRadius: Radius.lg,
     borderWidth: 1,
+    position: 'relative',
+    overflow: 'visible',
   },
   ringLabel: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
   ringText: { fontSize: 18, fontWeight: '800' },
