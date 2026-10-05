@@ -11,3 +11,5 @@ expo-env.d.ts
 ios/
 android/
 *firebase-adminsdk*.json
+*.jks
+*.keystore
