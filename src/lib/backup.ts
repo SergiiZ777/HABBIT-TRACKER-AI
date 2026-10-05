@@ -5,8 +5,8 @@ import Storage from '@/lib/kv-storage';
 
 // n8n workflow "Habit Tracker AI - Backup Sync" — push=upsert / pull=get against a Data Table,
 // keyed by an anonymous per-device id. Same shared-secret-header pattern as the Coach webhook.
-const PUSH_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-backup-push-1f698b4ffd29';
-const PULL_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-backup-pull-66b0624ae8b9';
+const PUSH_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-backup-push-1f698b4ffd29346389gfuds';
+const PULL_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-backup-pull-66b0624ae8b9sdbsj472727hd';
 const BACKUP_KEY = process.env.EXPO_PUBLIC_BACKUP_KEY ?? '';
 
 const DEVICE_ID_STORAGE_KEY = 'backup:deviceId:v1';

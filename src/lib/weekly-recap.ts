@@ -9,7 +9,7 @@ import { requestReminderPermission } from '@/lib/notifications';
 // n8n workflow "Habit Tracker AI - Weekly Recap" — registers this device's Expo push token so a
 // weekly scheduled job can push a real, AI-written recap (unlike daily-nudge.ts's local-only
 // reminder, this needs a server round trip since local notifications can't call an AI at fire-time).
-const REGISTER_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-weekly-recap-register-9b31f2c84a67';
+const REGISTER_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-weekly-recap-register-9b3148583uygdy35';
 const REGISTER_KEY = process.env.EXPO_PUBLIC_WEEKLY_RECAP_KEY ?? '';
 
 const ENABLED_KEY = 'weeklyRecap:enabled:v1';
