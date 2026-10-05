@@ -6,13 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ConfettiBurst } from '@/components/confetti-burst';
 import { HabitCard } from '@/components/habit-card';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { MoodInput } from '@/components/mood-input';
 import { ProgressRing } from '@/components/progress-ring';
 import { WeekStrip } from '@/components/week-strip';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, toggleCompletion, useHabits, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
-import { computeRecommendation, type Recommendation } from '@/lib/recommendation';
+import { computeRecommendation } from '@/lib/recommendation';
 
 type RoutineGroup = 'morning' | 'evening' | 'anytime';
 function routineGroup(habit: Habit): RoutineGroup {
@@ -130,6 +131,8 @@ export default function TodayScreen() {
           </View>
           {showConfetti && <ConfettiBurst onDone={() => setShowConfetti(false)} />}
         </View>
+
+        {isToday && <MoodInput day={selected} />}
 
         {recommendation && (
           <Pressable

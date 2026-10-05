@@ -185,6 +185,11 @@ export interface Dictionary {
   backupIdCopied: string;
   copyButton: string;
 
+  // Mood
+  moodSectionTitle: string;
+  moodEnergyLabel: string;
+  moodMoodLabel: string;
+
   // Daily nudge
   dailyNudgeTitle: string;
   dailyNudgeLabel: string;

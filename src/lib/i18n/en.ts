@@ -180,6 +180,10 @@ export const en: Dictionary = {
   backupIdCopied: 'Copied!',
   copyButton: 'Copy',
 
+  moodSectionTitle: 'How are you feeling?',
+  moodEnergyLabel: 'Energy',
+  moodMoodLabel: 'Mood',
+
   dailyNudgeTitle: 'Habit Coach',
   dailyNudgeLabel: 'Daily nudge',
   dailyNudgeHint: "An evening reminder if you haven't finished today's habits yet.",

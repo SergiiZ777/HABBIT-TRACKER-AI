@@ -2,6 +2,7 @@ import { computeStats } from '@/lib/achievements';
 import { getDeviceId } from '@/lib/backup';
 import { currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
 import type { Dictionary, Locale } from '@/lib/i18n';
+import { getMoodForDay } from '@/lib/mood';
 
 // n8n workflow "Habit Tracker AI - Coach Chat" — webhook -> AI Agent (Claude) grounded in real habit data.
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
@@ -23,6 +24,7 @@ function buildContext(habits: Habit[], today: Date) {
       reminderTime: h.reminderTime ?? null,
     })),
     stats: computeStats(habits, today),
+    mood: getMoodForDay(key),
   };
 }
 

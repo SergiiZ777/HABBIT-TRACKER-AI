@@ -180,6 +180,10 @@ export const da: Dictionary = {
   backupIdCopied: 'Kopieret!',
   copyButton: 'Kopiér',
 
+  moodSectionTitle: 'Hvordan har du det?',
+  moodEnergyLabel: 'Energi',
+  moodMoodLabel: 'Humør',
+
   dailyNudgeTitle: 'Vaneguide',
   dailyNudgeLabel: 'Daglig påmindelse',
   dailyNudgeHint: 'En aftenpåmindelse, hvis du ikke har fuldført dagens vaner endnu.',

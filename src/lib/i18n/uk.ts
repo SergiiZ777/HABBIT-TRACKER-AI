@@ -189,6 +189,10 @@ export const uk: Dictionary = {
   backupIdCopied: 'Скопійовано!',
   copyButton: 'Копіювати',
 
+  moodSectionTitle: 'Як ви себе почуваєте?',
+  moodEnergyLabel: 'Енергія',
+  moodMoodLabel: 'Настрій',
+
   dailyNudgeTitle: 'AI-коуч',
   dailyNudgeLabel: 'Щоденне нагадування',
   dailyNudgeHint: 'Вечірнє нагадування, якщо ви ще не завершили сьогоднішні звички.',

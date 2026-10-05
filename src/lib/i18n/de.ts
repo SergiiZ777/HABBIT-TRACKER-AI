@@ -181,6 +181,10 @@ export const de: Dictionary = {
   backupIdCopied: 'Kopiert!',
   copyButton: 'Kopieren',
 
+  moodSectionTitle: 'Wie fühlst du dich?',
+  moodEnergyLabel: 'Energie',
+  moodMoodLabel: 'Stimmung',
+
   dailyNudgeTitle: 'Habit-Coach',
   dailyNudgeLabel: 'Tägliche Erinnerung',
   dailyNudgeHint: 'Eine Abenderinnerung, falls du die heutigen Gewohnheiten noch nicht abgeschlossen hast.',

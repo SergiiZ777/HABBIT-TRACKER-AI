@@ -189,6 +189,10 @@ export const ru: Dictionary = {
   backupIdCopied: 'Скопировано!',
   copyButton: 'Копировать',
 
+  moodSectionTitle: 'Как вы себя чувствуете?',
+  moodEnergyLabel: 'Энергия',
+  moodMoodLabel: 'Настроение',
+
   dailyNudgeTitle: 'ИИ-коуч',
   dailyNudgeLabel: 'Ежедневное напоминание',
   dailyNudgeHint: 'Вечернее напоминание, если вы ещё не завершили сегодняшние привычки.',
