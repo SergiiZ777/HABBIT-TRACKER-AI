@@ -15,6 +15,7 @@ export type HabitFormValues = {
   emoji: string;
   color: string;
   scheduledDays: number[];
+  priority: 'high' | 'normal';
   reminderEnabled: boolean;
   reminderTime: string;
 };
@@ -34,6 +35,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
   const [emoji, setEmoji] = useState<string>(initialValues?.emoji ?? HabitEmojis[0]);
   const [color, setColor] = useState<string>(initialValues?.color ?? HabitColors[0]);
   const [scheduledDays, setScheduledDays] = useState<number[]>(initialValues?.scheduledDays ?? ALL_DAYS);
+  const [priority, setPriority] = useState<'high' | 'normal'>(initialValues?.priority ?? 'normal');
   const [reminderEnabled, setReminderEnabled] = useState(initialValues?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? DEFAULT_REMINDER_TIME);
 
@@ -59,7 +61,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
 
   const save = () => {
     if (!canSave) return;
-    onSubmit({ name: name.trim(), emoji, color, scheduledDays, reminderEnabled, reminderTime });
+    onSubmit({ name: name.trim(), emoji, color, scheduledDays, priority, reminderEnabled, reminderTime });
   };
 
   return (
@@ -148,6 +150,26 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         })}
       </View>
 
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelPriority}</Text>
+      <View style={styles.priorityRow}>
+        {(['normal', 'high'] as const).map((p) => {
+          const active = priority === p;
+          return (
+            <Pressable
+              key={p}
+              onPress={() => setPriority(p)}
+              style={[
+                styles.priorityOption,
+                { backgroundColor: active ? color : theme.backgroundElement, borderColor: active ? color : theme.border },
+              ]}>
+              <Text style={{ color: active ? '#fff' : theme.text, fontSize: 14, fontWeight: '600' }}>
+                {p === 'high' ? `⭐ ${t.priorityHigh}` : t.priorityNormal}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelReminder}</Text>
       <View style={[styles.reminderRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
         <Text style={[styles.reminderLabel, { color: theme.text }]}>{t.dailyReminder}</Text>
@@ -213,6 +235,14 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  priorityRow: { flexDirection: 'row', gap: Spacing.two },
+  priorityOption: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: Radius.sm,
+    borderWidth: 1.5,
+    alignItems: 'center',
   },
   reminderRow: {
     flexDirection: 'row',

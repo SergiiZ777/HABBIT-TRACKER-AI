@@ -41,6 +41,7 @@ export default function EditHabitScreen() {
       emoji: values.emoji,
       color: values.color,
       scheduledDays: values.scheduledDays,
+      priority: values.priority,
       reminderTime: values.reminderEnabled ? values.reminderTime : undefined,
       reminderNotificationIds,
     });
@@ -57,6 +58,7 @@ export default function EditHabitScreen() {
         emoji: habit.emoji,
         color: habit.color,
         scheduledDays: habit.scheduledDays,
+        priority: habit.priority ?? 'normal',
         reminderEnabled: Boolean(habit.reminderTime),
         reminderTime: habit.reminderTime,
       }}

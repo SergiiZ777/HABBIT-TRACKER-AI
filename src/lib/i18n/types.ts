@@ -81,6 +81,9 @@ export interface Dictionary {
   labelIcon: string;
   labelColor: string;
   labelScheduledDays: string;
+  labelPriority: string;
+  priorityHigh: string;
+  priorityNormal: string;
   labelReminder: string;
   dailyReminder: string;
   /** index into constants/theme.ts's HabitColors, in the same order */

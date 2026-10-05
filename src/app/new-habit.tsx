@@ -10,7 +10,7 @@ export default function NewHabitScreen() {
   const t = useT();
 
   const onSubmit = async (values: HabitFormValues) => {
-    const created = addHabit({ name: values.name, emoji: values.emoji, color: values.color, scheduledDays: values.scheduledDays });
+    const created = addHabit({ name: values.name, emoji: values.emoji, color: values.color, scheduledDays: values.scheduledDays, priority: values.priority });
 
     if (values.reminderEnabled) {
       const notificationIds = await scheduleHabitReminder(created, values.reminderTime, t, values.scheduledDays);

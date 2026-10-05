@@ -19,12 +19,19 @@ export function computeRecommendation(
   const uncompleted = habits.filter((h) => !h.completions.includes(day));
   if (uncompleted.length === 0) return null;
 
+  const isHighPriority = (h: Habit) => h.priority === 'high';
+
   // Tier 1: one completion away from a streak milestone
   let closestMilestone: { habit: Habit; target: number } | undefined;
   for (const h of uncompleted) {
     const streak = currentStreak(h, today);
     const target = STREAK_MILESTONES.find((m) => m === streak + 1);
-    if (target && (!closestMilestone || target > closestMilestone.target)) {
+    if (
+      target &&
+      (!closestMilestone ||
+        target > closestMilestone.target ||
+        (target === closestMilestone.target && isHighPriority(h) && !isHighPriority(closestMilestone.habit)))
+    ) {
       closestMilestone = { habit: h, target };
     }
   }
@@ -42,7 +49,12 @@ export function computeRecommendation(
   let longestStreak: { habit: Habit; streak: number } | undefined;
   for (const h of uncompleted) {
     const s = currentStreak(h, today);
-    if (s > 0 && (!longestStreak || s > longestStreak.streak)) {
+    if (
+      s > 0 &&
+      (!longestStreak ||
+        s > longestStreak.streak ||
+        (s === longestStreak.streak && isHighPriority(h) && !isHighPriority(longestStreak.habit)))
+    ) {
       longestStreak = { habit: h, streak: s };
     }
   }
@@ -60,7 +72,13 @@ export function computeRecommendation(
   let mostNeglected: { habit: Habit; gap: number } | undefined;
   for (const h of uncompleted) {
     const gap = daysSinceLastCompletion(h, today);
-    if (Number.isFinite(gap) && gap >= 2 && (!mostNeglected || gap > mostNeglected.gap)) {
+    if (
+      Number.isFinite(gap) &&
+      gap >= 2 &&
+      (!mostNeglected ||
+        gap > mostNeglected.gap ||
+        (gap === mostNeglected.gap && isHighPriority(h) && !isHighPriority(mostNeglected.habit)))
+    ) {
       mostNeglected = { habit: h, gap };
     }
   }

@@ -79,7 +79,7 @@ export function HabitCard({ habit, day }: Props) {
             { color: theme.text },
             done && { textDecorationLine: 'line-through', color: theme.textSecondary },
           ]}>
-          {habit.name}
+          {habit.priority === 'high' ? '⭐ ' : ''}{habit.name}
         </Text>
         <View style={styles.metaRow}>
           {streak > 0 ? (

@@ -18,6 +18,8 @@ export type Habit = {
   reminderNotificationIds?: string[];
   /** Days of the week this habit is tracked on (0=Sun..6=Sat, matches Date#getDay()). Absent = every day. */
   scheduledDays?: number[];
+  /** High-priority habits sort first and are weighted in recommendations. Absent = normal. */
+  priority?: 'high' | 'normal';
 };
 
 /** Every reminder notification id for a habit, reading both the current and legacy field. */
@@ -162,7 +164,7 @@ export function restoreHabits(habits: Habit[]) {
 
 export function addHabit(
   input: Pick<Habit, 'name' | 'emoji' | 'color'> &
-    Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays'>>
+    Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority'>>
 ): Habit {
   const habit: Habit = {
     ...input,
@@ -176,7 +178,7 @@ export function addHabit(
 
 export function updateHabit(
   id: string,
-  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays'>>
+  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority'>>
 ) {
   setState({
     habits: state.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)),

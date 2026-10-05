@@ -57,10 +57,13 @@ export default function TodayScreen() {
     null,
   );
 
+  const sortByPriority = (a: Habit, b: Habit) =>
+    (a.priority === 'high' ? 0 : 1) - (b.priority === 'high' ? 0 : 1);
+
   const habitGroups = (() => {
-    const morning = scheduledToday.filter((h) => routineGroup(h) === 'morning');
-    const evening = scheduledToday.filter((h) => routineGroup(h) === 'evening');
-    const anytime = scheduledToday.filter((h) => routineGroup(h) === 'anytime');
+    const morning = scheduledToday.filter((h) => routineGroup(h) === 'morning').sort(sortByPriority);
+    const evening = scheduledToday.filter((h) => routineGroup(h) === 'evening').sort(sortByPriority);
+    const anytime = scheduledToday.filter((h) => routineGroup(h) === 'anytime').sort(sortByPriority);
     const groups = [
       { key: 'morning' as const, label: t.sectionMorning, habits: morning },
       { key: 'evening' as const, label: t.sectionEvening, habits: evening },
@@ -158,7 +161,7 @@ export default function TodayScreen() {
           <>
             <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
             <View style={styles.list}>
-              {scheduledToday.map((h) => (
+              {[...scheduledToday].sort(sortByPriority).map((h) => (
                 <HabitCard key={h.id} habit={h} day={selected} />
               ))}
             </View>
