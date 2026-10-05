@@ -22,6 +22,7 @@ import { setDailyNudgeEnabled, setDailyNudgeTime, useDailyNudgeEnabled, useDaily
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, useHabits } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
+import { computePatternInsight, resolvePatternInsight } from '@/lib/insights';
 import { computeMotivation, resolveMotivation } from '@/lib/motivation';
 
 export default function DashboardScreen() {
@@ -52,6 +53,8 @@ export default function DashboardScreen() {
   const badges = computeBadges(habits, today);
   const rawMotivation = computeMotivation(habits, today);
   const motivation = { emoji: rawMotivation.emoji, ...resolveMotivation(t, rawMotivation) };
+  const rawPatternInsight = computePatternInsight(habits, today);
+  const patternInsight = rawPatternInsight ? resolvePatternInsight(t, localeTag, rawPatternInsight) : null;
   const trend = computeTrend(habits, range, today, localeTag);
   const heatmapColumns = range === 'year' ? computeYearHeatmap(habits, today, localeTag) : [];
   const rangeSummary = computeRangeSummary(habits, range, today);
@@ -81,6 +84,16 @@ export default function DashboardScreen() {
             <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{motivation.detail}</Text>
           </View>
         </View>
+
+        {patternInsight && (
+          <View style={[styles.insightCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+            <Text style={styles.insightEmoji}>📊</Text>
+            <View style={styles.flex}>
+              <Text style={[styles.insightHeadline, { color: theme.text }]}>{patternInsight.headline}</Text>
+              <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{patternInsight.detail}</Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.statsGrid}>
           {statTiles.map((s) => (
@@ -275,6 +288,16 @@ const styles = StyleSheet.create({
   },
   motivationEmoji: { fontSize: 32 },
   motivationHeadline: { fontSize: 18, fontWeight: '800', marginBottom: 2 },
+  insightCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    padding: Spacing.four,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+  },
+  insightEmoji: { fontSize: 28 },
+  insightHeadline: { fontSize: 16, fontWeight: '700', marginBottom: 2 },
   trendCard: {
     gap: Spacing.three,
     padding: Spacing.four,

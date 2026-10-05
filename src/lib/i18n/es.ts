@@ -116,6 +116,10 @@ export const es: Dictionary = {
   motivKeepGoingHeadline: 'Sigue así',
   motivKeepGoingDetail: (n) => `Te queda${n === 1 ? '' : 'n'} ${n} hábito${n === 1 ? '' : 's'} hoy. ¡Tú puedes!`,
 
+  insightPatternHeadline: 'Patrón detectado',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `Completas ${emoji} ${name} el ${bestPct}% de las veces cada ${bestDay}, pero solo el ${worstPct}% cada ${worstDay}.`,
+
   badgeTitleFirstStep: 'Primer paso',
   badgeTitleStreak3: 'Racha de 3 días',
   badgeTitleStreak7: 'Guerrero semanal',

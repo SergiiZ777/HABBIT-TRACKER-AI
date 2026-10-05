@@ -124,6 +124,10 @@ export const ru: Dictionary = {
   motivKeepGoingHeadline: 'Продолжайте',
   motivKeepGoingDetail: (n) => `Осталось ${n} ${ruPlural(n, 'привычка', 'привычки', 'привычек')} на сегодня. У вас всё получится!`,
 
+  insightPatternHeadline: 'Обнаружена закономерность',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `Вы выполняете ${emoji} ${name} в ${bestPct}% случаев в день «${bestDay}», но только в ${worstPct}% — в день «${worstDay}».`,
+
   badgeTitleFirstStep: 'Первый шаг',
   badgeTitleStreak3: '3-дневная серия',
   badgeTitleStreak7: 'Недельный воин',

@@ -115,6 +115,10 @@ export const en: Dictionary = {
   motivKeepGoingHeadline: 'Keep going',
   motivKeepGoingDetail: (n) => `${n} habit${n === 1 ? '' : 's'} left today. You've got this.`,
 
+  insightPatternHeadline: 'Pattern spotted',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `You complete ${emoji} ${name} ${bestPct}% of the time on ${bestDay}s, but only ${worstPct}% on ${worstDay}s.`,
+
   badgeTitleFirstStep: 'First Step',
   badgeTitleStreak3: '3-Day Streak',
   badgeTitleStreak7: 'Week Warrior',

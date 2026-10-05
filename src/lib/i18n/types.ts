@@ -115,6 +115,10 @@ export interface Dictionary {
   motivKeepGoingHeadline: string;
   motivKeepGoingDetail: (n: number) => string;
 
+  // Pattern insight
+  insightPatternHeadline: string;
+  insightPatternDetail: (emoji: string, name: string, bestPct: number, bestDay: string, worstPct: number, worstDay: string) => string;
+
   // Badges
   badgeTitleFirstStep: string;
   badgeTitleStreak3: string;

@@ -116,6 +116,10 @@ export const de: Dictionary = {
   motivKeepGoingHeadline: 'Weiter so',
   motivKeepGoingDetail: (n) => `Noch ${n} Gewohnheit${n === 1 ? '' : 'en'} heute übrig. Du schaffst das!`,
 
+  insightPatternHeadline: 'Muster erkannt',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `Du erledigst ${emoji} ${name} an ${bestPct}% der Tage am ${bestDay}, aber nur an ${worstPct}% am ${worstDay}.`,
+
   badgeTitleFirstStep: 'Erster Schritt',
   badgeTitleStreak3: '3-Tage-Serie',
   badgeTitleStreak7: 'Wochenkrieger',

@@ -124,6 +124,10 @@ export const uk: Dictionary = {
   motivKeepGoingHeadline: 'Так тримати',
   motivKeepGoingDetail: (n) => `Залишилось ${n} ${ukPlural(n, 'звичка', 'звички', 'звичок')} на сьогодні. У вас усе вийде!`,
 
+  insightPatternHeadline: 'Знайдено закономірність',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `Ви виконуєте ${emoji} ${name} у ${bestPct}% випадків у день «${bestDay}», але лише у ${worstPct}% — у день «${worstDay}».`,
+
   badgeTitleFirstStep: 'Перший крок',
   badgeTitleStreak3: '3-денна серія',
   badgeTitleStreak7: 'Тижневий воїн',

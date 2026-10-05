@@ -115,6 +115,10 @@ export const da: Dictionary = {
   motivKeepGoingHeadline: 'Bliv ved',
   motivKeepGoingDetail: (n) => `${n} vane${n === 1 ? '' : 'r'} tilbage i dag. Du klarer det!`,
 
+  insightPatternHeadline: 'Mønster fundet',
+  insightPatternDetail: (emoji, name, bestPct, bestDay, worstPct, worstDay) =>
+    `Du gennemfører ${emoji} ${name} ${bestPct}% af gangene om ${bestDay}en, men kun ${worstPct}% om ${worstDay}en.`,
+
   badgeTitleFirstStep: 'Første skridt',
   badgeTitleStreak3: '3-dages stime',
   badgeTitleStreak7: 'Ugekriger',
