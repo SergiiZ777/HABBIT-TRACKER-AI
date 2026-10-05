@@ -1,5 +1,5 @@
 import type { Dictionary } from '@/lib/i18n';
-import { addDays, currentStreak, dayKey, type Habit } from '@/lib/habits';
+import { addDays, currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
 
 export type BadgeId =
   | 'first-step'
@@ -30,9 +30,10 @@ export type DashboardStats = {
   perfectDaysCount: number;
 };
 
-/** Habits that existed by local day `key` — a habit "exists" once its createdAt's local day is <= key. */
+/** Habits due on local day `key` — exist by then (createdAt's local day <= key) AND scheduled that weekday. */
 function existingHabitsOn(habits: Habit[], key: string): Habit[] {
-  return habits.filter((h) => dayKey(new Date(h.createdAt)) <= key);
+  const date = new Date(`${key}T12:00:00`);
+  return habits.filter((h) => dayKey(new Date(h.createdAt)) <= key && isScheduledOn(h, date));
 }
 
 /**

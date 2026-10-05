@@ -4,14 +4,17 @@ import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from
 import { TimePickerField } from '@/components/time-picker-field';
 import { HabitColors, HabitEmojis, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { useT } from '@/lib/i18n';
+import { weekdayLabel } from '@/lib/habits';
+import { useLocaleTag, useT } from '@/lib/i18n';
 
 const DEFAULT_REMINDER_TIME = '08:00';
+const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
 export type HabitFormValues = {
   name: string;
   emoji: string;
   color: string;
+  scheduledDays: number[];
   reminderEnabled: boolean;
   reminderTime: string;
 };
@@ -26,11 +29,23 @@ type Props = {
 export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props) {
   const theme = useTheme();
   const t = useT();
+  const localeTag = useLocaleTag();
   const [name, setName] = useState(initialValues?.name ?? '');
   const [emoji, setEmoji] = useState<string>(initialValues?.emoji ?? HabitEmojis[0]);
   const [color, setColor] = useState<string>(initialValues?.color ?? HabitColors[0]);
+  const [scheduledDays, setScheduledDays] = useState<number[]>(initialValues?.scheduledDays ?? ALL_DAYS);
   const [reminderEnabled, setReminderEnabled] = useState(initialValues?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? DEFAULT_REMINDER_TIME);
+
+  const toggleDay = (dow: number) => {
+    setScheduledDays((prev) => {
+      if (prev.includes(dow)) {
+        if (prev.length === 1) return prev; // always keep at least one day scheduled
+        return prev.filter((d) => d !== dow);
+      }
+      return [...prev, dow].sort();
+    });
+  };
 
   const suggestions = [
     t.suggestionDrinkWater,
@@ -44,7 +59,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
 
   const save = () => {
     if (!canSave) return;
-    onSubmit({ name: name.trim(), emoji, color, reminderEnabled, reminderTime });
+    onSubmit({ name: name.trim(), emoji, color, scheduledDays, reminderEnabled, reminderTime });
   };
 
   return (
@@ -112,6 +127,27 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         ))}
       </View>
 
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelScheduledDays}</Text>
+      <View style={styles.wrap}>
+        {ALL_DAYS.map((dow) => {
+          const selected = scheduledDays.includes(dow);
+          return (
+            <Pressable
+              key={dow}
+              onPress={() => toggleDay(dow)}
+              accessibilityLabel={weekdayLabel(dow, localeTag, 'long')}
+              style={[
+                styles.dayOption,
+                { backgroundColor: selected ? color : theme.backgroundElement, borderColor: selected ? color : theme.border },
+              ]}>
+              <Text style={{ color: selected ? '#fff' : theme.text, fontSize: 13, fontWeight: '700' }}>
+                {weekdayLabel(dow, localeTag, 'narrow')}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelReminder}</Text>
       <View style={[styles.reminderRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
         <Text style={[styles.reminderLabel, { color: theme.text }]}>{t.dailyReminder}</Text>
@@ -170,6 +206,14 @@ const styles = StyleSheet.create({
   },
   swatchRing: { padding: 3, borderRadius: Radius.pill, borderWidth: 2 },
   swatch: { width: 32, height: 32, borderRadius: Radius.pill },
+  dayOption: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.pill,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   reminderRow: {
     flexDirection: 'row',
     alignItems: 'center',

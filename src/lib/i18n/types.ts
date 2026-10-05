@@ -28,6 +28,8 @@ export interface Dictionary {
   doneOfTotal: (done: number, total: number) => string;
   sectionHabits: string;
   emptyNoHabits: (fabLabel: string) => string;
+  /** Shown when the user has habits, but none are scheduled for the selected day (not the same as having zero habits at all). */
+  noHabitsScheduledToday: string;
   hintTapLongPress: string;
   fabNewHabit: string;
   languageButtonLabel: string;
@@ -75,6 +77,7 @@ export interface Dictionary {
   placeholderHabitName: string;
   labelIcon: string;
   labelColor: string;
+  labelScheduledDays: string;
   labelReminder: string;
   dailyReminder: string;
   /** index into constants/theme.ts's HabitColors, in the same order */

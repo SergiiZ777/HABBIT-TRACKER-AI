@@ -1,6 +1,6 @@
 import { computeStats } from '@/lib/achievements';
 import { getDeviceId } from '@/lib/backup';
-import { currentStreak, dayKey, type Habit } from '@/lib/habits';
+import { currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
 import type { Dictionary, Locale } from '@/lib/i18n';
 
 // n8n workflow "Habit Tracker AI - Coach Chat" — webhook -> AI Agent (Claude) grounded in real habit data.
@@ -19,6 +19,7 @@ function buildContext(habits: Habit[], today: Date) {
       emoji: h.emoji,
       streak: currentStreak(h, today),
       completedToday: h.completions.includes(key),
+      scheduledToday: isScheduledOn(h, today),
       reminderTime: h.reminderTime ?? null,
     })),
     stats: computeStats(habits, today),

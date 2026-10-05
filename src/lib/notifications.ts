@@ -58,16 +58,24 @@ async function ensureAndroidChannel(name: string): Promise<void> {
 }
 
 /**
- * Schedules a daily local reminder for a habit at the given "HH:mm" local time, with the
- * notification text in the app's current language. Returns the scheduled notification id on
- * success, or undefined if permission was denied, the platform doesn't support it (web), or
- * scheduling otherwise failed.
+ * Schedules a local reminder for a habit at the given "HH:mm" local time, respecting its
+ * scheduled days — every day (or `scheduledDays` undefined/all 7) uses a single DAILY trigger;
+ * a strict subset needs one WEEKLY trigger per selected weekday, since neither expo-notifications
+ * trigger type supports targeting multiple weekdays in one registration (verified directly
+ * against the installed package's trigger types, not assumed). Weekday conversion: this app's
+ * `scheduledDays` uses 0=Sun..6=Sat (matching `Date#getDay()`); expo-notifications' `WeeklyTriggerInput.weekday`
+ * uses 1=Sun..7=Sat, hence the `+1` below.
+ *
+ * Returns every scheduled notification id (one element for the daily case) on success, or
+ * undefined if permission was denied, the platform doesn't support it (web), or scheduling
+ * otherwise failed.
  */
 export async function scheduleHabitReminder(
   habit: { id: string; name: string; emoji: string },
   time: string,
-  t: Dictionary
-): Promise<string | undefined> {
+  t: Dictionary,
+  scheduledDays?: number[]
+): Promise<string[] | undefined> {
   if (Platform.OS === 'web') return undefined;
 
   const granted = await requestReminderPermission();
@@ -80,20 +88,28 @@ export async function scheduleHabitReminder(
 
   await ensureAndroidChannel(t.notifChannelName);
 
+  const content = {
+    title: t.notifTitle,
+    body: t.notifBody(habit.emoji, habit.name),
+    data: { habitId: habit.id },
+  };
+
   try {
-    return await scheduleNotificationAsync({
-      content: {
-        title: t.notifTitle,
-        body: t.notifBody(habit.emoji, habit.name),
-        data: { habitId: habit.id },
-      },
-      trigger: {
-        type: SchedulableTriggerInputTypes.DAILY,
-        hour,
-        minute,
-        channelId: CHANNEL_ID,
-      },
-    });
+    if (!scheduledDays || scheduledDays.length === 7) {
+      const id = await scheduleNotificationAsync({
+        content,
+        trigger: { type: SchedulableTriggerInputTypes.DAILY, hour, minute, channelId: CHANNEL_ID },
+      });
+      return [id];
+    }
+    return await Promise.all(
+      scheduledDays.map((dow) =>
+        scheduleNotificationAsync({
+          content,
+          trigger: { type: SchedulableTriggerInputTypes.WEEKLY, weekday: dow + 1, hour, minute, channelId: CHANNEL_ID },
+        })
+      )
+    );
   } catch {
     return undefined;
   }
@@ -137,12 +153,16 @@ export async function scheduleDailyNudge(
   }
 }
 
-/** Cancels a previously scheduled reminder. Safe to call with undefined (e.g. no reminder was ever scheduled). */
-export async function cancelHabitReminder(notificationId: string | undefined): Promise<void> {
-  if (!notificationId || Platform.OS === 'web') return;
-  try {
-    await cancelScheduledNotificationAsync(notificationId);
-  } catch {
-    // Already cancelled/fired or unavailable — nothing more to do.
-  }
+/** Cancels previously scheduled reminder(s). Safe to call with undefined/empty (e.g. no reminder was ever scheduled). */
+export async function cancelHabitReminder(notificationIds: string[] | undefined): Promise<void> {
+  if (!notificationIds?.length || Platform.OS === 'web') return;
+  await Promise.all(
+    notificationIds.map(async (id) => {
+      try {
+        await cancelScheduledNotificationAsync(id);
+      } catch {
+        // Already cancelled/fired or unavailable — nothing more to do.
+      }
+    })
+  );
 }

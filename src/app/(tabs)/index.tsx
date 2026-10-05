@@ -10,7 +10,7 @@ import { ProgressRing } from '@/components/progress-ring';
 import { WeekStrip } from '@/components/week-strip';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { dayKey, useHabits } from '@/lib/habits';
+import { dayKey, isScheduledOn, useHabits } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
 
 function greeting(t: Dictionary) {
@@ -34,11 +34,12 @@ export default function TodayScreen() {
   const habits = useHabits();
   const today = dayKey();
   const [selected, setSelected] = useState(today);
-
-  const done = habits.filter((h) => h.completions.includes(selected)).length;
-  const total = habits.length;
-  const isToday = selected === today;
   const selectedDate = new Date(`${selected}T12:00:00`);
+
+  const scheduledToday = habits.filter((h) => isScheduledOn(h, selectedDate));
+  const done = scheduledToday.filter((h) => h.completions.includes(selected)).length;
+  const total = scheduledToday.length;
+  const isToday = selected === today;
 
   const [showConfetti, setShowConfetti] = useState(false);
   const wasAllDoneToday = useRef<boolean | null>(null);
@@ -95,14 +96,22 @@ export default function TodayScreen() {
         <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
 
         <View style={styles.list}>
-          {habits.map((h) => (
+          {scheduledToday.map((h) => (
             <HabitCard key={h.id} habit={h} day={selected} />
           ))}
-          {total === 0 && (
+          {habits.length === 0 && (
             <View style={[styles.empty, { borderColor: theme.border }]}>
               <Text style={styles.emptyEmoji}>🌱</Text>
               <Text style={[styles.summaryText, { color: theme.textSecondary, textAlign: 'center' }]}>
                 {t.emptyNoHabits(t.fabNewHabit)}
+              </Text>
+            </View>
+          )}
+          {habits.length > 0 && total === 0 && (
+            <View style={[styles.empty, { borderColor: theme.border }]}>
+              <Text style={styles.emptyEmoji}>🌤️</Text>
+              <Text style={[styles.summaryText, { color: theme.textSecondary, textAlign: 'center' }]}>
+                {t.noHabitsScheduledToday}
               </Text>
             </View>
           )}

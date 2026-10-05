@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { addDays, dayKey, type Habit } from '@/lib/habits';
+import { addDays, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
 import { useLocaleTag } from '@/lib/i18n';
 
 type Props = {
@@ -23,8 +23,9 @@ export function WeekStrip({ habits, selected, onSelect }: Props) {
       {days.map((date) => {
         const key = dayKey(date);
         const isSelected = key === selected;
-        const doneCount = habits.filter((h) => h.completions.includes(key)).length;
-        const rate = habits.length ? doneCount / habits.length : 0;
+        const scheduled = habits.filter((h) => isScheduledOn(h, date) && dayKey(new Date(h.createdAt)) <= key);
+        const doneCount = scheduled.filter((h) => h.completions.includes(key)).length;
+        const rate = scheduled.length ? doneCount / scheduled.length : 0;
 
         return (
           <Pressable

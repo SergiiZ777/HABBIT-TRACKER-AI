@@ -12,9 +12,23 @@ export type Habit = {
   completions: string[];
   /** Daily reminder time as local "HH:mm" (24h), e.g. "08:30". Absent = no reminder. */
   reminderTime?: string;
-  /** expo-notifications scheduled-notification id backing reminderTime. Absent = not actually scheduled (off, web, or permission denied). */
+  /** @deprecated superseded by reminderNotificationIds — kept only to read habits stored before that field existed. */
   reminderNotificationId?: string;
+  /** expo-notifications scheduled-notification ids backing reminderTime — one per scheduled weekday (a single trigger can't target multiple weekdays), or one id if every day. Absent = not actually scheduled (off, web, or permission denied). */
+  reminderNotificationIds?: string[];
+  /** Days of the week this habit is tracked on (0=Sun..6=Sat, matches Date#getDay()). Absent = every day. */
+  scheduledDays?: number[];
 };
+
+/** Every reminder notification id for a habit, reading both the current and legacy field. */
+export function habitReminderNotificationIds(habit: Habit): string[] {
+  return habit.reminderNotificationIds ?? (habit.reminderNotificationId ? [habit.reminderNotificationId] : []);
+}
+
+/** Whether `habit` is tracked on `date`'s weekday — undefined `scheduledDays` means every day. */
+export function isScheduledOn(habit: Habit, date: Date): boolean {
+  return !habit.scheduledDays || habit.scheduledDays.includes(date.getDay());
+}
 
 type State = { habits: Habit[] };
 
@@ -55,14 +69,32 @@ export function formatTime(time: string, localeTag?: string): string {
   return timeToDate(time).toLocaleTimeString(localeTag, { hour: 'numeric', minute: '2-digit' });
 }
 
-/** Consecutive completed days ending today (or yesterday, so a streak isn't "lost" before you've had a chance today). */
+// A fixed reference Sunday, purely to turn a dow index (0=Sun..6=Sat) back into a real Date for
+// Intl formatting — reused wherever a weekday name/letter is needed, instead of new Dictionary
+// keys per locale (the convention already established for day labels throughout this app).
+const DOW_REFERENCE = new Date(2024, 0, 7);
+export function weekdayLabel(dow: number, localeTag: string, format: 'long' | 'short' | 'narrow' = 'long'): string {
+  return addDays(DOW_REFERENCE, dow).toLocaleDateString(localeTag, { weekday: format });
+}
+
+/**
+ * Consecutive completed *scheduled* days ending today (or yesterday, so a streak isn't "lost"
+ * before you've had a chance today) — a day the habit isn't scheduled on is skipped entirely
+ * (neither breaks nor extends the streak), not treated as a miss.
+ */
 export function currentStreak(habit: Habit, today: Date = new Date()): number {
   const done = new Set(habit.completions);
-  let cursor = done.has(dayKey(today)) ? today : addDays(today, -1);
+  const todayCounts = isScheduledOn(habit, today) && done.has(dayKey(today));
+  let cursor = todayCounts ? today : addDays(today, -1);
   let streak = 0;
-  while (done.has(dayKey(cursor))) {
-    streak++;
+  let guard = 0;
+  while (guard < 3660) {
+    if (isScheduledOn(habit, cursor)) {
+      if (!done.has(dayKey(cursor))) break;
+      streak++;
+    }
     cursor = addDays(cursor, -1);
+    guard++;
   }
   return streak;
 }
@@ -120,7 +152,8 @@ export function restoreHabits(habits: Habit[]) {
 }
 
 export function addHabit(
-  input: Pick<Habit, 'name' | 'emoji' | 'color'> & Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationId'>>
+  input: Pick<Habit, 'name' | 'emoji' | 'color'> &
+    Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays'>>
 ): Habit {
   const habit: Habit = {
     ...input,
@@ -134,7 +167,7 @@ export function addHabit(
 
 export function updateHabit(
   id: string,
-  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationId'>>
+  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays'>>
 ) {
   setState({
     habits: state.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)),

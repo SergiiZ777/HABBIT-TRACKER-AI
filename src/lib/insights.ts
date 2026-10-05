@@ -1,5 +1,5 @@
 import type { Dictionary } from '@/lib/i18n';
-import { addDays, dayKey, type Habit } from '@/lib/habits';
+import { addDays, dayKey, isScheduledOn, weekdayLabel, type Habit } from '@/lib/habits';
 
 /**
  * A rule-based, data-driven observation — the same philosophy as motivation.ts (no AI call,
@@ -36,10 +36,12 @@ function dayOfWeekStats(habit: Habit, today: Date): DowStats[] {
   let cursor = new Date(habit.createdAt);
   let guard = 0;
   while (dayKey(cursor) <= todayKey && guard < 3660) {
-    const key = dayKey(cursor);
-    const bucket = stats[cursor.getDay()];
-    bucket.occurrences++;
-    if (habit.completions.includes(key)) bucket.completed++;
+    if (isScheduledOn(habit, cursor)) {
+      const key = dayKey(cursor);
+      const bucket = stats[cursor.getDay()];
+      bucket.occurrences++;
+      if (habit.completions.includes(key)) bucket.completed++;
+    }
     cursor = addDays(cursor, 1);
     guard++;
   }
@@ -93,14 +95,6 @@ export function computePatternInsight(habits: Habit[], today: Date = new Date())
   return candidates[0].insight;
 }
 
-// A fixed reference Sunday, purely to turn a dow index (0=Sun..6=Sat) back into a real Date for
-// Intl formatting — the same `toLocaleDateString(localeTag, {weekday: ...})` convention already
-// used throughout achievements.ts and week-strip.tsx, not new Dictionary keys.
-const DOW_REFERENCE = new Date(2024, 0, 7);
-function dowName(dow: number, localeTag: string): string {
-  return addDays(DOW_REFERENCE, dow).toLocaleDateString(localeTag, { weekday: 'long' });
-}
-
 /** Resolves a computed PatternInsight into translated headline/detail text for the active language. */
 export function resolvePatternInsight(
   t: Dictionary,
@@ -113,9 +107,9 @@ export function resolvePatternInsight(
       insight.habitEmoji,
       insight.habitName,
       Math.round(insight.bestRate * 100),
-      dowName(insight.bestDow, localeTag),
+      weekdayLabel(insight.bestDow, localeTag),
       Math.round(insight.worstRate * 100),
-      dowName(insight.worstDow, localeTag)
+      weekdayLabel(insight.worstDow, localeTag)
     ),
   };
 }

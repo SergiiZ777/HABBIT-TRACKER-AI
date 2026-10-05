@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Alert } from 'react-native';
 
 import { HabitForm, type HabitFormValues } from '@/components/habit-form';
-import { updateHabit, useHabits } from '@/lib/habits';
+import { habitReminderNotificationIds, updateHabit, useHabits } from '@/lib/habits';
 import { useT } from '@/lib/i18n';
 import { cancelHabitReminder, scheduleHabitReminder } from '@/lib/notifications';
 
@@ -21,16 +21,17 @@ export default function EditHabitScreen() {
   if (!habit) return null;
 
   const onSubmit = async (values: HabitFormValues) => {
-    await cancelHabitReminder(habit.reminderNotificationId);
+    await cancelHabitReminder(habitReminderNotificationIds(habit));
 
-    let reminderNotificationId: string | undefined;
+    let reminderNotificationIds: string[] | undefined;
     if (values.reminderEnabled) {
-      reminderNotificationId = await scheduleHabitReminder(
+      reminderNotificationIds = await scheduleHabitReminder(
         { id: habit.id, name: values.name, emoji: values.emoji },
         values.reminderTime,
-        t
+        t,
+        values.scheduledDays
       );
-      if (!reminderNotificationId) {
+      if (!reminderNotificationIds) {
         Alert.alert(t.remindersDisabledTitle, t.remindersDisabledMessage);
       }
     }
@@ -39,8 +40,9 @@ export default function EditHabitScreen() {
       name: values.name,
       emoji: values.emoji,
       color: values.color,
+      scheduledDays: values.scheduledDays,
       reminderTime: values.reminderEnabled ? values.reminderTime : undefined,
-      reminderNotificationId,
+      reminderNotificationIds,
     });
 
     router.back();
@@ -54,6 +56,7 @@ export default function EditHabitScreen() {
         name: habit.name,
         emoji: habit.emoji,
         color: habit.color,
+        scheduledDays: habit.scheduledDays,
         reminderEnabled: Boolean(habit.reminderTime),
         reminderTime: habit.reminderTime,
       }}

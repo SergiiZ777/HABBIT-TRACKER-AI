@@ -76,7 +76,7 @@ export function useDailyNudgeTime(): string {
 
 /** Cancels whatever's currently scheduled (if anything) and clears the stored notification id. */
 async function clearScheduled() {
-  if (notifId) await cancelHabitReminder(notifId);
+  if (notifId) await cancelHabitReminder([notifId]);
   notifId = undefined;
   persist(NOTIF_ID_KEY, undefined);
 }

@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, w
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentStreak, deleteHabit, formatTime, toggleCompletion, type Habit } from '@/lib/habits';
+import { currentStreak, deleteHabit, formatTime, habitReminderNotificationIds, toggleCompletion, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
 import { cancelHabitReminder } from '@/lib/notifications';
 
@@ -47,7 +47,7 @@ export function HabitCard({ habit, day }: Props) {
         text: t.actionDelete,
         style: 'destructive',
         onPress: async () => {
-          await cancelHabitReminder(habit.reminderNotificationId);
+          await cancelHabitReminder(habitReminderNotificationIds(habit));
           deleteHabit(habit.id);
         },
       },

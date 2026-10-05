@@ -1,5 +1,5 @@
 import type { Dictionary } from '@/lib/i18n';
-import { addDays, currentStreak, dayKey, type Habit } from '@/lib/habits';
+import { addDays, currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
 
 /**
  * A short, honest, data-driven nudge — the closest thing that could be an AI headline
@@ -21,17 +21,19 @@ export type Motivation =
 const STREAK_MILESTONES = [3, 7, 30, 100];
 const FALLBACK_COUNT = 5;
 
-/** How many days since a habit was last completed (0 = today, 1 = yesterday, ...). Infinity if never. */
+/** How many *scheduled* days since a habit was last completed (0 = today, 1 = its previous scheduled day, ...). Infinity if never. */
 function daysSinceLastCompletion(habit: Habit, today: Date): number {
   if (habit.completions.length === 0) return Infinity;
   const mostRecent = [...habit.completions].sort().at(-1)!;
   let gap = 0;
   let cursor = today;
-  while (dayKey(cursor) !== mostRecent) {
-    gap++;
+  let guard = 0;
+  while (dayKey(cursor) !== mostRecent && guard < 3660) {
     cursor = addDays(cursor, -1);
-    if (gap > 3660) return Infinity; // safety valve for corrupt/ancient data
+    if (isScheduledOn(habit, cursor)) gap++;
+    guard++;
   }
+  if (guard >= 3660) return Infinity; // safety valve for corrupt/ancient data
   return gap;
 }
 
@@ -45,15 +47,17 @@ export function computeMotivation(habits: Habit[], today: Date = new Date()): Mo
   }
 
   const key = dayKey(today);
-  const doneToday = habits.filter((h) => h.completions.includes(key)).length;
+  const scheduledToday = habits.filter((h) => isScheduledOn(h, today));
+  const doneToday = scheduledToday.filter((h) => h.completions.includes(key)).length;
 
-  if (doneToday === habits.length) {
+  if (doneToday === scheduledToday.length) {
     return { emoji: '🎉', kind: 'perfect' };
   }
 
-  // Closest to a streak milestone, not yet done today.
+  // Closest to a streak milestone, not yet done today — only among today's actually-due habits,
+  // since there's nothing actionable about a habit that isn't scheduled today.
   let closest: { habit: Habit; target: number; remaining: number } | undefined;
-  for (const h of habits) {
+  for (const h of scheduledToday) {
     if (h.completions.includes(key)) continue;
     const streak = currentStreak(h, today);
     const target = STREAK_MILESTONES.find((m) => m > streak);
@@ -87,7 +91,7 @@ export function computeMotivation(habits: Habit[], today: Date = new Date()): Mo
   }
 
   if (doneToday > 0) {
-    return { emoji: '💪', kind: 'keepGoing', remaining: habits.length - doneToday };
+    return { emoji: '💪', kind: 'keepGoing', remaining: scheduledToday.length - doneToday };
   }
 
   const dayOfYear = Math.floor(
