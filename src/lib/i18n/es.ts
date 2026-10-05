@@ -160,4 +160,9 @@ export const es: Dictionary = {
   backupIdHint: 'Guarda esto en un lugar seguro. Úsalo para restaurar tus hábitos en un nuevo dispositivo.',
   backupIdCopied: '¡Copiado!',
   copyButton: 'Copiar',
+
+  dailyNudgeTitle: 'Coach de hábitos',
+  dailyNudgeLabel: 'Recordatorio diario',
+  dailyNudgeHint: 'Un recordatorio nocturno si aún no has terminado tus hábitos de hoy.',
+  dailyNudgeDisabledMessage: 'Activa las notificaciones en Ajustes para recibir tu recordatorio diario.',
 };

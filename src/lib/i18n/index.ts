@@ -84,3 +84,13 @@ export function useLocaleTag(): string {
 export function useT(): Dictionary {
   return DICTIONARIES[useLocale()];
 }
+
+/** Current translation dictionary, outside of React (e.g. for daily-nudge.ts's background scheduling). */
+export function getT(): Dictionary {
+  return DICTIONARIES[locale];
+}
+
+/** Registers a plain (non-React) listener that fires on every locale change. Returns an unsubscribe function. */
+export function onLocaleChange(listener: () => void): () => void {
+  return subscribe(listener);
+}

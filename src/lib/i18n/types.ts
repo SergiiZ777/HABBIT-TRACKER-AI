@@ -162,4 +162,10 @@ export interface Dictionary {
   backupIdHint: string;
   backupIdCopied: string;
   copyButton: string;
+
+  // Daily nudge
+  dailyNudgeTitle: string;
+  dailyNudgeLabel: string;
+  dailyNudgeHint: string;
+  dailyNudgeDisabledMessage: string;
 }

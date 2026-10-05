@@ -168,4 +168,9 @@ export const uk: Dictionary = {
   backupIdHint: 'Збережіть це у надійному місці. Використайте, щоб відновити звички на новому пристрої.',
   backupIdCopied: 'Скопійовано!',
   copyButton: 'Копіювати',
+
+  dailyNudgeTitle: 'AI-коуч',
+  dailyNudgeLabel: 'Щоденне нагадування',
+  dailyNudgeHint: 'Вечірнє нагадування, якщо ви ще не завершили сьогоднішні звички.',
+  dailyNudgeDisabledMessage: 'Увімкніть сповіщення в налаштуваннях, щоб отримувати щоденне нагадування.',
 };

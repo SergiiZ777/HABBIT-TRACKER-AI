@@ -99,6 +99,44 @@ export async function scheduleHabitReminder(
   }
 }
 
+/**
+ * Schedules (or replaces) the daily nudge notification at the given "HH:mm" local time, with
+ * caller-supplied title/body (already translated — this isn't tied to a specific habit, so it
+ * has no fixed copy of its own). Same permission/channel/trigger shape as `scheduleHabitReminder`.
+ */
+export async function scheduleDailyNudge(
+  time: string,
+  title: string,
+  body: string,
+  channelName: string
+): Promise<string | undefined> {
+  if (Platform.OS === 'web') return undefined;
+
+  const granted = await requestReminderPermission();
+  if (!granted) return undefined;
+
+  const [hourStr, minuteStr] = time.split(':');
+  const hour = Number(hourStr);
+  const minute = Number(minuteStr);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return undefined;
+
+  await ensureAndroidChannel(channelName);
+
+  try {
+    return await scheduleNotificationAsync({
+      content: { title, body },
+      trigger: {
+        type: SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+        channelId: CHANNEL_ID,
+      },
+    });
+  } catch {
+    return undefined;
+  }
+}
+
 /** Cancels a previously scheduled reminder. Safe to call with undefined (e.g. no reminder was ever scheduled). */
 export async function cancelHabitReminder(notificationId: string | undefined): Promise<void> {
   if (!notificationId || Platform.OS === 'web') return;

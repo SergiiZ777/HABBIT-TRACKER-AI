@@ -1,8 +1,9 @@
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TimePickerField } from '@/components/time-picker-field';
 import { TrendChart } from '@/components/trend-chart';
 import { YearHeatmap } from '@/components/year-heatmap';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@/lib/achievements';
 import { useDeviceId } from '@/lib/backup';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { setDailyNudgeEnabled, setDailyNudgeTime, useDailyNudgeEnabled, useDailyNudgeTime } from '@/lib/daily-nudge';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, useHabits } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
@@ -32,11 +34,18 @@ export default function DashboardScreen() {
   const today = new Date();
   const [range, setRange] = useState<TrendRange>('week');
   const [yearView, setYearView] = useState<'heatmap' | 'graph'>('heatmap');
+  const nudgeEnabled = useDailyNudgeEnabled();
+  const nudgeTime = useDailyNudgeTime();
 
   const copyBackupId = async () => {
     await Clipboard.setStringAsync(deviceId);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const onToggleNudge = async (next: boolean) => {
+    const ok = await setDailyNudgeEnabled(next);
+    if (!ok) Alert.alert(t.remindersDisabledTitle, t.dailyNudgeDisabledMessage);
   };
 
   const stats = computeStats(habits, today);
@@ -214,6 +223,19 @@ export default function DashboardScreen() {
           </Pressable>
           <Text style={[styles.backupHint, { color: theme.textSecondary }]}>{t.backupIdHint}</Text>
         </View>
+
+        <View style={[styles.backupCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+          <View style={styles.nudgeRow}>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.dailyNudgeLabel}</Text>
+            <Switch
+              value={nudgeEnabled}
+              onValueChange={onToggleNudge}
+              trackColor={{ true: theme.accent, false: theme.backgroundSelected }}
+            />
+          </View>
+          <Text style={[styles.backupHint, { color: theme.textSecondary }]}>{t.dailyNudgeHint}</Text>
+          {nudgeEnabled && <TimePickerField time={nudgeTime} color={theme.accent} onChange={setDailyNudgeTime} />}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -306,6 +328,7 @@ const styles = StyleSheet.create({
   },
   emptyEmoji: { fontSize: 36 },
   backupCard: { gap: Spacing.two, padding: Spacing.four, borderRadius: Radius.lg, borderWidth: 1 },
+  nudgeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   backupRow: {
     flexDirection: 'row',
     alignItems: 'center',

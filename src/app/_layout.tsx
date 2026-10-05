@@ -7,6 +7,7 @@ import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
 import { Colors } from '@/constants/theme';
 import '@/lib/backup'; // side-effect: registers auto-backup-on-change once at startup
+import '@/lib/daily-nudge'; // side-effect: (re)arms the daily nudge on habits/locale change once at startup
 import { useT } from '@/lib/i18n';
 import { useOnboardingCompleted } from '@/lib/onboarding-store';
 

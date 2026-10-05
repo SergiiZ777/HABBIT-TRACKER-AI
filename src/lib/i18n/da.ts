@@ -159,4 +159,9 @@ export const da: Dictionary = {
   backupIdHint: 'Gem dette et sikkert sted. Brug det til at gendanne dine vaner på en ny enhed.',
   backupIdCopied: 'Kopieret!',
   copyButton: 'Kopiér',
+
+  dailyNudgeTitle: 'Vaneguide',
+  dailyNudgeLabel: 'Daglig påmindelse',
+  dailyNudgeHint: 'En aftenpåmindelse, hvis du ikke har fuldført dagens vaner endnu.',
+  dailyNudgeDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få din daglige påmindelse.',
 };
