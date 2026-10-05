@@ -30,6 +30,9 @@ export interface Dictionary {
   emptyNoHabits: (fabLabel: string) => string;
   /** Shown when the user has habits, but none are scheduled for the selected day (not the same as having zero habits at all). */
   noHabitsScheduledToday: string;
+  sectionMorning: string;
+  sectionEvening: string;
+  sectionAnytime: string;
   hintTapLongPress: string;
   fabNewHabit: string;
   languageButtonLabel: string;

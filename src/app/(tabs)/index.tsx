@@ -13,6 +13,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, useHabits, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
 
+type RoutineGroup = 'morning' | 'evening' | 'anytime';
+function routineGroup(habit: Habit): RoutineGroup {
+  if (!habit.reminderTime) return 'anytime';
+  const hour = parseInt(habit.reminderTime.split(':')[0], 10);
+  return hour < 12 ? 'morning' : 'evening';
+}
+
 function greeting(t: Dictionary) {
   const h = new Date().getHours();
   if (h < 12) return t.greetingMorning;
@@ -48,6 +55,18 @@ export default function TodayScreen() {
     },
     null,
   );
+
+  const habitGroups = (() => {
+    const morning = scheduledToday.filter((h) => routineGroup(h) === 'morning');
+    const evening = scheduledToday.filter((h) => routineGroup(h) === 'evening');
+    const anytime = scheduledToday.filter((h) => routineGroup(h) === 'anytime');
+    const groups = [
+      { key: 'morning' as const, label: t.sectionMorning, habits: morning },
+      { key: 'evening' as const, label: t.sectionEvening, habits: evening },
+      { key: 'anytime' as const, label: t.sectionAnytime, habits: anytime },
+    ].filter((g) => g.habits.length > 0);
+    return groups.length > 1 ? groups : null;
+  })();
 
   const [showConfetti, setShowConfetti] = useState(false);
   const wasAllDoneToday = useRef<boolean | null>(null);
@@ -106,12 +125,29 @@ export default function TodayScreen() {
           {showConfetti && <ConfettiBurst onDone={() => setShowConfetti(false)} />}
         </View>
 
-        <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
+        {habitGroups ? (
+          habitGroups.map((g) => (
+            <View key={g.key}>
+              <Text style={[styles.section, { color: theme.textSecondary }]}>{g.label}</Text>
+              <View style={styles.list}>
+                {g.habits.map((h) => (
+                  <HabitCard key={h.id} habit={h} day={selected} />
+                ))}
+              </View>
+            </View>
+          ))
+        ) : (
+          <>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.sectionHabits}</Text>
+            <View style={styles.list}>
+              {scheduledToday.map((h) => (
+                <HabitCard key={h.id} habit={h} day={selected} />
+              ))}
+            </View>
+          </>
+        )}
 
         <View style={styles.list}>
-          {scheduledToday.map((h) => (
-            <HabitCard key={h.id} habit={h} day={selected} />
-          ))}
           {habits.length === 0 && (
             <View style={[styles.empty, { borderColor: theme.border }]}>
               <Text style={styles.emptyEmoji}>🌱</Text>
