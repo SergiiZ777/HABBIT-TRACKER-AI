@@ -8,6 +8,7 @@
     "scheme": "habbittrackerai",
     "userInterfaceStyle": "automatic",
     "android": {
+      "package": "com.sergii777.habbittrackerai",
       "adaptiveIcon": {
         "backgroundColor": "#5B5BF7",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
