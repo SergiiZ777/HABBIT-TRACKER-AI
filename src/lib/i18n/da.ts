@@ -89,6 +89,9 @@ export const da: Dictionary = {
   actionCancel: 'Annuller',
   startStreakToday: 'Start din stime i dag',
   daysStreak: (n) => `🔥 ${n} ${n === 1 ? 'dags' : 'dages'} stime`,
+  streakBadge: (n) => `${n} ${n === 1 ? 'dag' : 'dage'}`,
+  topStreakLabel: 'Bedste stime',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} ${n === 1 ? 'dag' : 'dage'}`,
 
   remindersDisabledTitle: 'Påmindelser deaktiveret',
   remindersDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få en daglig påmindelse til denne vane.',

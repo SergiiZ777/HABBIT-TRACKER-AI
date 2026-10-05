@@ -98,6 +98,9 @@ export const ru: Dictionary = {
   actionCancel: 'Отмена',
   startStreakToday: 'Начните серию сегодня',
   daysStreak: (n) => `🔥 ${n}-дневная серия`,
+  streakBadge: (n) => `${n} д.`,
+  topStreakLabel: 'Лучшая серия',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} д.`,
 
   remindersDisabledTitle: 'Напоминания отключены',
   remindersDisabledMessage: 'Включите уведомления в Настройках, чтобы получать ежедневное напоминание для этой привычки.',

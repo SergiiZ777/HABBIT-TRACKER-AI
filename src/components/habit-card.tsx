@@ -6,7 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, w
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentStreak, deleteHabit, formatTime, habitReminderNotificationIds, toggleCompletion, type Habit } from '@/lib/habits';
+import { currentStreak, deleteHabit, formatTime, habitReminderNotificationIds, streakMilestoneColor, toggleCompletion, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
 import { cancelHabitReminder } from '@/lib/notifications';
 
@@ -81,10 +81,20 @@ export function HabitCard({ habit, day }: Props) {
           ]}>
           {habit.name}
         </Text>
-        <Text style={[styles.meta, { color: theme.textSecondary }]}>
-          {streak > 0 ? t.daysStreak(streak) : t.startStreakToday}
-          {habit.reminderTime ? `  ·  ⏰ ${formatTime(habit.reminderTime, localeTag)}` : ''}
-        </Text>
+        <View style={styles.metaRow}>
+          {streak > 0 ? (
+            <View style={[styles.streakPill, { backgroundColor: (streakMilestoneColor(streak) ?? theme.textSecondary) + '22' }]}>
+              <Text style={[styles.streakPillText, { color: streakMilestoneColor(streak) ?? theme.textSecondary }]}>
+                🔥 {t.streakBadge(streak)}
+              </Text>
+            </View>
+          ) : (
+            <Text style={[styles.meta, { color: theme.textSecondary }]}>{t.startStreakToday}</Text>
+          )}
+          {habit.reminderTime ? (
+            <Text style={[styles.meta, { color: theme.textSecondary }]}>⏰ {formatTime(habit.reminderTime, localeTag)}</Text>
+          ) : null}
+        </View>
       </View>
 
       <Animated.View
@@ -119,7 +129,10 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 24 },
   body: { flex: 1, gap: 2 },
   name: { fontSize: 17, fontWeight: '600' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   meta: { fontSize: 13 },
+  streakPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.pill },
+  streakPillText: { fontSize: 12, fontWeight: '700' },
   check: {
     width: 32,
     height: 32,

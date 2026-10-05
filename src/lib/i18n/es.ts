@@ -90,6 +90,9 @@ export const es: Dictionary = {
   actionCancel: 'Cancelar',
   startStreakToday: 'Empieza tu racha hoy',
   daysStreak: (n) => `🔥 Racha de ${n} día${n === 1 ? '' : 's'}`,
+  streakBadge: (n) => `${n} día${n === 1 ? '' : 's'}`,
+  topStreakLabel: 'Mejor racha',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} día${n === 1 ? '' : 's'}`,
 
   remindersDisabledTitle: 'Recordatorios desactivados',
   remindersDisabledMessage: 'Activa las notificaciones en Ajustes para recibir un recordatorio diario de este hábito.',

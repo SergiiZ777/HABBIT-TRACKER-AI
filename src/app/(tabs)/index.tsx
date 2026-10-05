@@ -10,7 +10,7 @@ import { ProgressRing } from '@/components/progress-ring';
 import { WeekStrip } from '@/components/week-strip';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { dayKey, isScheduledOn, useHabits } from '@/lib/habits';
+import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, useHabits, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
 
 function greeting(t: Dictionary) {
@@ -40,6 +40,14 @@ export default function TodayScreen() {
   const done = scheduledToday.filter((h) => h.completions.includes(selected)).length;
   const total = scheduledToday.length;
   const isToday = selected === today;
+
+  const topStreakHabit = scheduledToday.reduce<{ habit: Habit; streak: number } | null>(
+    (best, h) => {
+      const s = currentStreak(h);
+      return s > 0 && (!best || s > best.streak) ? { habit: h, streak: s } : best;
+    },
+    null,
+  );
 
   const [showConfetti, setShowConfetti] = useState(false);
   const wasAllDoneToday = useRef<boolean | null>(null);
@@ -89,6 +97,11 @@ export default function TodayScreen() {
           <View style={styles.flex}>
             <Text style={[styles.summaryTitle, { color: theme.text }]}>{t.doneOfTotal(done, total)}</Text>
             <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{encouragement(t, done, total)}</Text>
+            {topStreakHabit && (
+              <Text style={[styles.topStreak, { color: streakMilestoneColor(topStreakHabit.streak) ?? theme.accent }]}>
+                🔥 {t.topStreakValue(topStreakHabit.habit.emoji, topStreakHabit.habit.name, topStreakHabit.streak)}
+              </Text>
+            )}
           </View>
           {showConfetti && <ConfettiBurst onDone={() => setShowConfetti(false)} />}
         </View>
@@ -158,6 +171,7 @@ const styles = StyleSheet.create({
   ringText: { fontSize: 18, fontWeight: '800' },
   summaryTitle: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
   summaryText: { fontSize: 15, lineHeight: 21 },
+  topStreak: { fontSize: 13, fontWeight: '700', marginTop: 4 },
   section: { fontSize: 12, fontWeight: '700', letterSpacing: 1.2, marginBottom: -Spacing.two },
   list: { gap: Spacing.two + 2 },
   empty: {

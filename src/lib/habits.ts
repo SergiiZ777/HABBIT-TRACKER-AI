@@ -99,6 +99,15 @@ export function currentStreak(habit: Habit, today: Date = new Date()): number {
   return streak;
 }
 
+/** Returns a milestone color when the streak hits a notable threshold, or null. */
+export function streakMilestoneColor(streak: number): string | null {
+  if (streak >= 100) return '#FFD700';
+  if (streak >= 30) return '#FF6B35';
+  if (streak >= 7) return '#F2994A';
+  if (streak >= 3) return '#E0A800';
+  return null;
+}
+
 // ---------- store ----------
 
 function load(): State {

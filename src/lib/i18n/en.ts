@@ -89,6 +89,9 @@ export const en: Dictionary = {
   actionCancel: 'Cancel',
   startStreakToday: 'Start your streak today',
   daysStreak: (n) => `🔥 ${n} day${n === 1 ? '' : 's'} streak`,
+  streakBadge: (n) => `${n} day${n === 1 ? '' : 's'}`,
+  topStreakLabel: 'Top streak',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} day${n === 1 ? '' : 's'}`,
 
   remindersDisabledTitle: 'Reminders disabled',
   remindersDisabledMessage: 'Enable notifications in Settings to get a daily reminder for this habit.',

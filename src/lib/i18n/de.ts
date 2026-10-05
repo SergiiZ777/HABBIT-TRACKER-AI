@@ -90,6 +90,9 @@ export const de: Dictionary = {
   actionCancel: 'Abbrechen',
   startStreakToday: 'Starte deine Serie heute',
   daysStreak: (n) => `🔥 ${n}-Tage-Serie`,
+  streakBadge: (n) => `${n} ${n === 1 ? 'Tag' : 'Tage'}`,
+  topStreakLabel: 'Beste Serie',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} ${n === 1 ? 'Tag' : 'Tage'}`,
 
   remindersDisabledTitle: 'Erinnerungen deaktiviert',
   remindersDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um eine tägliche Erinnerung für diese Gewohnheit zu erhalten.',

@@ -98,6 +98,9 @@ export const uk: Dictionary = {
   actionCancel: 'Скасувати',
   startStreakToday: 'Почніть серію сьогодні',
   daysStreak: (n) => `🔥 ${n}-денна серія`,
+  streakBadge: (n) => `${n} д.`,
+  topStreakLabel: 'Найкраща серія',
+  topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} д.`,
 
   remindersDisabledTitle: 'Нагадування вимкнено',
   remindersDisabledMessage: 'Увімкніть сповіщення в Налаштуваннях, щоб отримувати щоденне нагадування для цієї звички.',

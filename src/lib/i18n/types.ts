@@ -95,6 +95,9 @@ export interface Dictionary {
   actionCancel: string;
   startStreakToday: string;
   daysStreak: (n: number) => string;
+  streakBadge: (n: number) => string;
+  topStreakLabel: string;
+  topStreakValue: (emoji: string, name: string, n: number) => string;
 
   // Alerts
   remindersDisabledTitle: string;
