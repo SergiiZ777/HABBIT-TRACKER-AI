@@ -171,4 +171,7 @@ export const de: Dictionary = {
   dailyNudgeLabel: 'Tägliche Erinnerung',
   dailyNudgeHint: 'Eine Abenderinnerung, falls du die heutigen Gewohnheiten noch nicht abgeschlossen hast.',
   dailyNudgeDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um deine tägliche Erinnerung zu erhalten.',
+  weeklyRecapLabel: 'Wöchentliche KI-Zusammenfassung',
+  weeklyRecapHint: 'Eine kurze, von der KI geschriebene Push-Benachrichtigung jeden Sonntagabend mit einem Rückblick auf deine Woche.',
+  weeklyRecapDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um deine wöchentliche Zusammenfassung zu erhalten.',
 };

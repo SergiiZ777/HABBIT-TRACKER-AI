@@ -171,4 +171,7 @@ export const es: Dictionary = {
   dailyNudgeLabel: 'Recordatorio diario',
   dailyNudgeHint: 'Un recordatorio nocturno si aún no has terminado tus hábitos de hoy.',
   dailyNudgeDisabledMessage: 'Activa las notificaciones en Ajustes para recibir tu recordatorio diario.',
+  weeklyRecapLabel: 'Resumen semanal con IA',
+  weeklyRecapHint: 'Una notificación corta escrita por IA cada domingo por la noche con un vistazo a tu semana.',
+  weeklyRecapDisabledMessage: 'Activa las notificaciones en Ajustes para recibir tu resumen semanal.',
 };

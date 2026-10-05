@@ -24,6 +24,7 @@ import { currentStreak, useHabits } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
 import { computePatternInsight, resolvePatternInsight } from '@/lib/insights';
 import { computeMotivation, resolveMotivation } from '@/lib/motivation';
+import { setWeeklyRecapEnabled, useWeeklyRecapEnabled } from '@/lib/weekly-recap';
 
 export default function DashboardScreen() {
   const theme = useTheme();
@@ -37,6 +38,7 @@ export default function DashboardScreen() {
   const [yearView, setYearView] = useState<'heatmap' | 'graph'>('heatmap');
   const nudgeEnabled = useDailyNudgeEnabled();
   const nudgeTime = useDailyNudgeTime();
+  const recapEnabled = useWeeklyRecapEnabled();
 
   const copyBackupId = async () => {
     await Clipboard.setStringAsync(deviceId);
@@ -47,6 +49,11 @@ export default function DashboardScreen() {
   const onToggleNudge = async (next: boolean) => {
     const ok = await setDailyNudgeEnabled(next);
     if (!ok) Alert.alert(t.remindersDisabledTitle, t.dailyNudgeDisabledMessage);
+  };
+
+  const onToggleRecap = async (next: boolean) => {
+    const ok = await setWeeklyRecapEnabled(next);
+    if (!ok) Alert.alert(t.remindersDisabledTitle, t.weeklyRecapDisabledMessage);
   };
 
   const stats = computeStats(habits, today);
@@ -248,6 +255,18 @@ export default function DashboardScreen() {
           </View>
           <Text style={[styles.backupHint, { color: theme.textSecondary }]}>{t.dailyNudgeHint}</Text>
           {nudgeEnabled && <TimePickerField time={nudgeTime} color={theme.accent} onChange={setDailyNudgeTime} />}
+        </View>
+
+        <View style={[styles.backupCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+          <View style={styles.nudgeRow}>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.weeklyRecapLabel}</Text>
+            <Switch
+              value={recapEnabled}
+              onValueChange={onToggleRecap}
+              trackColor={{ true: theme.accent, false: theme.backgroundSelected }}
+            />
+          </View>
+          <Text style={[styles.backupHint, { color: theme.textSecondary }]}>{t.weeklyRecapHint}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -179,4 +179,7 @@ export const uk: Dictionary = {
   dailyNudgeLabel: 'Щоденне нагадування',
   dailyNudgeHint: 'Вечірнє нагадування, якщо ви ще не завершили сьогоднішні звички.',
   dailyNudgeDisabledMessage: 'Увімкніть сповіщення в налаштуваннях, щоб отримувати щоденне нагадування.',
+  weeklyRecapLabel: 'Тижневий підсумок від AI',
+  weeklyRecapHint: 'Короткий push-підсумок тижня, написаний AI, щонеділі ввечері.',
+  weeklyRecapDisabledMessage: 'Увімкніть сповіщення в налаштуваннях, щоб отримувати тижневий підсумок.',
 };

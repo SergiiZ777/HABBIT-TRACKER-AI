@@ -170,4 +170,7 @@ export const en: Dictionary = {
   dailyNudgeLabel: 'Daily nudge',
   dailyNudgeHint: "An evening reminder if you haven't finished today's habits yet.",
   dailyNudgeDisabledMessage: 'Enable notifications in Settings to get your daily nudge.',
+  weeklyRecapLabel: 'Weekly AI recap',
+  weeklyRecapHint: 'A short AI-written push notification every Sunday evening, looking back at your week.',
+  weeklyRecapDisabledMessage: 'Enable notifications in Settings to get your weekly recap.',
 };

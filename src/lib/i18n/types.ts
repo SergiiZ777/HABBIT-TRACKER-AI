@@ -175,4 +175,7 @@ export interface Dictionary {
   dailyNudgeLabel: string;
   dailyNudgeHint: string;
   dailyNudgeDisabledMessage: string;
+  weeklyRecapLabel: string;
+  weeklyRecapHint: string;
+  weeklyRecapDisabledMessage: string;
 }

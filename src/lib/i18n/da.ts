@@ -170,4 +170,7 @@ export const da: Dictionary = {
   dailyNudgeLabel: 'Daglig påmindelse',
   dailyNudgeHint: 'En aftenpåmindelse, hvis du ikke har fuldført dagens vaner endnu.',
   dailyNudgeDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få din daglige påmindelse.',
+  weeklyRecapLabel: 'Ugentlig AI-opsummering',
+  weeklyRecapHint: 'En kort AI-skrevet push-notifikation hver søndag aften med et tilbageblik på din uge.',
+  weeklyRecapDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få din ugentlige opsummering.',
 };
