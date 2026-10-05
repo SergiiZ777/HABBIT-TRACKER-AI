@@ -97,6 +97,11 @@ export const es: Dictionary = {
   topStreakLabel: 'Mejor racha',
   topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} día${n === 1 ? '' : 's'}`,
 
+  recommendationTitle: 'No te saltes esta',
+  recommendationCloseMilestone: (emoji, name, target) => `¡Completa ${emoji} ${name} hoy y alcanza una racha de ${target} días!`,
+  recommendationLongestStreak: (emoji, name, streak) => `¡Mantén ${emoji} ${name} — racha de ${streak} día${streak === 1 ? '' : 's'}!`,
+  recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} no se ha hecho en ${gap} días`,
+
   remindersDisabledTitle: 'Recordatorios desactivados',
   remindersDisabledMessage: 'Activa las notificaciones en Ajustes para recibir un recordatorio diario de este hábito.',
 

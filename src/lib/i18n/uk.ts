@@ -105,6 +105,11 @@ export const uk: Dictionary = {
   topStreakLabel: 'Найкраща серія',
   topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} д.`,
 
+  recommendationTitle: 'Не пропустіть',
+  recommendationCloseMilestone: (emoji, name, target) => `Виконайте ${emoji} ${name} сьогодні — до серії в ${target} днів!`,
+  recommendationLongestStreak: (emoji, name, streak) => `Тримайте ${emoji} ${name} — серія ${streak} д.!`,
+  recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} не виконувалось ${gap} дн.`,
+
   remindersDisabledTitle: 'Нагадування вимкнено',
   remindersDisabledMessage: 'Увімкніть сповіщення в Налаштуваннях, щоб отримувати щоденне нагадування для цієї звички.',
 

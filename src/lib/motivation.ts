@@ -22,7 +22,7 @@ const STREAK_MILESTONES = [3, 7, 30, 100];
 const FALLBACK_COUNT = 5;
 
 /** How many *scheduled* days since a habit was last completed (0 = today, 1 = its previous scheduled day, ...). Infinity if never. */
-function daysSinceLastCompletion(habit: Habit, today: Date): number {
+export function daysSinceLastCompletion(habit: Habit, today: Date): number {
   if (habit.completions.length === 0) return Infinity;
   const mostRecent = [...habit.completions].sort().at(-1)!;
   let gap = 0;

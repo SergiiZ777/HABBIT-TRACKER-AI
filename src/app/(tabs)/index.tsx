@@ -10,8 +10,9 @@ import { ProgressRing } from '@/components/progress-ring';
 import { WeekStrip } from '@/components/week-strip';
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, useHabits, type Habit } from '@/lib/habits';
+import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, toggleCompletion, useHabits, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
+import { computeRecommendation, type Recommendation } from '@/lib/recommendation';
 
 type RoutineGroup = 'morning' | 'evening' | 'anytime';
 function routineGroup(habit: Habit): RoutineGroup {
@@ -67,6 +68,8 @@ export default function TodayScreen() {
     ].filter((g) => g.habits.length > 0);
     return groups.length > 1 ? groups : null;
   })();
+
+  const recommendation = isToday ? computeRecommendation(scheduledToday, selected, new Date()) : null;
 
   const [showConfetti, setShowConfetti] = useState(false);
   const wasAllDoneToday = useRef<boolean | null>(null);
@@ -124,6 +127,21 @@ export default function TodayScreen() {
           </View>
           {showConfetti && <ConfettiBurst onDone={() => setShowConfetti(false)} />}
         </View>
+
+        {recommendation && (
+          <Pressable
+            onPress={() => toggleCompletion(recommendation.habitId, selected)}
+            style={[styles.recCard, { backgroundColor: theme.accent + '15', borderColor: theme.accent + '33' }]}>
+            <Text style={[styles.recTitle, { color: theme.accent }]}>✨ {t.recommendationTitle}</Text>
+            <Text style={[styles.recBody, { color: theme.text }]}>
+              {recommendation.reason === 'closeMilestone'
+                ? t.recommendationCloseMilestone(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)
+                : recommendation.reason === 'longestStreak'
+                  ? t.recommendationLongestStreak(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)
+                  : t.recommendationMostNeglected(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)}
+            </Text>
+          </Pressable>
+        )}
 
         {habitGroups ? (
           habitGroups.map((g) => (
@@ -208,6 +226,9 @@ const styles = StyleSheet.create({
   summaryTitle: { fontSize: 20, fontWeight: '700', marginBottom: 4 },
   summaryText: { fontSize: 15, lineHeight: 21 },
   topStreak: { fontSize: 13, fontWeight: '700', marginTop: 4 },
+  recCard: { padding: Spacing.three, borderRadius: Radius.lg, borderWidth: 1, gap: 4 },
+  recTitle: { fontSize: 13, fontWeight: '700' },
+  recBody: { fontSize: 15, lineHeight: 21 },
   section: { fontSize: 12, fontWeight: '700', letterSpacing: 1.2, marginBottom: -Spacing.two },
   list: { gap: Spacing.two + 2 },
   empty: {

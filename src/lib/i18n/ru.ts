@@ -105,6 +105,11 @@ export const ru: Dictionary = {
   topStreakLabel: 'Лучшая серия',
   topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} д.`,
 
+  recommendationTitle: 'Не пропустите',
+  recommendationCloseMilestone: (emoji, name, target) => `Выполните ${emoji} ${name} сегодня — до серии в ${target} дней!`,
+  recommendationLongestStreak: (emoji, name, streak) => `Не ломайте ${emoji} ${name} — серия ${streak} д.!`,
+  recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} не выполнялось ${gap} дн.`,
+
   remindersDisabledTitle: 'Напоминания отключены',
   remindersDisabledMessage: 'Включите уведомления в Настройках, чтобы получать ежедневное напоминание для этой привычки.',
 

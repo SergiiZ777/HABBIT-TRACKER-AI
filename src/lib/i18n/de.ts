@@ -97,6 +97,11 @@ export const de: Dictionary = {
   topStreakLabel: 'Beste Serie',
   topStreakValue: (emoji, name, n) => `${emoji} ${name} — ${n} ${n === 1 ? 'Tag' : 'Tage'}`,
 
+  recommendationTitle: 'Lass diese nicht aus',
+  recommendationCloseMilestone: (emoji, name, target) => `Schließe ${emoji} ${name} ab und erreiche eine ${target}-Tage-Serie!`,
+  recommendationLongestStreak: (emoji, name, streak) => `Halte ${emoji} ${name} am Laufen — ${streak}-Tage-Serie!`,
+  recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} wurde seit ${gap} Tagen nicht gemacht`,
+
   remindersDisabledTitle: 'Erinnerungen deaktiviert',
   remindersDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um eine tägliche Erinnerung für diese Gewohnheit zu erhalten.',
 

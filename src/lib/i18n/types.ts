@@ -102,6 +102,12 @@ export interface Dictionary {
   topStreakLabel: string;
   topStreakValue: (emoji: string, name: string, n: number) => string;
 
+  // Recommendation
+  recommendationTitle: string;
+  recommendationCloseMilestone: (emoji: string, name: string, target: number) => string;
+  recommendationLongestStreak: (emoji: string, name: string, streak: number) => string;
+  recommendationMostNeglected: (emoji: string, name: string, gap: number) => string;
+
   // Alerts
   remindersDisabledTitle: string;
   remindersDisabledMessage: string;
