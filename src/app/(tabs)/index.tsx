@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   recCard: { padding: Spacing.three, borderRadius: Radius.lg, borderWidth: 1, gap: 4 },
   recTitle: { fontSize: 13, fontWeight: '700' },
   recBody: { fontSize: 15, lineHeight: 21 },
-  section: { fontSize: 12, fontWeight: '700', letterSpacing: 1.2, marginBottom: -Spacing.two },
+  section: { fontSize: 12, fontWeight: '700', letterSpacing: 1.2, marginBottom: Spacing.one },
   list: { gap: Spacing.two + 2 },
   empty: {
     alignItems: 'center',

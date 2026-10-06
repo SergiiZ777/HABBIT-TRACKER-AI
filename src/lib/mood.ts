@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import Storage from '@/lib/kv-storage';
 
@@ -42,6 +42,11 @@ export function getMood(): State {
 
 export function getMoodForDay(day: string): MoodEntry | null {
   return state[day] ?? null;
+}
+
+export function useMoodForDay(day: string): MoodEntry | null {
+  const snap = useCallback(() => state[day] ?? null, [day]);
+  return useSyncExternalStore(subscribe, snap);
 }
 
 export function setMoodForDay(day: string, entry: MoodEntry) {

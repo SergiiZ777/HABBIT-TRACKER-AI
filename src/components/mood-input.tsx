@@ -1,9 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useT } from '@/lib/i18n';
-import { getMoodForDay, setMoodForDay, useMood } from '@/lib/mood';
+import { setMoodForDay, useMoodForDay, type MoodEntry } from '@/lib/mood';
 
 const ENERGY_EMOJIS = ['😴', '😐', '🙂', '😊', '⚡'];
 const MOOD_EMOJIS = ['😢', '😕', '😐', '🙂', '😄'];
@@ -13,15 +14,20 @@ type Props = { day: string };
 export function MoodInput({ day }: Props) {
   const theme = useTheme();
   const t = useT();
-  useMood();
-  const entry = getMoodForDay(day);
+  const entry = useMoodForDay(day);
 
-  const setEnergy = (level: number) => {
-    setMoodForDay(day, { energy: level, mood: entry?.mood ?? 0 });
-  };
-  const setMoodLevel = (level: number) => {
-    setMoodForDay(day, { energy: entry?.energy ?? 0, mood: level });
-  };
+  const setEnergy = useCallback(
+    (level: number) => {
+      setMoodForDay(day, { energy: level, mood: entry?.mood ?? 0 });
+    },
+    [day, entry?.mood],
+  );
+  const setMoodLevel = useCallback(
+    (level: number) => {
+      setMoodForDay(day, { energy: entry?.energy ?? 0, mood: level });
+    },
+    [day, entry?.energy],
+  );
 
   return (
     <View style={[styles.card, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
@@ -34,17 +40,18 @@ export function MoodInput({ day }: Props) {
             const level = i + 1;
             const selected = entry?.energy === level;
             return (
-              <Pressable
+              <TouchableOpacity
                 key={e}
                 onPress={() => setEnergy(level)}
+                activeOpacity={0.6}
                 style={[
                   styles.emojiBtn,
                   selected
-                    ? { backgroundColor: theme.accent + '22', borderColor: theme.accent }
-                    : { backgroundColor: theme.backgroundSelected, borderColor: 'transparent' },
+                    ? { backgroundColor: theme.accent + '44', borderColor: theme.accent, transform: [{ scale: 1.15 }] }
+                    : { backgroundColor: theme.backgroundSelected, borderColor: theme.border },
                 ]}>
                 <Text style={styles.emoji}>{e}</Text>
-              </Pressable>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -57,17 +64,18 @@ export function MoodInput({ day }: Props) {
             const level = i + 1;
             const selected = entry?.mood === level;
             return (
-              <Pressable
+              <TouchableOpacity
                 key={e}
                 onPress={() => setMoodLevel(level)}
+                activeOpacity={0.6}
                 style={[
                   styles.emojiBtn,
                   selected
-                    ? { backgroundColor: theme.accent + '22', borderColor: theme.accent }
-                    : { backgroundColor: theme.backgroundSelected, borderColor: 'transparent' },
+                    ? { backgroundColor: theme.accent + '44', borderColor: theme.accent, transform: [{ scale: 1.15 }] }
+                    : { backgroundColor: theme.backgroundSelected, borderColor: theme.border },
                 ]}>
                 <Text style={styles.emoji}>{e}</Text>
-              </Pressable>
+              </TouchableOpacity>
             );
           })}
         </View>
