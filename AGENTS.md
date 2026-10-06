@@ -10,7 +10,7 @@ Expo ships breaking changes every SDK release. APIs you remember are likely rena
 
 ## Commands
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+This project uses npm. Use `npx` for all commands. (If a project has `bun.lock`, use `bunx` instead.)
 
 ```bash
 npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
@@ -22,6 +22,8 @@ npx expo install --fix      # fix incompatible package versions
 ```
 
 Run lint and typecheck before declaring any task done.
+
+There is no test framework configured. Do not attempt to run tests or create test files unless the user asks to set up testing.
 
 ## Navigation & Routing
 
