@@ -40,6 +40,14 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="weekly-review"
+            options={{
+              title: t.weeklyReviewTitle,
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.background },
+            }}
+          />
+          <Stack.Screen
             name="edit-habit"
             options={{
               title: t.screenEditHabit,

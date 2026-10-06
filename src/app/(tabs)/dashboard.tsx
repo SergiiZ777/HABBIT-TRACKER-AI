@@ -1,5 +1,6 @@
 import * as Clipboard from 'expo-clipboard';
-import { useState } from 'react';
+import { router } from 'expo-router';
+import { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -25,6 +26,7 @@ import { useLocaleTag, useT } from '@/lib/i18n';
 import { computePatternInsight, resolvePatternInsight } from '@/lib/insights';
 import { computeMotivation, resolveMotivation } from '@/lib/motivation';
 import { setWeeklyRecapEnabled, useWeeklyRecapEnabled } from '@/lib/weekly-recap';
+import { computeWeeklyReview } from '@/lib/weekly-review';
 
 export default function DashboardScreen() {
   const theme = useTheme();
@@ -67,6 +69,14 @@ export default function DashboardScreen() {
   const rangeSummary = computeRangeSummary(habits, range, today);
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `today` is stable within a single render
+  const weeklyReview = useMemo(() => computeWeeklyReview(habits, today), [habits]);
+  const weeklyTrendArrow = weeklyReview.trend.delta > 0
+    ? t.weeklyTrendUp(weeklyReview.trend.delta)
+    : weeklyReview.trend.delta < 0
+      ? t.weeklyTrendDown(weeklyReview.trend.delta)
+      : t.weeklyTrendFlat;
+
   const topHabits = [...habits].sort((a, b) => currentStreak(b, today) - currentStreak(a, today));
 
   const statTiles = [
@@ -100,6 +110,21 @@ export default function DashboardScreen() {
               <Text style={[styles.summaryText, { color: theme.textSecondary }]}>{patternInsight.detail}</Text>
             </View>
           </View>
+        )}
+
+        {habits.length > 0 && (
+          <Pressable
+            onPress={() => router.push('/weekly-review')}
+            style={[styles.weeklyCard, { backgroundColor: theme.accent + '12', borderColor: theme.accent + '44' }]}>
+            <Text style={styles.weeklyEmoji}>📋</Text>
+            <View style={styles.flex}>
+              <Text style={[styles.motivationHeadline, { color: theme.text }]}>{t.dashboardWeeklyCard}</Text>
+              <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
+                {t.dashboardWeeklyCardSummary(weeklyReview.completionRate, weeklyTrendArrow)}
+              </Text>
+            </View>
+            <Text style={[styles.weeklyArrow, { color: theme.accent }]}>→</Text>
+          </Pressable>
         )}
 
         <View style={styles.statsGrid}>
@@ -369,6 +394,16 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
   },
   emptyEmoji: { fontSize: 36 },
+  weeklyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    padding: Spacing.four,
+    borderRadius: Radius.lg,
+    borderWidth: 1.5,
+  },
+  weeklyEmoji: { fontSize: 28 },
+  weeklyArrow: { fontSize: 22, fontWeight: '700' },
   backupCard: { gap: Spacing.two, padding: Spacing.four, borderRadius: Radius.lg, borderWidth: 1 },
   nudgeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   backupRow: {

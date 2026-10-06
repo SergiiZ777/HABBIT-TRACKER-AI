@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useT } from '@/lib/i18n';
-import { setMoodForDay, useMoodForDay, type MoodEntry } from '@/lib/mood';
+import { setMoodForDay, useMoodForDay } from '@/lib/mood';
 
 const ENERGY_EMOJIS = ['😴', '😐', '🙂', '😊', '⚡'];
 const MOOD_EMOJIS = ['😢', '😕', '😐', '🙂', '😄'];

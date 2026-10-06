@@ -190,6 +190,31 @@ export interface Dictionary {
   moodEnergyLabel: string;
   moodMoodLabel: string;
 
+  // Weekly review
+  weeklyReviewTitle: string;
+  weeklyReviewDateRange: (start: string, end: string) => string;
+  weeklyOverviewDone: (done: number, total: number) => string;
+  weeklyPerfectDays: (n: number) => string;
+  weeklyTrendUp: (delta: number) => string;
+  weeklyTrendDown: (delta: number) => string;
+  weeklyTrendFlat: string;
+  weeklyBestHabits: string;
+  weeklyWorstHabits: string;
+  weeklyMissedHabits: string;
+  weeklyMissedNone: string;
+  weeklyMoodAvg: string;
+  weeklyCorrelationsTitle: string;
+  weeklyCorrelationPair: (a: string, b: string, days: number) => string;
+  weeklyAiReviewTitle: string;
+  weeklyAiLoading: string;
+  weeklyAiError: string;
+  weeklyAiWentWell: string;
+  weeklyAiFailed: string;
+  weeklyAiWhyFailed: string;
+  weeklyAiNextWeek: string;
+  dashboardWeeklyCard: string;
+  dashboardWeeklyCardSummary: (rate: number, trend: string) => string;
+
   // Daily nudge
   dailyNudgeTitle: string;
   dailyNudgeLabel: string;
