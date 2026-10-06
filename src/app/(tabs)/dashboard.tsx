@@ -5,6 +5,10 @@ import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { TimePickerField } from '@/components/time-picker-field';
+import { HabitDependenciesCard } from '@/components/habit-dependencies-card';
+import { HabitExperimentsSection } from '@/components/habit-experiments-section';
+import { HabitHealthCard } from '@/components/habit-health-card';
+import { computeHabitDependencies } from '@/lib/habit-dependencies';
 import { TrendChart } from '@/components/trend-chart';
 import { YearHeatmap } from '@/components/year-heatmap';
 import {
@@ -27,6 +31,8 @@ import { computePatternInsight, resolvePatternInsight } from '@/lib/insights';
 import { computeMotivation, resolveMotivation } from '@/lib/motivation';
 import { setWeeklyRecapEnabled, useWeeklyRecapEnabled } from '@/lib/weekly-recap';
 import { computeWeeklyReview } from '@/lib/weekly-review';
+import { computeMonthConsistency, defaultReviewMonth } from '@/lib/monthly-review';
+import { computeYearlyConsistencyScore } from '@/lib/yearly-review';
 
 export default function DashboardScreen() {
   const theme = useTheme();
@@ -71,12 +77,16 @@ export default function DashboardScreen() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- `today` is stable within a single render
   const weeklyReview = useMemo(() => computeWeeklyReview(habits, today), [habits]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `today` is stable within a single render
+  const monthlyRate = useMemo(() => computeMonthConsistency(habits, defaultReviewMonth(today), today), [habits]);
+  const yearlyScore = computeYearlyConsistencyScore(habits, today);
   const weeklyTrendArrow = weeklyReview.trend.delta > 0
     ? t.weeklyTrendUp(weeklyReview.trend.delta)
     : weeklyReview.trend.delta < 0
       ? t.weeklyTrendDown(weeklyReview.trend.delta)
       : t.weeklyTrendFlat;
 
+  const dependencies = computeHabitDependencies(habits, today);
   const topHabits = [...habits].sort((a, b) => currentStreak(b, today) - currentStreak(a, today));
 
   const statTiles = [
@@ -121,6 +131,36 @@ export default function DashboardScreen() {
               <Text style={[styles.motivationHeadline, { color: theme.text }]}>{t.dashboardWeeklyCard}</Text>
               <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
                 {t.dashboardWeeklyCardSummary(weeklyReview.completionRate, weeklyTrendArrow)}
+              </Text>
+            </View>
+            <Text style={[styles.weeklyArrow, { color: theme.accent }]}>→</Text>
+          </Pressable>
+        )}
+
+        {habits.length > 0 && (
+          <Pressable
+            onPress={() => router.push('/monthly-review')}
+            style={[styles.weeklyCard, { backgroundColor: theme.accent + '12', borderColor: theme.accent + '44' }]}>
+            <Text style={styles.weeklyEmoji}>📅</Text>
+            <View style={styles.flex}>
+              <Text style={[styles.motivationHeadline, { color: theme.text }]}>{t.dashboardMonthlyCard}</Text>
+              <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
+                {t.dashboardMonthlyCardSummary(monthlyRate)}
+              </Text>
+            </View>
+            <Text style={[styles.weeklyArrow, { color: theme.accent }]}>→</Text>
+          </Pressable>
+        )}
+
+        {habits.length > 0 && (
+          <Pressable
+            onPress={() => router.push('/yearly-review')}
+            style={[styles.weeklyCard, { backgroundColor: theme.accent + '12', borderColor: theme.accent + '44' }]}>
+            <Text style={styles.weeklyEmoji}>📊</Text>
+            <View style={styles.flex}>
+              <Text style={[styles.motivationHeadline, { color: theme.text }]}>{t.dashboardYearlyCard}</Text>
+              <Text style={[styles.summaryText, { color: theme.textSecondary }]}>
+                {t.dashboardYearlyCardSummary(yearlyScore)}
               </Text>
             </View>
             <Text style={[styles.weeklyArrow, { color: theme.accent }]}>→</Text>
@@ -223,28 +263,22 @@ export default function DashboardScreen() {
           ))}
         </View>
 
+        <HabitExperimentsSection />
+
+        {habits.length > 1 && (
+          <>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.dependenciesTitle}</Text>
+            <HabitDependenciesCard dependencies={dependencies} />
+          </>
+        )}
+
         {topHabits.length > 0 && (
           <>
-            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.perHabit}</Text>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.habitHealthTitle}</Text>
             <View style={styles.list}>
-              {topHabits.map((h) => {
-                const streak = currentStreak(h, today);
-                return (
-                  <View
-                    key={h.id}
-                    style={[styles.habitRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
-                    <View style={[styles.habitEmojiWrap, { backgroundColor: h.color + '22' }]}>
-                      <Text style={{ fontSize: 20 }}>{h.emoji}</Text>
-                    </View>
-                    <Text numberOfLines={1} style={[styles.habitName, { color: theme.text }]}>
-                      {h.name}
-                    </Text>
-                    <Text style={[styles.habitStreak, { color: theme.textSecondary }]}>
-                      {streak > 0 ? `🔥 ${streak}` : '—'}
-                    </Text>
-                  </View>
-                );
-              })}
+              {topHabits.map((h) => (
+                <HabitHealthCard key={h.id} habit={h} today={today} />
+              ))}
             </View>
           </>
         )}

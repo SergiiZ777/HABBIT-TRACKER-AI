@@ -7,6 +7,8 @@ import { useTheme } from '@/hooks/use-theme';
 import { weekdayLabel } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
 
+import { areaLabel, guessArea, LIFE_AREA_EMOJI, LIFE_AREAS, type LifeArea } from '@/lib/life-areas';
+
 const DEFAULT_REMINDER_TIME = '08:00';
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
@@ -16,6 +18,7 @@ export type HabitFormValues = {
   color: string;
   scheduledDays: number[];
   priority: 'high' | 'normal';
+  area: LifeArea;
   reminderEnabled: boolean;
   reminderTime: string;
 };
@@ -36,6 +39,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
   const [color, setColor] = useState<string>(initialValues?.color ?? HabitColors[0]);
   const [scheduledDays, setScheduledDays] = useState<number[]>(initialValues?.scheduledDays ?? ALL_DAYS);
   const [priority, setPriority] = useState<'high' | 'normal'>(initialValues?.priority ?? 'normal');
+  const [area, setArea] = useState<LifeArea>(initialValues?.area ?? guessArea(initialValues?.name ?? '', initialValues?.emoji ?? HabitEmojis[0]));
   const [reminderEnabled, setReminderEnabled] = useState(initialValues?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? DEFAULT_REMINDER_TIME);
 
@@ -61,7 +65,7 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
 
   const save = () => {
     if (!canSave) return;
-    onSubmit({ name: name.trim(), emoji, color, scheduledDays, priority, reminderEnabled, reminderTime });
+    onSubmit({ name: name.trim(), emoji, color, scheduledDays, priority, area, reminderEnabled, reminderTime });
   };
 
   return (
@@ -170,6 +174,26 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         })}
       </View>
 
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelLifeArea}</Text>
+      <View style={styles.wrap}>
+        {LIFE_AREAS.map((a) => {
+          const selected = area === a;
+          return (
+            <Pressable
+              key={a}
+              onPress={() => setArea(a)}
+              style={[
+                styles.areaChip,
+                { backgroundColor: selected ? color : theme.backgroundElement, borderColor: selected ? color : theme.border },
+              ]}>
+              <Text style={{ color: selected ? '#fff' : theme.text, fontSize: 13, fontWeight: '600' }}>
+                {LIFE_AREA_EMOJI[a]} {areaLabel(t, a)}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       <Text style={[styles.label, { color: theme.textSecondary }]}>{t.labelReminder}</Text>
       <View style={[styles.reminderRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
         <Text style={[styles.reminderLabel, { color: theme.text }]}>{t.dailyReminder}</Text>
@@ -243,6 +267,12 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     borderWidth: 1.5,
     alignItems: 'center',
+  },
+  areaChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: Radius.pill,
+    borderWidth: 1.5,
   },
   reminderRow: {
     flexDirection: 'row',

@@ -67,6 +67,11 @@ export interface Dictionary {
   coachSuggestion1: string;
   coachSuggestion2: string;
   coachSuggestion3: string;
+  coachSuggestion4: string;
+  coachSuggestion5: string;
+  coachInsightsHeader: string;
+  coachApplyAction: string;
+  coachActionApplied: string;
   marketBlurb: string;
   coachFallbackError: string;
 
@@ -216,6 +221,44 @@ export interface Dictionary {
   dashboardWeeklyCard: string;
   dashboardWeeklyCardSummary: (rate: number, trend: string) => string;
 
+  // Yearly review
+  yearlyReviewTitle: string;
+  yearlyReviewYear: (year: number) => string;
+  yearlyConsistencyScore: string;
+  yearlyTotalCompletions: string;
+  yearlyPerfectDays: (n: number) => string;
+  yearlyActiveDays: (active: number, total: number) => string;
+  yearlyBeforeAfterTitle: string;
+  yearlyBeforeLabel: string;
+  yearlyAfterLabel: string;
+  yearlyCompletionRate: (rate: number) => string;
+  yearlyMonthlyTrendsTitle: string;
+  yearlyBestMonth: (month: string, rate: number) => string;
+  yearlyWorstMonth: (month: string, rate: number) => string;
+  yearlyLongestStreakTitle: string;
+  yearlyLongestStreakValue: (emoji: string, name: string, days: number) => string;
+  yearlyHabitEvolutionTitle: string;
+  yearlyTrendImproving: string;
+  yearlyTrendDeclining: string;
+  yearlyTrendSteady: string;
+  yearlyBiggestImprovementsTitle: string;
+  yearlyImprovementStat: (earlyRate: number, recentRate: number) => string;
+  yearlyNoImprovements: string;
+  yearlyGoalsAchievedTitle: string;
+  yearlyNoGoals: string;
+  yearlyMoodAvgTitle: string;
+  yearlyAiTitle: string;
+  yearlyAiLoading: string;
+  yearlyAiError: string;
+  yearlyAiStory: string;
+  yearlyAiProud: string;
+  yearlyAiTransformation: string;
+  yearlyAiNextYear: string;
+  yearlyAiClosing: string;
+  yearlyHabitsAdded: (n: number) => string;
+  dashboardYearlyCard: string;
+  dashboardYearlyCardSummary: (score: number) => string;
+
   // Daily nudge
   dailyNudgeTitle: string;
   dailyNudgeLabel: string;
@@ -224,4 +267,105 @@ export interface Dictionary {
   weeklyRecapLabel: string;
   weeklyRecapHint: string;
   weeklyRecapDisabledMessage: string;
+
+  // Life Areas
+  labelLifeArea: string;
+  areaHealth: string;
+  areaLearning: string;
+  areaProductivity: string;
+  areaRelationships: string;
+  areaMind: string;
+
+  // Monthly Review
+  monthlyReviewTitle: string;
+  monthlyAtAGlance: string;
+  monthlyConsistency: string;
+  monthlyHabitsCompleted: (done: number, total: number) => string;
+  monthlyBestStreak: (days: number) => string;
+  monthlyHabitsImproved: (count: number) => string;
+  monthlyHabitsDeclined: (count: number) => string;
+  monthlyGoalsAchieved: (achieved: number, total: number) => string;
+  monthlyComparison: (prevMonth: string, currMonth: string, prevRate: number, currRate: number, delta: number) => string;
+  monthlyProgressByArea: string;
+  monthlyBiggestWins: string;
+  monthlyYourBiggestWin: string;
+  monthlyBiggestProblems: string;
+  monthlyYourBiggestProblem: string;
+  monthlyHabitByHabit: string;
+  monthlyWhatToChange: string;
+  monthlyNextMonthPriorities: string;
+  monthlyReflectionTitle: string;
+  monthlyQuestionWorked: string;
+  monthlyQuestionDifficult: string;
+  monthlyQuestionImprove: string;
+  monthlyReflectionSaved: string;
+  monthlyNextMonthPlan: string;
+  monthlyPlanKeep: string;
+  monthlyPlanChange: string;
+  monthlyPlanPause: string;
+  monthlyPlanNew: string;
+  monthlyPlanFocusLabel: string;
+  monthlyPlanFocusConsistency: string;
+  monthlyPlanFocusStabilize: string;
+  monthlyPlanFocusGrowth: string;
+  monthlyPlanFocusMaintain: string;
+  monthlyPlanApplyButton: string;
+  monthlyPlanApplied: string;
+  monthlyYearConnection: string;
+  monthlyProgressStory: string;
+  monthlyApplySuggestion: string;
+  monthlySuggestionApplied: string;
+  monthlyPauseHabit: string;
+  monthlyResumeHabit: string;
+  dashboardMonthlyCard: string;
+  dashboardMonthlyCardSummary: (rate: number | null) => string;
+  impactHigh: string;
+  impactMedium: string;
+  impactLow: string;
+
+  // Habit Health
+  habitHealthTitle: string;
+  habitHealthScore: (score: number) => string;
+  statConsistencyLabel: string;
+  statFrequencyLabel: string;
+  statTrendLabel: string;
+  statDifficultyLabel: string;
+  statRiskLabel: string;
+  riskLow: string;
+  riskMedium: string;
+  riskHigh: string;
+  difficultyEasy: string;
+  difficultyMedium: string;
+  difficultyHard: string;
+
+  // Focus Mode & Overload Intervention
+  focusModeTitle: string;
+  overloadInterventionHeadline: (count: number) => string;
+  focusSectionTitle: string;
+  secondarySectionTitle: string;
+  overloadWarningTitle: string;
+  overloadWarningBody: (count: number) => string;
+  focusTopThreeButton: string;
+  showAllHabitsButton: string;
+  createAnywayButton: string;
+
+  // Habit dependencies
+  dependenciesTitle: string;
+  dependencyInsight: (from: string, to: string, withPct: number, withoutPct: number) => string;
+  dependenciesEmpty: string;
+
+  // Habit experiments
+  experimentsTitle: string;
+  experimentStartButton: string;
+  experimentStarted: string;
+  experimentBadge: (days: number) => string;
+  experimentMove: (emoji: string, name: string, from: string, to: string) => string;
+  experimentGoal: string;
+  experimentProgress: (day: number, total: number) => string;
+  experimentRates: (baseline: number, current: number | null) => string;
+  experimentVerdictBetter: (delta: number) => string;
+  experimentVerdictWorse: (delta: number) => string;
+  experimentVerdictSame: string;
+  experimentKeep: string;
+  experimentRevert: string;
 }

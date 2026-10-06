@@ -13,6 +13,11 @@ import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { currentStreak, dayKey, isScheduledOn, streakMilestoneColor, toggleCompletion, useHabits, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT, type Dictionary } from '@/lib/i18n';
+import { FocusInterventionCard } from '@/components/focus-intervention-card';
+import { HabitExperimentsSection } from '@/components/habit-experiments-section';
+import { NextBestActionCard } from '@/components/next-best-action-card';
+import { computeFocusPlan } from '@/lib/focus-mode';
+import { computeNextBestAction } from '@/lib/next-best-action';
 import { computeRecommendation } from '@/lib/recommendation';
 
 type RoutineGroup = 'morning' | 'evening' | 'anytime';
@@ -73,6 +78,8 @@ export default function TodayScreen() {
     return groups.length > 1 ? groups : null;
   })();
 
+  const focusPlan = computeFocusPlan(habits, t, selectedDate);
+  const nextBestAction = isToday && habits.length > 0 ? computeNextBestAction(habits, t, new Date()) : null;
   const recommendation = isToday ? computeRecommendation(scheduledToday, selected, new Date()) : null;
 
   const [showConfetti, setShowConfetti] = useState(false);
@@ -134,7 +141,13 @@ export default function TodayScreen() {
 
         {isToday && <MoodInput day={selected} />}
 
-        {recommendation && (
+        {focusPlan.focusModeActive && <FocusInterventionCard plan={focusPlan} />}
+
+        {nextBestAction && <NextBestActionCard action={nextBestAction} />}
+
+        {isToday && <HabitExperimentsSection />}
+
+        {!nextBestAction && recommendation && (
           <Pressable
             onPress={() => toggleCompletion(recommendation.habitId, selected)}
             style={[styles.recCard, { backgroundColor: theme.accent + '15', borderColor: theme.accent + '33' }]}>

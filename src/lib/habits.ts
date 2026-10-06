@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 import Storage from '@/lib/kv-storage';
+import type { LifeArea } from '@/lib/life-areas';
 
 export type Habit = {
   id: string;
@@ -20,6 +21,12 @@ export type Habit = {
   scheduledDays?: number[];
   /** High-priority habits sort first and are weighted in recommendations. Absent = normal. */
   priority?: 'high' | 'normal';
+  /** Life area used by the monthly review. Absent = inferred from emoji/name (see life-areas.ts). */
+  area?: LifeArea;
+  /** Paused periods as local day keys — `from` inclusive, `to` exclusive (the resume day). An open range (no `to`) = currently paused. Paused days are neither scheduled nor missed. */
+  pauses?: { from: string; to?: string }[];
+  /** Previous `scheduledDays` values, ascending by `until` (exclusive day key) — keeps past stats accurate after a schedule change. */
+  scheduleHistory?: { until: string; days?: number[] }[];
 };
 
 /** Every reminder notification id for a habit, reading both the current and legacy field. */
@@ -27,9 +34,48 @@ export function habitReminderNotificationIds(habit: Habit): string[] {
   return habit.reminderNotificationIds ?? (habit.reminderNotificationId ? [habit.reminderNotificationId] : []);
 }
 
-/** Whether `habit` is tracked on `date`'s weekday — undefined `scheduledDays` means every day. */
+/** The `scheduledDays` value that was in effect on `key` (a day key) — reads schedule history. */
+export function scheduledDaysOn(habit: Habit, key: string): number[] | undefined {
+  if (habit.scheduleHistory) {
+    for (const entry of habit.scheduleHistory) {
+      if (key < entry.until) return entry.days;
+    }
+  }
+  return habit.scheduledDays;
+}
+
+/** Whether `habit` was paused on `key` (a day key). */
+export function isPausedOn(habit: Habit, key: string): boolean {
+  return !!habit.pauses?.some((p) => key >= p.from && (!p.to || key < p.to));
+}
+
+/** Whether `habit` is currently paused (has an open pause range). */
+export function isPaused(habit: Habit): boolean {
+  return !!habit.pauses?.some((p) => !p.to);
+}
+
+/**
+ * Whether `habit` is tracked on `date` — honours the schedule that was in effect on that day
+ * (undefined `scheduledDays` means every day) and treats paused days as not scheduled.
+ */
 export function isScheduledOn(habit: Habit, date: Date): boolean {
-  return !habit.scheduledDays || habit.scheduledDays.includes(date.getDay());
+  if (!habit.pauses && !habit.scheduleHistory) {
+    return !habit.scheduledDays || habit.scheduledDays.includes(date.getDay());
+  }
+  const key = dayKey(date);
+  if (isPausedOn(habit, key)) return false;
+  const days = scheduledDaysOn(habit, key);
+  return !days || days.includes(date.getDay());
+}
+
+/** Number of days per week a schedule covers (undefined = every day). */
+export function daysPerWeek(days: number[] | undefined): number {
+  return days ? days.length : 7;
+}
+
+function sameSchedule(a: number[] | undefined, b: number[] | undefined): boolean {
+  const norm = (d: number[] | undefined) => (!d || d.length === 7 ? 'all' : [...d].sort().join(','));
+  return norm(a) === norm(b);
 }
 
 type State = { habits: Habit[] };
@@ -164,7 +210,7 @@ export function restoreHabits(habits: Habit[]) {
 
 export function addHabit(
   input: Pick<Habit, 'name' | 'emoji' | 'color'> &
-    Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority'>>
+    Partial<Pick<Habit, 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority' | 'area'>>
 ): Habit {
   const habit: Habit = {
     ...input,
@@ -178,10 +224,49 @@ export function addHabit(
 
 export function updateHabit(
   id: string,
-  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority'>>
+  patch: Partial<Pick<Habit, 'name' | 'emoji' | 'color' | 'reminderTime' | 'reminderNotificationIds' | 'scheduledDays' | 'priority' | 'area'>>
 ) {
+  const today = dayKey();
   setState({
-    habits: state.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)),
+    habits: state.habits.map((h) => {
+      if (h.id !== id) return h;
+      const next: Habit = { ...h, ...patch };
+      // Remember the outgoing schedule so days before today keep being judged by it.
+      if ('scheduledDays' in patch && !sameSchedule(h.scheduledDays, patch.scheduledDays)) {
+        const created = dayKey(new Date(h.createdAt));
+        const history = h.scheduleHistory ?? [];
+        const last = history[history.length - 1];
+        if (created < today && (!last || last.until !== today)) {
+          next.scheduleHistory = [...history, { until: today, days: h.scheduledDays }];
+        }
+      }
+      return next;
+    }),
+  });
+}
+
+/** Starts a pause today (no-op if already paused). Reminders must be cancelled by the caller. */
+export function pauseHabit(id: string) {
+  const today = dayKey();
+  setState({
+    habits: state.habits.map((h) => {
+      if (h.id !== id || isPaused(h)) return h;
+      return { ...h, pauses: [...(h.pauses ?? []), { from: today }], reminderNotificationIds: undefined };
+    }),
+  });
+}
+
+/** Ends the open pause today. A pause started and ended on the same day is dropped entirely. */
+export function resumeHabit(id: string) {
+  const today = dayKey();
+  setState({
+    habits: state.habits.map((h) => {
+      if (h.id !== id || !h.pauses) return h;
+      const pauses = h.pauses
+        .map((p) => (p.to ? p : { ...p, to: today }))
+        .filter((p) => p.to !== p.from);
+      return { ...h, pauses: pauses.length ? pauses : undefined };
+    }),
   });
 }
 

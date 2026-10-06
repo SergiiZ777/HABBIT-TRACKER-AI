@@ -2,15 +2,23 @@ import { router } from 'expo-router';
 import { Alert } from 'react-native';
 
 import { HabitForm, type HabitFormValues } from '@/components/habit-form';
-import { addHabit, updateHabit } from '@/lib/habits';
+import { setFocusModeEnabled } from '@/lib/focus-mode';
+import { addHabit, getHabits, isPaused, updateHabit } from '@/lib/habits';
 import { useT } from '@/lib/i18n';
 import { scheduleHabitReminder } from '@/lib/notifications';
 
 export default function NewHabitScreen() {
   const t = useT();
 
-  const onSubmit = async (values: HabitFormValues) => {
-    const created = addHabit({ name: values.name, emoji: values.emoji, color: values.color, scheduledDays: values.scheduledDays, priority: values.priority });
+  const proceedWithCreation = async (values: HabitFormValues) => {
+    const created = addHabit({
+      name: values.name,
+      emoji: values.emoji,
+      color: values.color,
+      scheduledDays: values.scheduledDays,
+      priority: values.priority,
+      area: values.area,
+    });
 
     if (values.reminderEnabled) {
       const notificationIds = await scheduleHabitReminder(created, values.reminderTime, t, values.scheduledDays);
@@ -25,5 +33,28 @@ export default function NewHabitScreen() {
     router.back();
   };
 
+  const onSubmit = async (values: HabitFormValues) => {
+    const activeCount = getHabits().filter((h) => !isPaused(h)).length;
+
+    if (activeCount >= 5) {
+      Alert.alert(t.overloadWarningTitle, t.overloadWarningBody(activeCount), [
+        {
+          text: t.focusTopThreeButton,
+          onPress: () => {
+            setFocusModeEnabled(true);
+            router.back();
+          },
+        },
+        {
+          text: t.createAnywayButton,
+          onPress: () => proceedWithCreation(values),
+        },
+      ]);
+    } else {
+      await proceedWithCreation(values);
+    }
+  };
+
   return <HabitForm title={t.newHabitTitle} submitLabel={t.createHabit} onSubmit={onSubmit} />;
 }
+

@@ -6,6 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, w
 
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { computeHabitHealth } from '@/lib/habit-health';
 import { currentStreak, deleteHabit, formatTime, habitReminderNotificationIds, streakMilestoneColor, toggleCompletion, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
 import { cancelHabitReminder } from '@/lib/notifications';
@@ -18,6 +19,7 @@ export function HabitCard({ habit, day }: Props) {
   const localeTag = useLocaleTag();
   const done = habit.completions.includes(day);
   const streak = currentStreak(habit);
+  const health = computeHabitHealth(habit, t, new Date(day + 'T12:00:00'));
 
   const scale = useSharedValue(1);
   const prevDone = useRef(done);
@@ -41,18 +43,29 @@ export function HabitCard({ habit, day }: Props) {
   };
 
   const onLongPress = () => {
-    Alert.alert(habit.name, undefined, [
-      { text: t.actionEdit, onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
-      {
-        text: t.actionDelete,
-        style: 'destructive',
-        onPress: async () => {
-          await cancelHabitReminder(habitReminderNotificationIds(habit));
-          deleteHabit(habit.id);
+    const riskText =
+      health.risk === 'high'
+        ? t.riskHigh
+        : health.risk === 'medium'
+          ? t.riskMedium
+          : t.riskLow;
+
+    Alert.alert(
+      `${habit.emoji} ${habit.name} — ${health.score}/100`,
+      `${t.statConsistencyLabel}: ${health.consistency}%\n${t.statTrendLabel}: ${health.trend === 'up' ? '↑' : health.trend === 'down' ? '↓' : '→'}\n${t.statRiskLabel}: ${riskText}\n\n🤖 "${health.explanation}"`,
+      [
+        { text: t.actionEdit, onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
+        {
+          text: t.actionDelete,
+          style: 'destructive',
+          onPress: async () => {
+            await cancelHabitReminder(habitReminderNotificationIds(habit));
+            deleteHabit(habit.id);
+          },
         },
-      },
-      { text: t.actionCancel, style: 'cancel' },
-    ]);
+        { text: t.actionCancel, style: 'cancel' },
+      ]
+    );
   };
 
   return (
@@ -82,15 +95,18 @@ export function HabitCard({ habit, day }: Props) {
           {habit.priority === 'high' ? '⭐ ' : ''}{habit.name}
         </Text>
         <View style={styles.metaRow}>
+          <View style={[styles.healthPill, { backgroundColor: health.badgeColor + '22' }]}>
+            <Text style={[styles.healthPillText, { color: health.badgeColor }]}>
+              💚 {health.score}/100
+            </Text>
+          </View>
           {streak > 0 ? (
             <View style={[styles.streakPill, { backgroundColor: (streakMilestoneColor(streak) ?? theme.textSecondary) + '22' }]}>
               <Text style={[styles.streakPillText, { color: streakMilestoneColor(streak) ?? theme.textSecondary }]}>
                 🔥 {t.streakBadge(streak)}
               </Text>
             </View>
-          ) : (
-            <Text style={[styles.meta, { color: theme.textSecondary }]}>{t.startStreakToday}</Text>
-          )}
+          ) : null}
           {habit.reminderTime ? (
             <Text style={[styles.meta, { color: theme.textSecondary }]}>⏰ {formatTime(habit.reminderTime, localeTag)}</Text>
           ) : null}
@@ -131,6 +147,8 @@ const styles = StyleSheet.create({
   name: { fontSize: 17, fontWeight: '600' },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   meta: { fontSize: 13 },
+  healthPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 7, paddingVertical: 2, borderRadius: Radius.pill },
+  healthPillText: { fontSize: 11, fontWeight: '800' },
   streakPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.pill },
   streakPillText: { fontSize: 12, fontWeight: '700' },
   check: {

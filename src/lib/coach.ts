@@ -1,38 +1,71 @@
 import { computeStats } from '@/lib/achievements';
 import { getDeviceId } from '@/lib/backup';
-import { currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
+import type { CoachAction } from '@/lib/coach-insights';
+import { addDays, currentStreak, daysPerWeek, dayKey, isPaused, isScheduledOn, type Habit } from '@/lib/habits';
 import type { Dictionary, Locale } from '@/lib/i18n';
+import { habitArea } from '@/lib/life-areas';
 import { getMoodForDay } from '@/lib/mood';
 
-// n8n workflow "Habit Tracker AI - Coach Chat" — webhook -> AI Agent (Claude) grounded in real habit data.
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
-// Shared secret checked by the workflow's "Check Auth" node — keeps random discoverers of the
-// URL from spending the Anthropic credits behind it. Not a login secret; still kept out of git
-// via .env.local (see .env.example) rather than hardcoded, since this repo is public.
 const COACH_WEBHOOK_KEY = process.env.EXPO_PUBLIC_COACH_KEY ?? '';
 
-function buildContext(habits: Habit[], today: Date) {
+export type CoachResponse = {
+  text: string;
+  action?: CoachAction;
+};
+
+function buildRichContext(habits: Habit[], today: Date) {
   const key = dayKey(today);
-  return {
-    today: key,
-    habits: habits.map((h) => ({
+  const active = habits.filter((h) => !isPaused(h));
+
+  const days14: Date[] = [];
+  for (let i = 13; i >= 0; i--) days14.push(addDays(today, -i));
+
+  const habitStats = active.map((h) => {
+    const compSet = new Set(h.completions);
+    let schedCount = 0;
+    let doneCount = 0;
+    const dowDone = Array(7).fill(0);
+    const dowSched = Array(7).fill(0);
+
+    for (const d of days14) {
+      if (!isScheduledOn(h, d)) continue;
+      schedCount++;
+      const dow = d.getDay();
+      dowSched[dow]++;
+      if (compSet.has(dayKey(d))) {
+        doneCount++;
+        dowDone[dow]++;
+      }
+    }
+
+    return {
+      id: h.id,
       name: h.name,
       emoji: h.emoji,
+      area: habitArea(h),
+      priority: h.priority ?? 'normal',
       streak: currentStreak(h, today),
       completedToday: h.completions.includes(key),
       scheduledToday: isScheduledOn(h, today),
       reminderTime: h.reminderTime ?? null,
-    })),
+      daysPerWeek: daysPerWeek(h.scheduledDays),
+      last14DaysRate: schedCount > 0 ? Math.round((doneCount / schedCount) * 100) : 0,
+      dowFailures: dowSched.map((s, i) => (s >= 2 && dowDone[i] === 0 ? i : null)).filter((x): x is number => x !== null),
+    };
+  });
+
+  return {
+    today: key,
+    activeHabitsCount: active.length,
+    habits: habitStats,
     stats: computeStats(habits, today),
     mood: getMoodForDay(key),
   };
 }
 
 /**
- * Asks the coach a question grounded in the user's real habit data. Never throws — returns a
- * friendly fallback on any failure. Conversation memory is server-side now (keyed by this
- * device's Backup ID, via the n8n workflow's Data Table), so no local history is sent —
- * the coach recalls prior sessions on its own.
+ * Asks the AI coach a question grounded in the user's detailed habit history & patterns.
  */
 export async function askCoach(
   question: string,
@@ -40,18 +73,41 @@ export async function askCoach(
   locale: Locale,
   t: Dictionary,
   today: Date = new Date()
-): Promise<string> {
+): Promise<CoachResponse> {
   try {
     const res = await fetch(COACH_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Habit-Coach-Key': COACH_WEBHOOK_KEY },
-      body: JSON.stringify({ question, context: buildContext(habits, today), locale, deviceId: getDeviceId() }),
+      body: JSON.stringify({ question, context: buildRichContext(habits, today), locale, deviceId: getDeviceId() }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as { answer?: unknown };
     if (typeof data.answer !== 'string' || !data.answer.trim()) throw new Error('Empty answer');
-    return data.answer.trim();
+
+    const text = data.answer.trim();
+
+    // Check if the answer contains JSON payload or action code
+    let action: CoachAction | undefined;
+    const match = text.match(/```json\s*(\{[\s\S]*?\})\s*```/i);
+    if (match) {
+      try {
+        const parsed = JSON.parse(match[1]) as Record<string, unknown>;
+        if (parsed.habitId && parsed.change) {
+          action = {
+            habitId: String(parsed.habitId),
+            change: parsed.change as any,
+            buttonLabel: String(parsed.buttonLabel ?? 'Apply System Change'),
+          };
+        }
+      } catch {
+        // Fallthrough if not valid JSON
+      }
+    }
+
+    const cleanText = text.replace(/```json\s*\{[\s\S]*?\}\s*```/gi, '').trim();
+
+    return { text: cleanText || text, action };
   } catch {
-    return t.coachFallbackError;
+    return { text: t.coachFallbackError };
   }
 }

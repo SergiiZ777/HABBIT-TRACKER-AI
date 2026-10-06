@@ -42,6 +42,7 @@ export default function EditHabitScreen() {
       color: values.color,
       scheduledDays: values.scheduledDays,
       priority: values.priority,
+      area: values.area,
       reminderTime: values.reminderEnabled ? values.reminderTime : undefined,
       reminderNotificationIds,
     });
@@ -59,6 +60,7 @@ export default function EditHabitScreen() {
         color: habit.color,
         scheduledDays: habit.scheduledDays,
         priority: habit.priority ?? 'normal',
+        area: habit.area,
         reminderEnabled: Boolean(habit.reminderTime),
         reminderTime: habit.reminderTime,
       }}
