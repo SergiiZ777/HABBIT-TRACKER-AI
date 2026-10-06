@@ -104,6 +104,7 @@ export const de: Dictionary = {
   recommendationCloseMilestone: (emoji, name, target) => `Schließe ${emoji} ${name} ab und erreiche eine ${target}-Tage-Serie!`,
   recommendationLongestStreak: (emoji, name, streak) => `Halte ${emoji} ${name} am Laufen — ${streak}-Tage-Serie!`,
   recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} wurde seit ${gap} Tagen nicht gemacht`,
+  recommendationGetStarted: (emoji, name) => `Starte ${emoji} ${name} heute — jede Serie beginnt mit Tag eins!`,
 
   remindersDisabledTitle: 'Erinnerungen deaktiviert',
   remindersDisabledMessage: 'Aktiviere Benachrichtigungen in den Einstellungen, um eine tägliche Erinnerung für diese Gewohnheit zu erhalten.',

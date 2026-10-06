@@ -110,6 +110,7 @@ export interface Dictionary {
   recommendationCloseMilestone: (emoji: string, name: string, target: number) => string;
   recommendationLongestStreak: (emoji: string, name: string, streak: number) => string;
   recommendationMostNeglected: (emoji: string, name: string, gap: number) => string;
+  recommendationGetStarted: (emoji: string, name: string) => string;
 
   // Alerts
   remindersDisabledTitle: string;

@@ -112,6 +112,7 @@ export const ru: Dictionary = {
   recommendationCloseMilestone: (emoji, name, target) => `Выполните ${emoji} ${name} сегодня — до серии в ${target} дней!`,
   recommendationLongestStreak: (emoji, name, streak) => `Не ломайте ${emoji} ${name} — серия ${streak} д.!`,
   recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} не выполнялось ${gap} дн.`,
+  recommendationGetStarted: (emoji, name) => `Начните ${emoji} ${name} сегодня — каждая серия начинается с первого дня!`,
 
   remindersDisabledTitle: 'Напоминания отключены',
   remindersDisabledMessage: 'Включите уведомления в Настройках, чтобы получать ежедневное напоминание для этой привычки.',

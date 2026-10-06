@@ -103,6 +103,7 @@ export const en: Dictionary = {
   recommendationCloseMilestone: (emoji, name, target) => `Complete ${emoji} ${name} today to hit a ${target}-day streak!`,
   recommendationLongestStreak: (emoji, name, streak) => `Keep ${emoji} ${name} alive — ${streak} day${streak === 1 ? '' : 's'} strong!`,
   recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} hasn't been done in ${gap} days`,
+  recommendationGetStarted: (emoji, name) => `Start ${emoji} ${name} today — every streak begins with day one!`,
 
   remindersDisabledTitle: 'Reminders disabled',
   remindersDisabledMessage: 'Enable notifications in Settings to get a daily reminder for this habit.',

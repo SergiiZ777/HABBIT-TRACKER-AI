@@ -104,6 +104,7 @@ export const es: Dictionary = {
   recommendationCloseMilestone: (emoji, name, target) => `¡Completa ${emoji} ${name} hoy y alcanza una racha de ${target} días!`,
   recommendationLongestStreak: (emoji, name, streak) => `¡Mantén ${emoji} ${name} — racha de ${streak} día${streak === 1 ? '' : 's'}!`,
   recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} no se ha hecho en ${gap} días`,
+  recommendationGetStarted: (emoji, name) => `¡Empieza ${emoji} ${name} hoy — toda racha comienza con el día uno!`,
 
   remindersDisabledTitle: 'Recordatorios desactivados',
   remindersDisabledMessage: 'Activa las notificaciones en Ajustes para recibir un recordatorio diario de este hábito.',

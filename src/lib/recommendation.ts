@@ -7,7 +7,7 @@ export type Recommendation = {
   habitId: string;
   habitEmoji: string;
   habitName: string;
-  reason: 'closeMilestone' | 'longestStreak' | 'mostNeglected';
+  reason: 'closeMilestone' | 'longestStreak' | 'mostNeglected' | 'getStarted';
   detail: number;
 };
 
@@ -89,6 +89,18 @@ export function computeRecommendation(
       habitName: mostNeglected.habit.name,
       reason: 'mostNeglected',
       detail: mostNeglected.gap,
+    };
+  }
+
+  // Tier 4: no history yet — pick the first high-priority habit, or just the first one
+  const fallback = uncompleted.find((h) => isHighPriority(h)) ?? uncompleted[0];
+  if (fallback) {
+    return {
+      habitId: fallback.id,
+      habitEmoji: fallback.emoji,
+      habitName: fallback.name,
+      reason: 'getStarted',
+      detail: 0,
     };
   }
 

@@ -144,7 +144,9 @@ export default function TodayScreen() {
                 ? t.recommendationCloseMilestone(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)
                 : recommendation.reason === 'longestStreak'
                   ? t.recommendationLongestStreak(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)
-                  : t.recommendationMostNeglected(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)}
+                  : recommendation.reason === 'getStarted'
+                    ? t.recommendationGetStarted(recommendation.habitEmoji, recommendation.habitName)
+                    : t.recommendationMostNeglected(recommendation.habitEmoji, recommendation.habitName, recommendation.detail)}
             </Text>
           </Pressable>
         )}

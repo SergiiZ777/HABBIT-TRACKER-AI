@@ -103,6 +103,7 @@ export const da: Dictionary = {
   recommendationCloseMilestone: (emoji, name, target) => `Gennemfør ${emoji} ${name} i dag og nå en ${target}-dages stime!`,
   recommendationLongestStreak: (emoji, name, streak) => `Hold ${emoji} ${name} i gang — ${streak} ${streak === 1 ? 'dags' : 'dages'} stime!`,
   recommendationMostNeglected: (emoji, name, gap) => `${emoji} ${name} er ikke gjort i ${gap} dage`,
+  recommendationGetStarted: (emoji, name) => `Begynd ${emoji} ${name} i dag — hver stime starter med dag ét!`,
 
   remindersDisabledTitle: 'Påmindelser deaktiveret',
   remindersDisabledMessage: 'Aktivér notifikationer i Indstillinger for at få en daglig påmindelse til denne vane.',
