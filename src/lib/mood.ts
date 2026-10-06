@@ -49,6 +49,10 @@ export function useMoodForDay(day: string): MoodEntry | null {
   return useSyncExternalStore(subscribe, snap);
 }
 
+export function onMoodChange(listener: () => void): () => void {
+  return subscribe(listener);
+}
+
 export function setMoodForDay(day: string, entry: MoodEntry) {
   setState({ ...state, [day]: entry });
 }

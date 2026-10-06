@@ -116,6 +116,20 @@ export const en: Dictionary = {
   notifChannelName: 'Habit Reminders',
   notifTitle: 'Habit reminder',
   notifBody: (emoji, name) => `Time for ${emoji} ${name}`,
+  notifActionMarkDone: 'Mark as done',
+  notifActionSnooze: 'Snooze 15 min',
+
+  smartReminderMilestone: (emoji, name, target) => `Complete ${emoji} ${name} today for a ${target}-day streak!`,
+  smartReminderAtRisk: (emoji, name, gap) => `You haven't done ${emoji} ${name} in ${gap} days. A 5-minute version still counts.`,
+  smartReminderDependency: (emoji, name, anchorName, liftPct) => `You just did ${anchorName}. You're ${liftPct}% more likely to do ${emoji} ${name} next.`,
+  smartReminderBestDay: (emoji, name, dayName, ratePct) => `${dayName}s are your best day for ${emoji} ${name} — ${ratePct}% success rate!`,
+  smartReminderWorstDay: (emoji, name, dayName) => `${dayName}s are tough for ${emoji} ${name}. Even a small session keeps momentum.`,
+  smartReminderDeclining: (emoji, name, deltaPct) => `${emoji} ${name} has dropped ${deltaPct}% recently. One session can reverse the trend.`,
+  smartReminderMomentum: (emoji, name, streak) => `You're on fire with ${emoji} ${name}! ${streak}-day streak. Keep going!`,
+  smartReminderLowEnergy: (emoji, name) => `Low energy day? A shorter ${emoji} ${name} session still counts toward your streak.`,
+  smartReminderDefault: (emoji, name, consistencyPct) => `Time for ${emoji} ${name}. You've completed it ${consistencyPct}% of the last 14 days.`,
+  smartFollowupShortVersion: (emoji, name) => `Still time for ${emoji} ${name}. Even a shorter version counts.`,
+  smartFollowupStillTime: (emoji, name) => `You usually complete ${emoji} ${name} soon after the reminder. Haven't started yet?`,
 
   motivFallback: [
     { headline: 'Small steps compound', detail: 'Pick one habit and start now — momentum builds fast.' },

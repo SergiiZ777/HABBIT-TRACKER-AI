@@ -90,6 +90,11 @@ export function getT(): Dictionary {
   return DICTIONARIES[locale];
 }
 
+/** Current BCP-47 locale tag, outside of React (e.g. for smart-reminder.ts's background scheduling). */
+export function getLocaleTag(): string {
+  return LOCALE_TAGS[locale];
+}
+
 /** Registers a plain (non-React) listener that fires on every locale change. Returns an unsubscribe function. */
 export function onLocaleChange(listener: () => void): () => void {
   return subscribe(listener);

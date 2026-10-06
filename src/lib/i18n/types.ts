@@ -125,6 +125,21 @@ export interface Dictionary {
   notifChannelName: string;
   notifTitle: string;
   notifBody: (emoji: string, name: string) => string;
+  notifActionMarkDone: string;
+  notifActionSnooze: string;
+
+  // Smart reminders
+  smartReminderMilestone: (emoji: string, name: string, target: number) => string;
+  smartReminderAtRisk: (emoji: string, name: string, gap: number) => string;
+  smartReminderDependency: (emoji: string, name: string, anchorName: string, liftPct: number) => string;
+  smartReminderBestDay: (emoji: string, name: string, dayName: string, ratePct: number) => string;
+  smartReminderWorstDay: (emoji: string, name: string, dayName: string) => string;
+  smartReminderDeclining: (emoji: string, name: string, deltaPct: number) => string;
+  smartReminderMomentum: (emoji: string, name: string, streak: number) => string;
+  smartReminderLowEnergy: (emoji: string, name: string) => string;
+  smartReminderDefault: (emoji: string, name: string, consistencyPct: number) => string;
+  smartFollowupShortVersion: (emoji: string, name: string) => string;
+  smartFollowupStillTime: (emoji: string, name: string) => string;
 
   // Motivation
   motivFallback: { headline: string; detail: string }[];
