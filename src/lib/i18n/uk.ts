@@ -288,6 +288,29 @@ export const uk: Dictionary = {
   areaProductivity: 'Продуктивність',
   areaRelationships: 'Стосунки',
   areaMind: 'Розум та дух',
+  areaFinance: 'Фінанси',
+
+  lifeBalanceTitle: 'БАЛАНС ЖИТТЯ',
+  lifeBalanceOverall: (score) => `Загальний баланс: ${score}%`,
+  lifeBalanceNoData: 'Додайте звички щонайменше у 3 сфери життя, щоб побачити колесо балансу.',
+  nextBestActionEyebrow: 'ВАША НАСТУПНА НАЙКРАЩА ДІЯ',
+  imbalanceDiverging: (rising, falling) => `${rising} покращується, але ${falling} знизилась`,
+  imbalanceDivergingDetail: (rising, rd, falling, fd) =>
+    `${rising} зросла на ${rd}%, тоді як ${falling} впала на ${Math.abs(fd)}% за останні 2 тижні.`,
+  imbalanceDeclining: (area) => `${area} потребує уваги`,
+  imbalanceDecliningDetail: (area, score, delta) =>
+    `Оцінка знизилась до ${score}% (мінус ${Math.abs(delta)}%). Спробуйте сфокусуватися на звичці тут.`,
+  imbalanceNeglected: (area) => `Немає звичок у сфері ${area}`,
+  imbalanceNeglectedDetail: 'Спробуйте додати звичку для підтримки балансу життя.',
+  imbalanceOverinvested: (area, count) => `${area} процвітає — але ${count} ${count === 1 ? 'інша сфера потребує' : 'інші сфери потребують'} уваги`,
+  imbalanceOverinvestedDetail: (area, score, weakAreas) =>
+    `Спробуйте перерозподілити енергію з ${area} (${score}%) у ${weakAreas}.`,
+  areaBreakdownTitle: 'СФЕРИ',
+  areaHabitCount: (n) => {
+    if (n === 1) return '1 звичка';
+    if (n >= 2 && n <= 4) return `${n} звички`;
+    return `${n} звичок`;
+  },
 
   // Monthly Review
   monthlyReviewTitle: 'Підсумок місяця',

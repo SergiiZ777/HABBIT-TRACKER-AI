@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -14,9 +14,13 @@ import { getHabits, toggleCompletion } from '@/lib/habits';
 
 import { startExperiment, useExperiments } from '@/lib/habit-experiments';
 
+import { computeHabitHealth } from '@/lib/habit-health';
+
 import { useT } from '@/lib/i18n';
 
 import type { NextBestAction } from '@/lib/next-best-action';
+
+import { logRecommendation, markApplied } from '@/lib/recommendation-log';
 
 type Props = {
 
@@ -31,6 +35,22 @@ export function NextBestActionCard({ action, onApplied }: Props) {
   const theme = useTheme();
 
   const t = useT();
+
+  const entryIdRef = useRef<string | null>(null);
+
+  if (entryIdRef.current == null) {
+    const habit = getHabits().find((h) => h.id === action.habitId);
+    const preScore = habit ? computeHabitHealth(habit, t, new Date()).score : undefined;
+    entryIdRef.current = logRecommendation({
+      source: 'nextBestAction',
+      type: action.type,
+      habitId: action.habitId,
+      habitName: action.habitName,
+      headline: action.headline,
+      change: action.change,
+      preScore,
+    });
+  }
 
   const [loading, setLoading] = useState(false);
 
@@ -99,6 +119,8 @@ export function NextBestActionCard({ action, onApplied }: Props) {
         setDone(true);
 
       }
+
+      if (entryIdRef.current) markApplied(entryIdRef.current);
 
       onApplied?.();
 

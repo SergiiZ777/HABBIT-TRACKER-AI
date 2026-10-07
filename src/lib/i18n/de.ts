@@ -280,6 +280,25 @@ export const de: Dictionary = {
   areaProductivity: 'Produktivität',
   areaRelationships: 'Beziehungen',
   areaMind: 'Geist & Seele',
+  areaFinance: 'Finanzen',
+
+  lifeBalanceTitle: 'LEBENSBALANCE',
+  lifeBalanceOverall: (score) => `Gesamtbalance: ${score}%`,
+  lifeBalanceNoData: 'Füge Gewohnheiten in mindestens 3 Lebensbereichen hinzu, um dein Balancerad zu sehen.',
+  nextBestActionEyebrow: 'DEINE NÄCHSTE BESTE AKTION',
+  imbalanceDiverging: (rising, falling) => `${rising} verbessert sich, aber ${falling} ist gesunken`,
+  imbalanceDivergingDetail: (rising, rd, falling, fd) =>
+    `${rising} stieg um ${rd}%, während ${falling} um ${Math.abs(fd)}% in den letzten 2 Wochen fiel.`,
+  imbalanceDeclining: (area) => `${area} braucht Aufmerksamkeit`,
+  imbalanceDecliningDetail: (area, score, delta) =>
+    `Score auf ${score}% gesunken (minus ${Math.abs(delta)}%). Erwäge, hier eine Gewohnheit zu fokussieren.`,
+  imbalanceNeglected: (area) => `Keine Gewohnheiten in ${area} erfasst`,
+  imbalanceNeglectedDetail: 'Erwäge, eine Gewohnheit hinzuzufügen, um dein Leben im Gleichgewicht zu halten.',
+  imbalanceOverinvested: (area, count) => `${area} floriert — aber ${count} andere${count === 1 ? 'r Bereich braucht' : ' Bereiche brauchen'} Aufmerksamkeit`,
+  imbalanceOverinvestedDetail: (area, score, weakAreas) =>
+    `Erwäge, Energie von ${area} (${score}%) auf ${weakAreas} umzuverteilen.`,
+  areaBreakdownTitle: 'BEREICHE',
+  areaHabitCount: (n) => `${n} Gewohnheit${n === 1 ? '' : 'en'}`,
 
   // Monthly Review
   monthlyReviewTitle: 'Monatsrückblick',

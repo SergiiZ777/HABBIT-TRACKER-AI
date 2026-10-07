@@ -279,6 +279,25 @@ export const da: Dictionary = {
   areaProductivity: 'Produktivitet',
   areaRelationships: 'Relationer',
   areaMind: 'Sind',
+  areaFinance: 'Finans',
+
+  lifeBalanceTitle: 'LIVSBALANCE',
+  lifeBalanceOverall: (score) => `Samlet balance: ${score}%`,
+  lifeBalanceNoData: 'Tilføj vaner i mindst 3 livsområder for at se dit balancehjul.',
+  nextBestActionEyebrow: 'DIN NÆSTE BEDSTE HANDLING',
+  imbalanceDiverging: (rising, falling) => `${rising} forbedres, men ${falling} er faldet`,
+  imbalanceDivergingDetail: (rising, rd, falling, fd) =>
+    `${rising} steg ${rd}% mens ${falling} faldt ${Math.abs(fd)}% over de seneste 2 uger.`,
+  imbalanceDeclining: (area) => `${area} har brug for opmærksomhed`,
+  imbalanceDecliningDetail: (area, score, delta) =>
+    `Score faldt til ${score}% (ned ${Math.abs(delta)}%). Overvej at fokusere en vane her.`,
+  imbalanceNeglected: (area) => `Ingen vaner registreret i ${area}`,
+  imbalanceNeglectedDetail: 'Overvej at tilføje en vane for at holde dit liv i balance.',
+  imbalanceOverinvested: (area, count) => `${area} trives — men ${count} andre område${count === 1 ? '' : 'r'} mangler opmærksomhed`,
+  imbalanceOverinvestedDetail: (area, score, weakAreas) =>
+    `Overvej at omfordele energi fra ${area} (${score}%) til ${weakAreas}.`,
+  areaBreakdownTitle: 'OMRÅDER',
+  areaHabitCount: (n) => `${n} vane${n === 1 ? '' : 'r'}`,
 
   // Monthly Review
   monthlyReviewTitle: 'Månedsevaluering',

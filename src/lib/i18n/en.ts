@@ -280,6 +280,25 @@ export const en: Dictionary = {
   areaProductivity: 'Productivity',
   areaRelationships: 'Relationships',
   areaMind: 'Mind',
+  areaFinance: 'Finance',
+
+  lifeBalanceTitle: 'LIFE BALANCE',
+  lifeBalanceOverall: (score) => `Overall balance: ${score}%`,
+  lifeBalanceNoData: 'Add habits in at least 3 life areas to see your balance wheel.',
+  nextBestActionEyebrow: 'YOUR NEXT BEST ACTION',
+  imbalanceDiverging: (rising, falling) => `${rising} is improving, but ${falling} has declined`,
+  imbalanceDivergingDetail: (rising, rd, falling, fd) =>
+    `${rising} rose ${rd}% while ${falling} dropped ${Math.abs(fd)}% over the last 2 weeks.`,
+  imbalanceDeclining: (area) => `${area} needs attention`,
+  imbalanceDecliningDetail: (area, score, delta) =>
+    `Score dropped to ${score}% (down ${Math.abs(delta)}%). Consider focusing a habit here.`,
+  imbalanceNeglected: (area) => `No habits tracked in ${area}`,
+  imbalanceNeglectedDetail: 'Consider adding a habit to keep your life balanced.',
+  imbalanceOverinvested: (area, count) => `${area} is thriving — but ${count} other area${count === 1 ? '' : 's'} need${count === 1 ? 's' : ''} attention`,
+  imbalanceOverinvestedDetail: (area, score, weakAreas) =>
+    `Consider redistributing energy from ${area} (${score}%) to ${weakAreas}.`,
+  areaBreakdownTitle: 'AREAS',
+  areaHabitCount: (n) => `${n} habit${n === 1 ? '' : 's'}`,
 
   // Monthly Review
   monthlyReviewTitle: 'Monthly Review',

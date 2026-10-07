@@ -8,7 +8,14 @@ import { TimePickerField } from '@/components/time-picker-field';
 import { HabitDependenciesCard } from '@/components/habit-dependencies-card';
 import { HabitExperimentsSection } from '@/components/habit-experiments-section';
 import { HabitHealthCard } from '@/components/habit-health-card';
+import { ImbalanceAlertCard } from '@/components/imbalance-alert-card';
+import { LifeBalanceRadar } from '@/components/life-balance-radar';
+import { NextBestActionCard } from '@/components/next-best-action-card';
 import { computeHabitDependencies } from '@/lib/habit-dependencies';
+import { computeLifeBalance } from '@/lib/life-balance';
+import { areaLabel, habitArea, LIFE_AREA_EMOJI } from '@/lib/life-areas';
+import { computeNextBestAction } from '@/lib/next-best-action';
+import { evaluateOutcomes } from '@/lib/recommendation-log';
 import { TrendChart } from '@/components/trend-chart';
 import { YearHeatmap } from '@/components/year-heatmap';
 import {
@@ -86,6 +93,12 @@ export default function DashboardScreen() {
       ? t.weeklyTrendDown(weeklyReview.trend.delta)
       : t.weeklyTrendFlat;
 
+  const balance = computeLifeBalance(habits, t, today);
+  const nextAction = habits.length > 0 ? computeNextBestAction(habits, t, today) : null;
+  evaluateOutcomes(habits, t, today);
+
+  const [expandedArea, setExpandedArea] = useState<string | null>(null);
+
   const dependencies = computeHabitDependencies(habits, today);
   const topHabits = [...habits].sort((a, b) => currentStreak(b, today) - currentStreak(a, today));
 
@@ -103,6 +116,80 @@ export default function DashboardScreen() {
           <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t.eyebrowProgress}</Text>
           <Text style={[styles.title, { color: theme.text }]}>{t.dashboardTitle}</Text>
         </View>
+
+        {nextAction && (
+          <View>
+            <Text style={[styles.section, { color: theme.textSecondary, marginBottom: Spacing.two }]}>
+              {t.nextBestActionEyebrow}
+            </Text>
+            <NextBestActionCard action={nextAction} />
+          </View>
+        )}
+
+        {habits.length > 0 && (
+          <View style={[styles.balanceCard, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+            <Text style={[styles.section, { color: theme.textSecondary }]}>{t.lifeBalanceTitle}</Text>
+            <LifeBalanceRadar areas={balance.areas} />
+            {balance.hasEnoughData && (
+              <Text style={[styles.overallScore, { color: theme.text }]}>
+                {t.lifeBalanceOverall(balance.overallScore)}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {balance.imbalances.length > 0 && (
+          <View style={styles.list}>
+            {balance.imbalances.map((alert) => (
+              <ImbalanceAlertCard key={alert.id} alert={alert} />
+            ))}
+          </View>
+        )}
+
+        {balance.areas.length > 0 && (
+          <View>
+            <Text style={[styles.section, { color: theme.textSecondary, marginBottom: Spacing.two }]}>
+              {t.areaBreakdownTitle}
+            </Text>
+            <View style={styles.list}>
+              {balance.areas
+                .sort((a, b) => b.score - a.score)
+                .map((ab) => {
+                  const isExpanded = expandedArea === ab.area;
+                  const areaHabits = habits.filter(
+                    (h) => !h.pauses?.some((p) => !p.to) && habitArea(h) === ab.area
+                  );
+                  const trendSymbol = ab.trend === 'up' ? ' ↑' : ab.trend === 'down' ? ' ↓' : '';
+                  return (
+                    <View key={ab.area}>
+                      <Pressable
+                        onPress={() => setExpandedArea(isExpanded ? null : ab.area)}
+                        style={[styles.areaRow, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+                        <Text style={styles.areaEmoji}>{LIFE_AREA_EMOJI[ab.area]}</Text>
+                        <View style={styles.flex}>
+                          <Text style={[styles.areaName, { color: theme.text }]}>{areaLabel(t, ab.area)}</Text>
+                          <Text style={[styles.areaHint, { color: theme.textSecondary }]}>
+                            {t.areaHabitCount(ab.habitCount)}
+                          </Text>
+                        </View>
+                        <Text style={[styles.areaScore, { color: theme.text }]}>{ab.score}%{trendSymbol}</Text>
+                        <View style={[styles.areaBar, { backgroundColor: theme.backgroundSelected }]}>
+                          <View style={[styles.areaBarFill, { width: `${ab.score}%`, backgroundColor: theme.accent }]} />
+                        </View>
+                      </Pressable>
+                      {isExpanded && (
+                        <View style={styles.expandedHabits}>
+                          {areaHabits.map((h) => (
+                            <HabitHealthCard key={h.id} habit={h} today={today} />
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+            </View>
+          </View>
+        )}
 
         <View style={[styles.motivationCard, { backgroundColor: theme.accent + '14', borderColor: theme.accent }]}>
           <Text style={styles.motivationEmoji}>{motivation.emoji}</Text>
@@ -451,4 +538,27 @@ const styles = StyleSheet.create({
   backupIdText: { flex: 1, fontSize: 14, fontWeight: '600' },
   copyButtonText: { fontSize: 14, fontWeight: '700' },
   backupHint: { fontSize: 12, lineHeight: 17 },
+  balanceCard: {
+    gap: Spacing.three,
+    padding: Spacing.four,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  overallScore: { fontSize: 15, fontWeight: '700', textAlign: 'center' },
+  areaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    padding: Spacing.three,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+  },
+  areaEmoji: { fontSize: 22 },
+  areaName: { fontSize: 15, fontWeight: '600' },
+  areaHint: { fontSize: 12 },
+  areaScore: { fontSize: 14, fontWeight: '700', minWidth: 44, textAlign: 'right' },
+  areaBar: { width: 48, height: 6, borderRadius: 3, overflow: 'hidden' },
+  areaBarFill: { height: '100%', borderRadius: 3 },
+  expandedHabits: { paddingLeft: Spacing.four, paddingTop: Spacing.two, gap: Spacing.two },
 });

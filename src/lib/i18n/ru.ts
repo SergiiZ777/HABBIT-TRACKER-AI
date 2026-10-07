@@ -288,6 +288,29 @@ export const ru: Dictionary = {
   areaProductivity: 'Продуктивность',
   areaRelationships: 'Отношения',
   areaMind: 'Разум и дух',
+  areaFinance: 'Финансы',
+
+  lifeBalanceTitle: 'БАЛАНС ЖИЗНИ',
+  lifeBalanceOverall: (score) => `Общий баланс: ${score}%`,
+  lifeBalanceNoData: 'Добавьте привычки минимум в 3 сферы жизни, чтобы увидеть колесо баланса.',
+  nextBestActionEyebrow: 'ВАШЕ СЛЕДУЮЩЕЕ ЛУЧШЕЕ ДЕЙСТВИЕ',
+  imbalanceDiverging: (rising, falling) => `${rising} улучшается, но ${falling} снизилась`,
+  imbalanceDivergingDetail: (rising, rd, falling, fd) =>
+    `${rising} выросла на ${rd}%, тогда как ${falling} упала на ${Math.abs(fd)}% за последние 2 недели.`,
+  imbalanceDeclining: (area) => `${area} требует внимания`,
+  imbalanceDecliningDetail: (area, score, delta) =>
+    `Оценка снизилась до ${score}% (минус ${Math.abs(delta)}%). Попробуйте сфокусироваться на привычке здесь.`,
+  imbalanceNeglected: (area) => `Нет привычек в сфере ${area}`,
+  imbalanceNeglectedDetail: 'Попробуйте добавить привычку для поддержания баланса жизни.',
+  imbalanceOverinvested: (area, count) => `${area} процветает — но ${count} ${count === 1 ? 'другая сфера требует' : 'другие сферы требуют'} внимания`,
+  imbalanceOverinvestedDetail: (area, score, weakAreas) =>
+    `Попробуйте перераспределить энергию из ${area} (${score}%) в ${weakAreas}.`,
+  areaBreakdownTitle: 'СФЕРЫ',
+  areaHabitCount: (n) => {
+    if (n === 1) return '1 привычка';
+    if (n >= 2 && n <= 4) return `${n} привычки`;
+    return `${n} привычек`;
+  },
 
   // Monthly Review
   monthlyReviewTitle: 'Итоги месяца',

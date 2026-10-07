@@ -290,6 +290,23 @@ export interface Dictionary {
   areaProductivity: string;
   areaRelationships: string;
   areaMind: string;
+  areaFinance: string;
+
+  // Life Balance
+  lifeBalanceTitle: string;
+  lifeBalanceOverall: (score: number) => string;
+  lifeBalanceNoData: string;
+  nextBestActionEyebrow: string;
+  imbalanceDiverging: (risingArea: string, fallingArea: string) => string;
+  imbalanceDivergingDetail: (risingArea: string, risingDelta: number, fallingArea: string, fallingDelta: number) => string;
+  imbalanceDeclining: (area: string) => string;
+  imbalanceDecliningDetail: (area: string, score: number, delta: number) => string;
+  imbalanceNeglected: (area: string) => string;
+  imbalanceNeglectedDetail: string;
+  imbalanceOverinvested: (area: string, count: number) => string;
+  imbalanceOverinvestedDetail: (area: string, score: number, weakAreas: string) => string;
+  areaBreakdownTitle: string;
+  areaHabitCount: (n: number) => string;
 
   // Monthly Review
   monthlyReviewTitle: string;

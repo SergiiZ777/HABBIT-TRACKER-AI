@@ -6,6 +6,8 @@ import type { Dictionary } from '@/lib/i18n';
 
 import type { HabitChange } from '@/lib/habit-actions';
 
+import { getRecommendationHistory } from '@/lib/recommendation-log';
+
 export type ActionType = 'timeShift' | 'reduceTarget' | 'routineStack' | 'milestonePush' | 'recoveryRest';
 
 export type NextBestAction = {
@@ -290,7 +292,15 @@ export function computeNextBestAction(
 
   }
 
-  // Return the candidate with the highest impact gain percentage
+  for (const c of candidates) {
+    const history = getRecommendationHistory(c.habitId);
+    const sameType = history.filter((e) => e.type === c.type);
+    if (sameType.some((e) => e.verdict === 'harmful')) {
+      c.impactGainPct = Math.round(c.impactGainPct * 0.5);
+    } else if (sameType.some((e) => e.verdict === 'effective')) {
+      c.impactGainPct = Math.round(c.impactGainPct * 1.1);
+    }
+  }
 
   candidates.sort((a, b) => b.impactGainPct - a.impactGainPct);
 

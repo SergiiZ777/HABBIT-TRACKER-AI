@@ -18,8 +18,10 @@ import { useTheme } from '@/hooks/use-theme';
 import { askCoach, type CoachResponse } from '@/lib/coach';
 import { detectCoachInsights, type CoachAction, type CoachInsight } from '@/lib/coach-insights';
 import { applyHabitChange, isChangeApplied } from '@/lib/habit-actions';
+import { computeHabitHealth } from '@/lib/habit-health';
 import { useHabits } from '@/lib/habits';
 import { useLocale, useLocaleTag, useT } from '@/lib/i18n';
+import { logRecommendation, markApplied } from '@/lib/recommendation-log';
 
 type Message = { id: string; role: 'user' | 'coach'; content: string; action?: CoachAction };
 
@@ -62,7 +64,18 @@ export default function CoachScreen() {
     const habit = habits.find((h) => h.id === action.habitId);
     if (!habit) return;
     setApplyingActionId(actionId);
+    const health = computeHabitHealth(habit, t, today);
+    const entryId = logRecommendation({
+      source: 'coachInsight',
+      type: 'coachAction',
+      habitId: action.habitId,
+      habitName: habit.name,
+      headline: action.buttonLabel,
+      change: action.change,
+      preScore: health.score,
+    });
     await applyHabitChange(action.habitId, action.change, t);
+    markApplied(entryId);
     setApplyingActionId(null);
     Alert.alert(t.coachActionApplied, `${habit.emoji} ${habit.name} system updated!`);
   };

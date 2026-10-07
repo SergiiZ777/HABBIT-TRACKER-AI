@@ -1,9 +1,9 @@
 import type { Habit } from '@/lib/habits';
 import type { Dictionary } from '@/lib/i18n';
 
-export type LifeArea = 'health' | 'learning' | 'productivity' | 'relationships' | 'mind';
+export type LifeArea = 'health' | 'learning' | 'productivity' | 'relationships' | 'mind' | 'finance';
 
-export const LIFE_AREAS: LifeArea[] = ['health', 'learning', 'productivity', 'relationships', 'mind'];
+export const LIFE_AREAS: LifeArea[] = ['health', 'learning', 'productivity', 'relationships', 'mind', 'finance'];
 
 export const LIFE_AREA_EMOJI: Record<LifeArea, string> = {
   health: '🏃',
@@ -11,6 +11,7 @@ export const LIFE_AREA_EMOJI: Record<LifeArea, string> = {
   productivity: '💼',
   relationships: '❤️',
   mind: '🧘',
+  finance: '💰',
 };
 
 const EMOJI_AREAS: Record<string, LifeArea> = {
@@ -26,6 +27,10 @@ const EMOJI_AREAS: Record<string, LifeArea> = {
   '📚': 'learning',
   '✍️': 'learning',
   '🎯': 'productivity',
+  '💰': 'finance',
+  '💵': 'finance',
+  '📈': 'finance',
+  '🏦': 'finance',
 };
 
 // Word stems across the app's six languages (en, da, de, es, ru, uk). Checked in order, so the
@@ -35,7 +40,8 @@ const KEYWORDS: [RegExp, LifeArea][] = [
   [/(meditat|mindful|breath|gratitude|journal|pray|yoga|calm|медит|дыха|дих|благодар|вдяч|дневник|щоденник|йога|meditér|åndedræt|taknem|dankbar|atem|respira|gratitud|diario)/i, 'mind'],
   [/(read|book|learn|study|language|course|lesson|page|write|chess|læs|bog|lær|lesen|buch|lern|leer|libro|aprend|estudi|idioma|чита|книг|учи|учё|вчи|язык|мов|курс|пиш)/i, 'learning'],
   [/(water|walk|run|gym|workout|exercise|sport|step|sleep|sugar|vitamin|stretch|\beat|diet|fruit|veget|smok|alcohol|vand|gå|løb|søvn|wasser|lauf|schlaf|zucker|agua|camin|corr|dorm|azúcar|вод|ход|бег|біг|спорт|трен|сон|сахар|цукор|кур|отжим|віджим)/i, 'health'],
-  [/(plan|work|focus|email|inbox|clean|tidy|budget|save|money|code|task|todo|arbeit|arbejd|trabaj|работ|робот|план|фокус|уборк|прибир|бюджет|грош|деньг)/i, 'productivity'],
+  [/(budget|save|money|invest|financ|expense|income|salary|debt|loan|bank|crypto|stock|spar|pengar|geld|dinero|ahorro|presupuest|деньг|грош|бюджет|фінанс|финанс|заощад|інвест|инвест)/i, 'finance'],
+  [/(plan|work|focus|email|inbox|clean|tidy|code|task|todo|arbeit|arbejd|trabaj|работ|робот|план|фокус|уборк|прибир)/i, 'productivity'],
 ];
 
 export function guessArea(name: string, emoji: string): LifeArea {
@@ -60,5 +66,7 @@ export function areaLabel(t: Dictionary, area: LifeArea): string {
       return t.areaRelationships;
     case 'mind':
       return t.areaMind;
+    case 'finance':
+      return t.areaFinance;
   }
 }

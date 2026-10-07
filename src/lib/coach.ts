@@ -3,7 +3,8 @@ import { getDeviceId } from '@/lib/backup';
 import type { CoachAction } from '@/lib/coach-insights';
 import { addDays, currentStreak, daysPerWeek, dayKey, isPaused, isScheduledOn, type Habit } from '@/lib/habits';
 import type { Dictionary, Locale } from '@/lib/i18n';
-import { habitArea } from '@/lib/life-areas';
+import { areaLabel, habitArea } from '@/lib/life-areas';
+import { computeLifeBalance } from '@/lib/life-balance';
 import { getMoodForDay } from '@/lib/mood';
 
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
@@ -14,7 +15,7 @@ export type CoachResponse = {
   action?: CoachAction;
 };
 
-function buildRichContext(habits: Habit[], today: Date) {
+function buildRichContext(habits: Habit[], t: Dictionary, today: Date) {
   const key = dayKey(today);
   const active = habits.filter((h) => !isPaused(h));
 
@@ -55,12 +56,28 @@ function buildRichContext(habits: Habit[], today: Date) {
     };
   });
 
+  const balance = computeLifeBalance(habits, t, today);
+
   return {
     today: key,
     activeHabitsCount: active.length,
     habits: habitStats,
     stats: computeStats(habits, today),
     mood: getMoodForDay(key),
+    lifeBalance: {
+      overallScore: balance.overallScore,
+      areas: balance.areas.map((a) => ({
+        area: areaLabel(t, a.area),
+        score: a.score,
+        trend: a.trend,
+        trendDelta: a.trendDelta,
+        habitCount: a.habitCount,
+      })),
+      imbalances: balance.imbalances.map((i) => ({
+        type: i.type,
+        headline: i.headline,
+      })),
+    },
   };
 }
 
@@ -78,7 +95,7 @@ export async function askCoach(
     const res = await fetch(COACH_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Habit-Coach-Key': COACH_WEBHOOK_KEY },
-      body: JSON.stringify({ question, context: buildRichContext(habits, today), locale, deviceId: getDeviceId() }),
+      body: JSON.stringify({ question, context: buildRichContext(habits, t, today), locale, deviceId: getDeviceId() }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as { answer?: unknown };
