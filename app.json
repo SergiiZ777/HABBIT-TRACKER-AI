@@ -9,7 +9,6 @@
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.sergii777.habbittrackerai",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#5B5BF7",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
