@@ -6,7 +6,9 @@ import type { Dictionary } from '@/lib/i18n';
 
 import type { HabitChange } from '@/lib/habit-actions';
 
-import { getRecommendationHistory } from '@/lib/recommendation-log';
+import { getMoodForDay } from '@/lib/mood';
+
+import { getRecentDismissals, getRecommendationHistory } from '@/lib/recommendation-log';
 
 export type ActionType = 'timeShift' | 'reduceTarget' | 'routineStack' | 'milestonePush' | 'recoveryRest';
 
@@ -96,11 +98,11 @@ export function computeNextBestAction(
 
         habitName: h.name,
 
-        headline: `Move your ${h.emoji} ${h.name} from ${h.reminderTime} → ${targetHour}`,
+        headline: t.nbaTimeShiftHeadline(h.emoji, h.name, h.reminderTime!, targetHour),
 
-        reason: `You complete it ${earlyRate}% of the time when scheduled earlier, but only ${lateRate}% after ${h.reminderTime}.`,
+        reason: t.nbaTimeShiftReason(earlyRate, lateRate, h.reminderTime!),
 
-        actionLabel: `Move to ${targetHour}`,
+        actionLabel: t.nbaTimeShiftAction(targetHour),
 
         change: { reminderTime: targetHour },
 
@@ -136,11 +138,11 @@ export function computeNextBestAction(
 
         habitName: h.name,
 
-        headline: `Scale ${h.emoji} ${h.name} target from ${freq} days/week → 4 days/week`,
+        headline: t.nbaReduceTargetHeadline(h.emoji, h.name, freq, 4),
 
-        reason: `Your consistency is currently ${health.consistency}%. Adjusting to 4 focused days/week reduces friction and rebuilds momentum.`,
+        reason: t.nbaReduceTargetReason(h.name, health.consistency),
 
-        actionLabel: 'Adjust Target',
+        actionLabel: t.nbaReduceTargetAction,
 
         change: { scheduledDays: newDays },
 
@@ -188,11 +190,11 @@ export function computeNextBestAction(
 
         habitName: strugglingHabit.name,
 
-        headline: `Pair ${strugglingHabit.emoji} ${strugglingHabit.name} right after ${anchorHabit.emoji} ${anchorHabit.name}`,
+        headline: t.nbaRoutineStackHeadline(strugglingHabit.emoji, strugglingHabit.name, anchorHabit.emoji, anchorHabit.name),
 
-        reason: `You have a ${anchorHealth.consistency}% completion rate on ${anchorHabit.name}. Stacking them back-to-back leverages existing momentum.`,
+        reason: t.nbaRoutineStackReason(anchorHealth.consistency, anchorHabit.name),
 
-        actionLabel: `Pair at ${anchorHabit.reminderTime}`,
+        actionLabel: t.nbaRoutineStackAction(anchorHabit.reminderTime!),
 
         change: { reminderTime: anchorHabit.reminderTime },
 
@@ -230,11 +232,11 @@ export function computeNextBestAction(
 
         habitName: h.name,
 
-        headline: `Complete ${h.emoji} ${h.name} today to hit a ${targetMilestone}-day streak!`,
+        headline: t.nbaMilestoneHeadline(h.emoji, h.name, targetMilestone),
 
-        reason: `You're just 1 session away from unlocking a ${targetMilestone}-day consistency milestone.`,
+        reason: t.nbaMilestoneReason(targetMilestone),
 
-        actionLabel: `Complete ${h.name}`,
+        actionLabel: t.nbaMilestoneAction(h.name),
 
         markCompletedDay: todayKey,
 
@@ -244,6 +246,28 @@ export function computeNextBestAction(
 
     }
 
+  }
+
+  // 5. Recovery Rest — burnout detection
+  for (const h of activeHabits) {
+    const health = computeHabitHealth(h, t, today);
+    if (health.risk === 'high' && health.trend === 'down' && health.consistency < 40) {
+      let impact = 45;
+      const mood = getMoodForDay(todayKey);
+      if (mood && mood.energy <= 2) impact = 55;
+      candidates.push({
+        id: `recoveryRest-${h.id}`,
+        type: 'recoveryRest',
+        habitId: h.id,
+        habitEmoji: h.emoji,
+        habitName: h.name,
+        headline: t.nbaRecoveryRestHeadline(h.emoji, h.name),
+        reason: t.nbaRecoveryRestReason(h.name, health.consistency),
+        actionLabel: t.nbaRecoveryRestAction,
+        change: { pause: true },
+        impactGainPct: impact,
+      });
+    }
   }
 
   // Fallback: If no specific candidates were triggered, generate a Time Shift or Target Optimization recommendation for the habit with the lowest health score
@@ -278,11 +302,11 @@ export function computeNextBestAction(
 
       habitName: lowest.name,
 
-      headline: `Move your ${lowest.emoji} ${lowest.name} from ${currentRem} → ${targetTime}`,
+      headline: t.nbaTimeShiftHeadline(lowest.emoji, lowest.name, currentRem, targetTime),
 
-      reason: `You complete it 78% of the time when done earlier, but only 31% after ${currentRem}.`,
+      reason: t.nbaTimeShiftReason(78, 31, currentRem),
 
-      actionLabel: `Move to ${targetTime}`,
+      actionLabel: t.nbaTimeShiftAction(targetTime),
 
       change: { reminderTime: targetTime },
 
@@ -292,7 +316,13 @@ export function computeNextBestAction(
 
   }
 
-  for (const c of candidates) {
+  // Filter out recently dismissed recommendations
+  const dismissed = getRecentDismissals(3);
+  const dismissedKeys = new Set(dismissed.map((e) => `${e.type}:${e.habitId}`));
+  const filtered = candidates.filter((c) => !dismissedKeys.has(`${c.type}:${c.habitId}`));
+  const final = filtered.length > 0 ? filtered : candidates;
+
+  for (const c of final) {
     const history = getRecommendationHistory(c.habitId);
     const sameType = history.filter((e) => e.type === c.type);
     if (sameType.some((e) => e.verdict === 'harmful')) {
@@ -302,9 +332,9 @@ export function computeNextBestAction(
     }
   }
 
-  candidates.sort((a, b) => b.impactGainPct - a.impactGainPct);
+  final.sort((a, b) => b.impactGainPct - a.impactGainPct);
 
-  return candidates[0];
+  return final[0];
 
 }
 

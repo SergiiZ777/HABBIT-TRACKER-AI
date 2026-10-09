@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import { HabitForm, type HabitFormValues } from '@/components/habit-form';
 import { setFocusModeEnabled } from '@/lib/focus-mode';
@@ -36,20 +36,30 @@ export default function NewHabitScreen() {
   const onSubmit = async (values: HabitFormValues) => {
     const activeCount = getHabits().filter((h) => !isPaused(h)).length;
 
-    if (activeCount >= 5) {
-      Alert.alert(t.overloadWarningTitle, t.overloadWarningBody(activeCount), [
-        {
-          text: t.focusTopThreeButton,
-          onPress: () => {
-            setFocusModeEnabled(true);
-            router.back();
+    if (activeCount >= 10) {
+      if (Platform.OS === 'web') {
+        const focusMode = confirm(`${t.overloadWarningTitle}\n\n${t.overloadWarningBody(activeCount)}\n\nOK = ${t.focusTopThreeButton}\nCancel = ${t.createAnywayButton}`);
+        if (focusMode) {
+          setFocusModeEnabled(true);
+          router.back();
+        } else {
+          await proceedWithCreation(values);
+        }
+      } else {
+        Alert.alert(t.overloadWarningTitle, t.overloadWarningBody(activeCount), [
+          {
+            text: t.focusTopThreeButton,
+            onPress: () => {
+              setFocusModeEnabled(true);
+              router.back();
+            },
           },
-        },
-        {
-          text: t.createAnywayButton,
-          onPress: () => proceedWithCreation(values),
-        },
-      ]);
+          {
+            text: t.createAnywayButton,
+            onPress: () => proceedWithCreation(values),
+          },
+        ]);
+      }
     } else {
       await proceedWithCreation(values);
     }

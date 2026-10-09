@@ -407,4 +407,60 @@ export const ru: Dictionary = {
   experimentVerdictSame: 'Существенной разницы нет. Решать вам.',
   experimentKeep: "Оставить новое время",
   experimentRevert: "Вернуть",
+
+  missReasonPrompt: "Почему вы это пропустили?",
+  missReasonTooTired: "Устал(а)",
+  missReasonNoTime: "Не было времени",
+  missReasonForgot: "Забыл(а)",
+  missReasonNoMotivation: "Нет мотивации",
+  missReasonScheduleConflict: "Конфликт расписания",
+  missReasonTooDifficult: "Слишком сложно",
+  missReasonSkip: "Пропустить",
+  missReasonWhyLink: "Почему?",
+  missPatternInsight: (reason, count, total) => `${count} из ${total} недавних пропусков — "${reason}". Это ваша главная помеха, а не сила воли.`,
+
+  nbaDismiss: "Не сейчас",
+  nbaEffectivenessLabel: (rate, applied) => `Точность ИИ: ${rate}% (${applied} применено)`,
+
+  weeklyPatternInsightsTitle: "Паттерны",
+  weeklyWeakDayInsight: (day, rate) => `${day} — ваш самый слабый день: всего ${rate}% выполнения.`,
+  weeklyTimeInsight: (morningRate, eveningRate) => `Утренние привычки: ${morningRate}% · Вечерние привычки: ${eveningRate}%.`,
+
+  nbaRecoveryRestHeadline: (emoji, name) => `Дайте ${emoji} ${name} отдых`,
+  nbaRecoveryRestReason: (name, consistency) => `${name} на уровне ${consistency}% и снижается. Короткая пауза предотвратит выгорание.`,
+  nbaRecoveryRestAction: "Приостановить привычку",
+
+  nbaEyebrow: "РЕКОМЕНДАЦИЯ ДНЯ",
+  nbaRoi: (pct) => `+${pct}% ROI`,
+  nbaApplied: "Применено ✓",
+
+  nbaTimeShiftHeadline: (emoji, name, from, to) => `Перенесите ${emoji} ${name} с ${from} → ${to}`,
+  nbaTimeShiftReason: (earlyRate, lateRate, time) => `Вы выполняете это ${earlyRate}% при раннем расписании, но только ${lateRate}% после ${time}.`,
+  nbaTimeShiftAction: (time) => `Перенести на ${time}`,
+  nbaReduceTargetHeadline: (emoji, name, fromDays, toDays) => `Сократите ${emoji} ${name} с ${fromDays} дн/нед → ${toDays}`,
+  nbaReduceTargetReason: (name, consistency) => `Стабильность ${name} — ${consistency}%. Меньше дней снизит нагрузку и восстановит ритм.`,
+  nbaReduceTargetAction: "Изменить цель",
+  nbaRoutineStackHeadline: (emoji1, name1, emoji2, name2) => `Свяжите ${emoji1} ${name1} сразу после ${emoji2} ${name2}`,
+  nbaRoutineStackReason: (consistency, anchorName) => `Ваш уровень выполнения ${anchorName} — ${consistency}%. Связка использует существующий импульс.`,
+  nbaRoutineStackAction: (time) => `Связать в ${time}`,
+  nbaMilestoneHeadline: (emoji, name, milestone) => `Выполните ${emoji} ${name} сегодня — серия ${milestone} дней!`,
+  nbaMilestoneReason: (milestone) => `Вам осталась только 1 сессия до серии в ${milestone} дней.`,
+  nbaMilestoneAction: (name) => `Выполнить ${name}`,
+
+  nbaAppliedTimeShift: (from, to) => `Напоминание перенесено с ${from} на ${to}`,
+  nbaAppliedReduceTarget: (days) => `Расписание сокращено до ${days} дн/нед`,
+  nbaAppliedRoutineStack: (time) => `Связано в ${time}`,
+  nbaAppliedMilestone: "Отмечено как выполненное!",
+  nbaAppliedPause: "Привычка приостановлена",
+
+  habitActionsTitle: (name) => `${name} — Действия`,
+
+  deleteHabitButton: "Удалить привычку",
+  deleteHabitConfirm: (name) => `Вы уверены, что хотите удалить "${name}"? Это действие нельзя отменить.`,
+
+  lifeBalanceTrendsTitle: "ТРЕНДЫ БАЛАНСА",
+  balanceTrendMonthly: "Месяц",
+  balanceTrendQuarterly: "Квартал",
+  balanceTrendYearly: "Год",
+  balanceTrendOverall: "Общий",
 };

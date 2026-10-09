@@ -1,10 +1,17 @@
-import { useLastNotificationResponse } from 'expo-notifications/build/useLastNotificationResponse';
 import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 
 import { dayKey, getHabits, toggleCompletion } from '@/lib/habits';
 import { getLocaleTag, getT } from '@/lib/i18n';
 import { ACTION_MARK_DONE, ACTION_SNOOZE, scheduleOneshotReminder } from '@/lib/notifications';
 import { computeSmartReminder, refreshAllSmartReminders } from '@/lib/smart-reminder';
+
+// expo-notifications useLastNotificationResponse is not available on web
+const useLastNotificationResponse =
+  Platform.OS !== 'web'
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('expo-notifications/build/useLastNotificationResponse').useLastNotificationResponse
+    : () => null;
 
 export function useNotificationNavigation() {
   const response = useLastNotificationResponse();

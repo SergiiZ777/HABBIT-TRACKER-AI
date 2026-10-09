@@ -4,6 +4,7 @@ import type { HabitChange } from '@/lib/habit-actions';
 import { addDays, daysPerWeek, dayKey, isPaused, isScheduledOn, scheduledDaysOn, type Habit } from '@/lib/habits';
 import type { Locale } from '@/lib/i18n';
 import { habitArea, LIFE_AREAS, type LifeArea } from '@/lib/life-areas';
+import { getMissReasons } from '@/lib/miss-reasons';
 import type { AppliedPlan, Reflection } from '@/lib/monthly-store';
 
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
@@ -945,6 +946,15 @@ export async function fetchAiMonthlyReport(
     },
     year: review.year,
     reflection: hasReflection ? reflection : null,
+    missReasons: (() => {
+      const startKey = monthKey(review.month) + '-01';
+      const endKey = monthKey(review.nextMonth) + '-01';
+      const all = getMissReasons().filter((e) => e.day >= startKey && e.day < endKey);
+      if (all.length === 0) return null;
+      const counts: Record<string, number> = {};
+      for (const e of all) counts[e.reason] = (counts[e.reason] || 0) + 1;
+      return counts;
+    })(),
   };
 
   try {

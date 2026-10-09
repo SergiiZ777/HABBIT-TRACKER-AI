@@ -7,8 +7,9 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, w
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { computeHabitHealth } from '@/lib/habit-health';
-import { currentStreak, deleteHabit, formatTime, habitReminderNotificationIds, streakMilestoneColor, toggleCompletion, type Habit } from '@/lib/habits';
+import { currentStreak, dayKey, deleteHabit, formatTime, habitReminderNotificationIds, isScheduledOn, streakMilestoneColor, toggleCompletion, type Habit } from '@/lib/habits';
 import { useLocaleTag, useT } from '@/lib/i18n';
+import { hasReasonForHabitDay, setMissReason, type MissReason } from '@/lib/miss-reasons';
 import { cancelHabitReminder } from '@/lib/notifications';
 
 type Props = { habit: Habit; day: string };
@@ -20,6 +21,37 @@ export function HabitCard({ habit, day }: Props) {
   const done = habit.completions.includes(day);
   const streak = currentStreak(habit);
   const health = computeHabitHealth(habit, t, new Date(day + 'T12:00:00'));
+  const todayKey = dayKey(new Date());
+  const isPastMiss = day < todayKey && !done && isScheduledOn(habit, new Date(day + 'T12:00:00'));
+  const hasReason = isPastMiss && hasReasonForHabitDay(habit.id, day);
+
+  const showWhyPrompt = () => {
+    const reasons: { key: MissReason; label: string }[] = [
+      { key: 'tooTired', label: t.missReasonTooTired },
+      { key: 'noTime', label: t.missReasonNoTime },
+      { key: 'forgot', label: t.missReasonForgot },
+      { key: 'noMotivation', label: t.missReasonNoMotivation },
+      { key: 'scheduleConflict', label: t.missReasonScheduleConflict },
+      { key: 'tooDifficult', label: t.missReasonTooDifficult },
+    ];
+    if (Platform.OS === 'web') {
+      const options = reasons.map((r, i) => `${i + 1}. ${r.label}`).join('\n');
+      const choice = prompt(`${t.missReasonPrompt}\n\n${options}`);
+      if (choice) {
+        const idx = parseInt(choice, 10) - 1;
+        if (idx >= 0 && idx < reasons.length) setMissReason(habit.id, day, reasons[idx].key);
+      }
+    } else {
+      Alert.alert(
+        t.missReasonPrompt,
+        undefined,
+        [
+          ...reasons.map((r) => ({ text: r.label, onPress: () => setMissReason(habit.id, day, r.key) })),
+          { text: t.missReasonSkip, style: 'cancel' as const },
+        ]
+      );
+    }
+  };
 
   const scale = useSharedValue(1);
   const prevDone = useRef(done);
@@ -50,22 +82,37 @@ export function HabitCard({ habit, day }: Props) {
           ? t.riskMedium
           : t.riskLow;
 
-    Alert.alert(
-      `${habit.emoji} ${habit.name} — ${health.score}/100`,
-      `${t.statConsistencyLabel}: ${health.consistency}%\n${t.statTrendLabel}: ${health.trend === 'up' ? '↑' : health.trend === 'down' ? '↓' : '→'}\n${t.statRiskLabel}: ${riskText}\n\n🤖 "${health.explanation}"`,
-      [
-        { text: t.actionEdit, onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
-        {
-          text: t.actionDelete,
-          style: 'destructive',
-          onPress: async () => {
-            await cancelHabitReminder(habitReminderNotificationIds(habit));
-            deleteHabit(habit.id);
+    const info = `${t.statConsistencyLabel}: ${health.consistency}%\n${t.statTrendLabel}: ${health.trend === 'up' ? '↑' : health.trend === 'down' ? '↓' : '→'}\n${t.statRiskLabel}: ${riskText}\n\n🤖 "${health.explanation}"`;
+
+    if (Platform.OS === 'web') {
+      const choice = prompt(
+        `${habit.emoji} ${habit.name} — ${health.score}/100\n\n${info}\n\n1. ${t.actionEdit}\n2. ${t.actionDelete}\n3. ${t.actionCancel}`
+      );
+      if (choice === '1') {
+        router.push({ pathname: '/edit-habit', params: { id: habit.id } });
+      } else if (choice === '2') {
+        if (confirm(`${t.actionDelete} "${habit.name}"?`)) {
+          void cancelHabitReminder(habitReminderNotificationIds(habit)).then(() => deleteHabit(habit.id));
+        }
+      }
+    } else {
+      Alert.alert(
+        `${habit.emoji} ${habit.name} — ${health.score}/100`,
+        info,
+        [
+          { text: t.actionEdit, onPress: () => router.push({ pathname: '/edit-habit', params: { id: habit.id } }) },
+          {
+            text: t.actionDelete,
+            style: 'destructive',
+            onPress: async () => {
+              await cancelHabitReminder(habitReminderNotificationIds(habit));
+              deleteHabit(habit.id);
+            },
           },
-        },
-        { text: t.actionCancel, style: 'cancel' },
-      ]
-    );
+          { text: t.actionCancel, style: 'cancel' },
+        ]
+      );
+    }
   };
 
   return (
@@ -110,6 +157,11 @@ export function HabitCard({ habit, day }: Props) {
           {habit.reminderTime ? (
             <Text style={[styles.meta, { color: theme.textSecondary }]}>⏰ {formatTime(habit.reminderTime, localeTag)}</Text>
           ) : null}
+          {isPastMiss && !hasReason && (
+            <Pressable onPress={showWhyPrompt} hitSlop={8}>
+              <Text style={[styles.whyLink, { color: theme.accent }]}>{t.missReasonWhyLink}</Text>
+            </Pressable>
+          )}
         </View>
       </View>
 
@@ -151,6 +203,7 @@ const styles = StyleSheet.create({
   healthPillText: { fontSize: 11, fontWeight: '800' },
   streakPill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.pill },
   streakPillText: { fontSize: 12, fontWeight: '700' },
+  whyLink: { fontSize: 12, fontWeight: '700' },
   check: {
     width: 32,
     height: 32,

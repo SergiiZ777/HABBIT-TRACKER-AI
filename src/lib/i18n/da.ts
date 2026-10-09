@@ -394,4 +394,60 @@ export const da: Dictionary = {
   experimentVerdictSame: 'Ingen reel forskel. Det er op til dig.',
   experimentKeep: "Behold nyt tidspunkt",
   experimentRevert: "Fortryd",
+
+  missReasonPrompt: "Hvorfor missede du denne?",
+  missReasonTooTired: "For træt",
+  missReasonNoTime: "Ingen tid",
+  missReasonForgot: "Glemte det",
+  missReasonNoMotivation: "Ingen motivation",
+  missReasonScheduleConflict: "Programkonflikt",
+  missReasonTooDifficult: "For svært",
+  missReasonSkip: "Spring over",
+  missReasonWhyLink: "Hvorfor?",
+  missPatternInsight: (reason, count, total) => `${count} af ${total} seneste misser var "${reason}" — det er din vigtigste blokering, ikke viljestyrke.`,
+
+  nbaDismiss: "Ikke nu",
+  nbaEffectivenessLabel: (rate, applied) => `AI-præcision: ${rate}% (${applied} anvendt)`,
+
+  weeklyPatternInsightsTitle: "Mønstre",
+  weeklyWeakDayInsight: (day, rate) => `${day} er din svageste dag — kun ${rate}% gennemførelse.`,
+  weeklyTimeInsight: (morningRate, eveningRate) => `Morgenvaner: ${morningRate}% · Aftenvaner: ${eveningRate}%.`,
+
+  nbaRecoveryRestHeadline: (emoji, name) => `Giv ${emoji} ${name} en pause`,
+  nbaRecoveryRestReason: (name, consistency) => `${name} er på ${consistency}% og faldende. En kort pause forhindrer udbrændthed.`,
+  nbaRecoveryRestAction: "Sæt vane på pause",
+
+  nbaEyebrow: "DAGENS ANBEFALING",
+  nbaRoi: (pct) => `+${pct}% ROI`,
+  nbaApplied: "Anvendt ✓",
+
+  nbaTimeShiftHeadline: (emoji, name, from, to) => `Flyt din ${emoji} ${name} fra ${from} → ${to}`,
+  nbaTimeShiftReason: (earlyRate, lateRate, time) => `Du gennemfører det ${earlyRate}% af tiden ved tidlig planlægning, men kun ${lateRate}% efter ${time}.`,
+  nbaTimeShiftAction: (time) => `Flyt til ${time}`,
+  nbaReduceTargetHeadline: (emoji, name, fromDays, toDays) => `Reducer ${emoji} ${name} fra ${fromDays} dage/uge → ${toDays}`,
+  nbaReduceTargetReason: (name, consistency) => `Din stabilitet for ${name} er ${consistency}%. Færre fokuserede dage reducerer friktion og genopbygger momentum.`,
+  nbaReduceTargetAction: "Juster mål",
+  nbaRoutineStackHeadline: (emoji1, name1, emoji2, name2) => `Par ${emoji1} ${name1} lige efter ${emoji2} ${name2}`,
+  nbaRoutineStackReason: (consistency, anchorName) => `Du har en ${consistency}% gennemførelsesrate på ${anchorName}. At stable dem udnytter eksisterende momentum.`,
+  nbaRoutineStackAction: (time) => `Par ved ${time}`,
+  nbaMilestoneHeadline: (emoji, name, milestone) => `Gennemfør ${emoji} ${name} i dag og nå en ${milestone}-dages serie!`,
+  nbaMilestoneReason: (milestone) => `Du mangler kun 1 session for at låse op for en ${milestone}-dages milepæl.`,
+  nbaMilestoneAction: (name) => `Gennemfør ${name}`,
+
+  nbaAppliedTimeShift: (from, to) => `Påmindelse flyttet fra ${from} til ${to}`,
+  nbaAppliedReduceTarget: (days) => `Skema reduceret til ${days} dage/uge`,
+  nbaAppliedRoutineStack: (time) => `Parret kl. ${time}`,
+  nbaAppliedMilestone: "Markeret som udført!",
+  nbaAppliedPause: "Vane sat på pause",
+
+  habitActionsTitle: (name) => `${name} — Handlinger`,
+
+  deleteHabitButton: "Slet vane",
+  deleteHabitConfirm: (name) => `Er du sikker på, at du vil slette "${name}"? Dette kan ikke fortrydes.`,
+
+  lifeBalanceTrendsTitle: "BALANCETENDENSER",
+  balanceTrendMonthly: "Månedlig",
+  balanceTrendQuarterly: "Kvartal",
+  balanceTrendYearly: "Årlig",
+  balanceTrendOverall: "Samlet",
 };

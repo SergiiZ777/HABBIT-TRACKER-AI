@@ -39,7 +39,7 @@ export default function WeeklyReviewScreen() {
 
   const locale = useLocale();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- `today` is stable within a single render
-  const review = useMemo(() => computeWeeklyReview(habits, today), [habits]);
+  const review = useMemo(() => computeWeeklyReview(habits, today, t), [habits, t]);
   const [aiReview, setAiReview] = useState<AiWeeklyReview | null>(null);
   const [aiLoading, setAiLoading] = useState(true);
 
@@ -127,6 +127,19 @@ export default function WeeklyReviewScreen() {
         <View style={[styles.card, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
           <TrendChart points={dailyPoints} />
         </View>
+
+        {/* Pattern insights */}
+        {(review.weakDayInsight || review.timeOfDayInsight) && (
+          <View style={[styles.card, { backgroundColor: '#f59e0b' + '12', borderColor: '#f59e0b' + '33' }]}>
+            <Text style={[styles.cardTitle, { color: '#f59e0b' }]}>💡 {t.weeklyPatternInsightsTitle}</Text>
+            {review.weakDayInsight && (
+              <Text style={[styles.subText, { color: theme.text }]}>{review.weakDayInsight}</Text>
+            )}
+            {review.timeOfDayInsight && (
+              <Text style={[styles.subText, { color: theme.text }]}>{review.timeOfDayInsight}</Text>
+            )}
+          </View>
+        )}
 
         {/* Best habits */}
         {review.bestHabits.length > 0 && (

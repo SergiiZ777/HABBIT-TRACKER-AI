@@ -395,4 +395,60 @@ export const de: Dictionary = {
   experimentVerdictSame: 'Kein echter Unterschied. Deine Entscheidung.',
   experimentKeep: "Neue Zeit behalten",
   experimentRevert: "Zurücksetzen",
+
+  missReasonPrompt: "Warum hast du das verpasst?",
+  missReasonTooTired: "Zu müde",
+  missReasonNoTime: "Keine Zeit",
+  missReasonForgot: "Vergessen",
+  missReasonNoMotivation: "Keine Motivation",
+  missReasonScheduleConflict: "Terminkonflikt",
+  missReasonTooDifficult: "Zu schwierig",
+  missReasonSkip: "Überspringen",
+  missReasonWhyLink: "Warum?",
+  missPatternInsight: (reason, count, total) => `${count} von ${total} Fehlern waren „${reason}" — das ist dein Haupthindernis, nicht Willenskraft.`,
+
+  nbaDismiss: "Nicht jetzt",
+  nbaEffectivenessLabel: (rate, applied) => `KI-Genauigkeit: ${rate}% (${applied} angewendet)`,
+
+  weeklyPatternInsightsTitle: "Muster",
+  weeklyWeakDayInsight: (day, rate) => `${day} ist dein schwächster Tag — nur ${rate}% Erledigung.`,
+  weeklyTimeInsight: (morningRate, eveningRate) => `Morgengewohnheiten: ${morningRate}% · Abendgewohnheiten: ${eveningRate}%.`,
+
+  nbaRecoveryRestHeadline: (emoji, name) => `Gib ${emoji} ${name} eine Pause`,
+  nbaRecoveryRestReason: (name, consistency) => `${name} liegt bei ${consistency}% und sinkt. Eine kurze Pause beugt Burnout vor.`,
+  nbaRecoveryRestAction: "Gewohnheit pausieren",
+
+  nbaEyebrow: "EMPFEHLUNG DES TAGES",
+  nbaRoi: (pct) => `+${pct}% ROI`,
+  nbaApplied: "Angewendet ✓",
+
+  nbaTimeShiftHeadline: (emoji, name, from, to) => `Verschiebe ${emoji} ${name} von ${from} → ${to}`,
+  nbaTimeShiftReason: (earlyRate, lateRate, time) => `Du schaffst es zu ${earlyRate}% bei früher Planung, aber nur zu ${lateRate}% nach ${time}.`,
+  nbaTimeShiftAction: (time) => `Auf ${time} verschieben`,
+  nbaReduceTargetHeadline: (emoji, name, fromDays, toDays) => `Reduziere ${emoji} ${name} von ${fromDays} Tage/Woche → ${toDays}`,
+  nbaReduceTargetReason: (name, consistency) => `Deine Stabilität bei ${name} liegt bei ${consistency}%. Weniger fokussierte Tage reduzieren Reibung und bauen Momentum auf.`,
+  nbaReduceTargetAction: "Ziel anpassen",
+  nbaRoutineStackHeadline: (emoji1, name1, emoji2, name2) => `Kombiniere ${emoji1} ${name1} direkt nach ${emoji2} ${name2}`,
+  nbaRoutineStackReason: (consistency, anchorName) => `Du hast eine ${consistency}%ige Erledigungsrate bei ${anchorName}. Die Kombination nutzt bestehendes Momentum.`,
+  nbaRoutineStackAction: (time) => `Kombinieren um ${time}`,
+  nbaMilestoneHeadline: (emoji, name, milestone) => `Erledige ${emoji} ${name} heute für eine ${milestone}-Tage-Serie!`,
+  nbaMilestoneReason: (milestone) => `Nur noch 1 Session bis zum ${milestone}-Tage-Meilenstein.`,
+  nbaMilestoneAction: (name) => `${name} erledigen`,
+
+  nbaAppliedTimeShift: (from, to) => `Erinnerung verschoben von ${from} auf ${to}`,
+  nbaAppliedReduceTarget: (days) => `Zeitplan auf ${days} Tage/Woche reduziert`,
+  nbaAppliedRoutineStack: (time) => `Kombiniert um ${time}`,
+  nbaAppliedMilestone: "Als erledigt markiert!",
+  nbaAppliedPause: "Gewohnheit pausiert",
+
+  habitActionsTitle: (name) => `${name} — Aktionen`,
+
+  deleteHabitButton: "Gewohnheit löschen",
+  deleteHabitConfirm: (name) => `Bist du sicher, dass du "${name}" löschen möchtest? Dies kann nicht rückgängig gemacht werden.`,
+
+  lifeBalanceTrendsTitle: "BALANCE-TRENDS",
+  balanceTrendMonthly: "Monatlich",
+  balanceTrendQuarterly: "Quartal",
+  balanceTrendYearly: "Jährlich",
+  balanceTrendOverall: "Gesamt",
 };

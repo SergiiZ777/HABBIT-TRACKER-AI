@@ -1,9 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import { HabitForm, type HabitFormValues } from '@/components/habit-form';
-import { habitReminderNotificationIds, updateHabit, useHabits } from '@/lib/habits';
+import { deleteHabit, habitReminderNotificationIds, updateHabit, useHabits } from '@/lib/habits';
 import { useT } from '@/lib/i18n';
 import { cancelHabitReminder, scheduleHabitReminder } from '@/lib/notifications';
 
@@ -50,6 +50,24 @@ export default function EditHabitScreen() {
     router.back();
   };
 
+  const onDelete = () => {
+    const doDelete = async () => {
+      await cancelHabitReminder(habitReminderNotificationIds(habit));
+      deleteHabit(habit.id);
+      router.back();
+    };
+    if (Platform.OS === 'web') {
+      if (confirm(t.deleteHabitConfirm(habit.name))) {
+        void doDelete();
+      }
+    } else {
+      Alert.alert(t.deleteHabitButton, t.deleteHabitConfirm(habit.name), [
+        { text: t.actionCancel, style: 'cancel' },
+        { text: t.actionDelete, style: 'destructive', onPress: () => void doDelete() },
+      ]);
+    }
+  };
+
   return (
     <HabitForm
       title={t.editHabitTitle}
@@ -65,6 +83,7 @@ export default function EditHabitScreen() {
         reminderTime: habit.reminderTime,
       }}
       onSubmit={onSubmit}
+      onDelete={onDelete}
     />
   );
 }

@@ -5,6 +5,7 @@ import { addDays, currentStreak, daysPerWeek, dayKey, isPaused, isScheduledOn, t
 import type { Dictionary, Locale } from '@/lib/i18n';
 import { areaLabel, habitArea } from '@/lib/life-areas';
 import { computeLifeBalance } from '@/lib/life-balance';
+import { getMissReasonsForHabit } from '@/lib/miss-reasons';
 import { getMoodForDay } from '@/lib/mood';
 
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
@@ -53,6 +54,9 @@ function buildRichContext(habits: Habit[], t: Dictionary, today: Date) {
       daysPerWeek: daysPerWeek(h.scheduledDays),
       last14DaysRate: schedCount > 0 ? Math.round((doneCount / schedCount) * 100) : 0,
       dowFailures: dowSched.map((s, i) => (s >= 2 && dowDone[i] === 0 ? i : null)).filter((x): x is number => x !== null),
+      missReasons: getMissReasonsForHabit(h.id)
+        .filter((e) => days14.some((d) => dayKey(d) === e.day))
+        .reduce((acc, e) => { acc[e.reason] = (acc[e.reason] || 0) + 1; return acc; }, {} as Record<string, number>),
     };
   });
 

@@ -20,7 +20,7 @@ import { useT } from '@/lib/i18n';
 
 import type { NextBestAction } from '@/lib/next-best-action';
 
-import { logRecommendation, markApplied } from '@/lib/recommendation-log';
+import { getEffectivenessStats, logRecommendation, markApplied, markDismissed } from '@/lib/recommendation-log';
 
 type Props = {
 
@@ -28,9 +28,11 @@ type Props = {
 
   onApplied?: () => void;
 
+  onDismissed?: () => void;
+
 };
 
-export function NextBestActionCard({ action, onApplied }: Props) {
+export function NextBestActionCard({ action, onApplied, onDismissed }: Props) {
 
   const theme = useTheme();
 
@@ -52,7 +54,9 @@ export function NextBestActionCard({ action, onApplied }: Props) {
     });
   }
 
+  const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [prevTime] = useState(() => getHabits().find((h) => h.id === action.habitId)?.reminderTime ?? '—');
 
   const [done, setDone] = useState(() => {
 
@@ -91,6 +95,32 @@ export function NextBestActionCard({ action, onApplied }: Props) {
       setLoading(false);
     }
   };
+
+  const handleDismiss = () => {
+    if (entryIdRef.current) markDismissed(entryIdRef.current);
+    setDismissed(true);
+    onDismissed?.();
+  };
+
+  if (dismissed) return null;
+
+  const isRest = action.type === 'recoveryRest';
+  const tint = isRest ? '#8b5cf6' : theme.accent;
+  const stats = getEffectivenessStats();
+
+  const appliedDetail = (() => {
+    if (!done) return null;
+    if (action.markCompletedDay) return t.nbaAppliedMilestone;
+    if (action.change?.pause) return t.nbaAppliedPause;
+    if (action.change?.reminderTime && action.type === 'routineStack')
+      return t.nbaAppliedRoutineStack(action.change.reminderTime);
+    if (action.change?.reminderTime) {
+      return t.nbaAppliedTimeShift(prevTime, action.change.reminderTime);
+    }
+    if (action.change?.scheduledDays)
+      return t.nbaAppliedReduceTarget(action.change.scheduledDays.length);
+    return null;
+  })();
 
   const handleApply = async () => {
 
@@ -134,15 +164,15 @@ export function NextBestActionCard({ action, onApplied }: Props) {
 
   return (
 
-    <View style={[styles.card, { backgroundColor: theme.accent + '15', borderColor: theme.accent + '44' }]}>
+    <View style={[styles.card, { backgroundColor: tint + '15', borderColor: tint + '44' }]}>
 
       <View style={styles.headerRow}>
 
-        <Text style={[styles.eyebrow, { color: theme.accent }]}>✨ TODAY&apos;S RECOMMENDATION</Text>
+        <Text style={[styles.eyebrow, { color: tint }]}>{isRest ? '🌿' : '✨'} {t.nbaEyebrow}</Text>
 
-        <View style={[styles.impactBadge, { backgroundColor: theme.accent + '25' }]}>
+        <View style={[styles.impactBadge, { backgroundColor: tint + '25' }]}>
 
-          <Text style={[styles.impactText, { color: theme.accent }]}>+{action.impactGainPct}% ROI</Text>
+          <Text style={[styles.impactText, { color: tint }]}>{t.nbaRoi(action.impactGainPct)}</Text>
 
         </View>
 
@@ -170,7 +200,7 @@ export function NextBestActionCard({ action, onApplied }: Props) {
 
           styles.actionButton,
 
-          { backgroundColor: done ? theme.backgroundSelected : theme.accent },
+          { backgroundColor: done ? theme.backgroundSelected : tint },
 
           pressed && styles.pressed,
 
@@ -184,7 +214,7 @@ export function NextBestActionCard({ action, onApplied }: Props) {
 
           <Text style={[styles.actionButtonText, { color: done ? theme.textSecondary : '#ffffff' }]}>
 
-            {done ? 'Applied ✓' : action.actionLabel}
+            {done ? t.nbaApplied : action.actionLabel}
 
           </Text>
 
@@ -192,10 +222,28 @@ export function NextBestActionCard({ action, onApplied }: Props) {
 
       </Pressable>
 
+      {done && appliedDetail && (
+        <Text style={[styles.appliedDetail, { color: '#22c55e' }]}>
+          ✅ {appliedDetail}
+        </Text>
+      )}
+
       {canExperiment && (
         <Pressable onPress={handleExperiment} disabled={loading} style={styles.experimentLink}>
-          <Text style={[styles.experimentLinkText, { color: theme.accent }]}>🧪 {t.experimentStartButton}</Text>
+          <Text style={[styles.experimentLinkText, { color: tint }]}>🧪 {t.experimentStartButton}</Text>
         </Pressable>
+      )}
+
+      {!done && (
+        <Pressable onPress={handleDismiss} style={styles.dismissLink}>
+          <Text style={[styles.dismissLinkText, { color: theme.textSecondary }]}>{t.nbaDismiss}</Text>
+        </Pressable>
+      )}
+
+      {stats.totalApplied >= 3 && (
+        <Text style={[styles.effectivenessText, { color: theme.textSecondary }]}>
+          {t.nbaEffectivenessLabel(stats.effectivenessRate, stats.totalApplied)}
+        </Text>
       )}
 
     </View>
@@ -313,6 +361,14 @@ const styles = StyleSheet.create({
   experimentLink: { alignSelf: 'flex-start', paddingVertical: 4 },
 
   experimentLinkText: { fontSize: 13, fontWeight: '700' },
+
+  dismissLink: { alignSelf: 'flex-start', paddingVertical: 4 },
+
+  dismissLinkText: { fontSize: 13, fontWeight: '600' },
+
+  appliedDetail: { fontSize: 13, fontWeight: '600' },
+
+  effectivenessText: { fontSize: 12, fontStyle: 'italic' },
 
   pressed: {
 

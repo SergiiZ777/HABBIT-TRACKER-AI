@@ -28,9 +28,10 @@ type Props = {
   submitLabel: string;
   initialValues?: Partial<HabitFormValues>;
   onSubmit: (values: HabitFormValues) => void | Promise<void>;
+  onDelete?: () => void;
 };
 
-export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props) {
+export function HabitForm({ title, submitLabel, initialValues, onSubmit, onDelete }: Props) {
   const theme = useTheme();
   const t = useT();
   const localeTag = useLocaleTag();
@@ -215,6 +216,17 @@ export function HabitForm({ title, submitLabel, initialValues, onSubmit }: Props
         ]}>
         <Text style={styles.saveText}>{submitLabel}</Text>
       </Pressable>
+
+      {onDelete && (
+        <Pressable
+          onPress={onDelete}
+          style={({ pressed }) => [
+            styles.deleteButton,
+            { borderColor: '#ef4444', opacity: pressed ? 0.85 : 1 },
+          ]}>
+          <Text style={styles.deleteText}>{t.deleteHabitButton}</Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }
@@ -286,4 +298,6 @@ const styles = StyleSheet.create({
   reminderLabel: { fontSize: 16, fontWeight: '600' },
   save: { marginTop: Spacing.three, paddingVertical: 16, borderRadius: Radius.pill, alignItems: 'center' },
   saveText: { color: '#fff', fontSize: 17, fontWeight: '700' },
+  deleteButton: { paddingVertical: 14, borderRadius: Radius.pill, alignItems: 'center', borderWidth: 1.5 },
+  deleteText: { color: '#ef4444', fontSize: 15, fontWeight: '700' },
 });

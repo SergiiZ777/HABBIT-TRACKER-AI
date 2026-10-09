@@ -407,4 +407,60 @@ export const uk: Dictionary = {
   experimentVerdictSame: 'Істотної різниці немає. Вирішувати вам.',
   experimentKeep: "Залишити новий час",
   experimentRevert: "Повернути",
+
+  missReasonPrompt: "Чому ви це пропустили?",
+  missReasonTooTired: "Втомився/лась",
+  missReasonNoTime: "Не було часу",
+  missReasonForgot: "Забув/ла",
+  missReasonNoMotivation: "Немає мотивації",
+  missReasonScheduleConflict: "Конфлікт розкладу",
+  missReasonTooDifficult: "Занадто складно",
+  missReasonSkip: "Пропустити",
+  missReasonWhyLink: "Чому?",
+  missPatternInsight: (reason, count, total) => `${count} з ${total} нещодавніх пропусків — "${reason}". Це ваша головна перешкода, а не сила волі.`,
+
+  nbaDismiss: "Не зараз",
+  nbaEffectivenessLabel: (rate, applied) => `Точність ШІ: ${rate}% (${applied} застосовано)`,
+
+  weeklyPatternInsightsTitle: "Патерни",
+  weeklyWeakDayInsight: (day, rate) => `${day} — ваш найслабший день: лише ${rate}% виконання.`,
+  weeklyTimeInsight: (morningRate, eveningRate) => `Ранкові звички: ${morningRate}% · Вечірні звички: ${eveningRate}%.`,
+
+  nbaRecoveryRestHeadline: (emoji, name) => `Дайте ${emoji} ${name} відпочинок`,
+  nbaRecoveryRestReason: (name, consistency) => `${name} на рівні ${consistency}% і знижується. Коротка пауза запобігає вигоранню.`,
+  nbaRecoveryRestAction: "Призупинити звичку",
+
+  nbaEyebrow: "РЕКОМЕНДАЦІЯ ДНЯ",
+  nbaRoi: (pct) => `+${pct}% ROI`,
+  nbaApplied: "Застосовано ✓",
+
+  nbaTimeShiftHeadline: (emoji, name, from, to) => `Перенесіть ${emoji} ${name} з ${from} → ${to}`,
+  nbaTimeShiftReason: (earlyRate, lateRate, time) => `Ви виконуєте це ${earlyRate}% часу при ранньому розкладі, але лише ${lateRate}% після ${time}.`,
+  nbaTimeShiftAction: (time) => `Перенести на ${time}`,
+  nbaReduceTargetHeadline: (emoji, name, fromDays, toDays) => `Зменшіть ${emoji} ${name} з ${fromDays} дн/тиж → ${toDays}`,
+  nbaReduceTargetReason: (name, consistency) => `Стабільність ${name} — ${consistency}%. Менше днів зменшить навантаження та відновить ритм.`,
+  nbaReduceTargetAction: "Змінити ціль",
+  nbaRoutineStackHeadline: (emoji1, name1, emoji2, name2) => `Поєднайте ${emoji1} ${name1} одразу після ${emoji2} ${name2}`,
+  nbaRoutineStackReason: (consistency, anchorName) => `Ваш рівень виконання ${anchorName} — ${consistency}%. Поєднання використовує наявний імпульс.`,
+  nbaRoutineStackAction: (time) => `Поєднати о ${time}`,
+  nbaMilestoneHeadline: (emoji, name, milestone) => `Виконайте ${emoji} ${name} сьогодні — серія ${milestone} днів!`,
+  nbaMilestoneReason: (milestone) => `Вам залишився лише 1 сеанс до серії у ${milestone} днів.`,
+  nbaMilestoneAction: (name) => `Виконати ${name}`,
+
+  nbaAppliedTimeShift: (from, to) => `Нагадування перенесено з ${from} на ${to}`,
+  nbaAppliedReduceTarget: (days) => `Розклад зменшено до ${days} дн/тиж`,
+  nbaAppliedRoutineStack: (time) => `Поєднано о ${time}`,
+  nbaAppliedMilestone: "Відмічено як виконане!",
+  nbaAppliedPause: "Звичку призупинено",
+
+  habitActionsTitle: (name) => `${name} — Дії`,
+
+  deleteHabitButton: "Видалити звичку",
+  deleteHabitConfirm: (name) => `Ви впевнені, що хочете видалити "${name}"? Цю дію не можна скасувати.`,
+
+  lifeBalanceTrendsTitle: "ТРЕНДИ БАЛАНСУ",
+  balanceTrendMonthly: "Місяць",
+  balanceTrendQuarterly: "Квартал",
+  balanceTrendYearly: "Рік",
+  balanceTrendOverall: "Загальний",
 };

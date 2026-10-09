@@ -153,6 +153,11 @@ export function getEffectivenessStats(): {
   return { totalApplied, effective, neutral, harmful, effectivenessRate: total > 0 ? Math.round((effective / total) * 100) : 0 };
 }
 
+export function getRecentDismissals(withinDays: number = 3): RecommendationEntry[] {
+  const cutoff = new Date(Date.now() - withinDays * 24 * 60 * 60 * 1000).toISOString();
+  return entries.filter((e) => e.status === 'dismissed' && e.timestamp >= cutoff);
+}
+
 export function getRecommendationHistory(habitId: string): RecommendationEntry[] {
   return entries.filter((e) => e.habitId === habitId && e.verdict);
 }

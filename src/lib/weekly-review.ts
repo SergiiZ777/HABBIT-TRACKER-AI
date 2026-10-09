@@ -1,6 +1,7 @@
 import { getDeviceId } from '@/lib/backup';
 import { addDays, currentStreak, dayKey, isScheduledOn, type Habit } from '@/lib/habits';
-import type { Locale } from '@/lib/i18n';
+import type { Dictionary, Locale } from '@/lib/i18n';
+import { getMissReasons } from '@/lib/miss-reasons';
 import { getMoodForDay } from '@/lib/mood';
 
 const COACH_WEBHOOK_URL = 'https://n8n.justbehappyandrichn8n.com/webhook/habit-coach-062761f499c33477830';
@@ -35,6 +36,8 @@ export type WeeklyReview = {
   dailyRates: { key: string; rate: number; done: number; total: number }[];
   moodAvg: { energy: number; mood: number } | null;
   dateRange: { start: string; end: string };
+  weakDayInsight: string | null;
+  timeOfDayInsight: string | null;
 };
 
 function weekDays(today: Date): Date[] {
@@ -84,7 +87,7 @@ function computeRange(habits: Habit[], days: Date[]) {
   return { totalDone, totalScheduled, perfectDays, perHabitMap, dailyRates, dailyCompletions };
 }
 
-export function computeWeeklyReview(habits: Habit[], today: Date = new Date()): WeeklyReview {
+export function computeWeeklyReview(habits: Habit[], today: Date = new Date(), t?: Dictionary): WeeklyReview {
   const days = weekDays(today);
   const { totalDone, totalScheduled, perfectDays, perHabitMap, dailyRates, dailyCompletions } = computeRange(habits, days);
 
@@ -162,6 +165,41 @@ export function computeWeeklyReview(habits: Habit[], today: Date = new Date()): 
     moodAvg = { energy: Math.round((energySum / moodCount) * 10) / 10, mood: Math.round((moodSum / moodCount) * 10) / 10 };
   }
 
+  // Pattern insights
+  let weakDayInsight: string | null = null;
+  if (t && dailyRates.length >= 5) {
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    let worstIdx = 0;
+    let bestRate = 0;
+    for (let i = 0; i < dailyRates.length; i++) {
+      if (dailyRates[i].total > 0 && dailyRates[i].rate < dailyRates[worstIdx].rate) worstIdx = i;
+      if (dailyRates[i].rate > bestRate) bestRate = dailyRates[i].rate;
+    }
+    const worstRate = dailyRates[worstIdx].rate;
+    if (worstRate < 60 && bestRate - worstRate >= 20 && dailyRates[worstIdx].total > 0) {
+      const dow = new Date(`${dailyRates[worstIdx].key}T12:00:00`).getDay();
+      weakDayInsight = t.weeklyWeakDayInsight(dayNames[dow], worstRate);
+    }
+  }
+
+  let timeOfDayInsight: string | null = null;
+  if (t) {
+    let mDone = 0, mSched = 0, eDone = 0, eSched = 0;
+    for (const s of perHabit) {
+      const hour = s.habit.reminderTime ? parseInt(s.habit.reminderTime.split(':')[0], 10) : NaN;
+      if (isNaN(hour)) continue;
+      if (hour < 12) { mDone += s.completed; mSched += s.scheduled; }
+      else if (hour >= 18) { eDone += s.completed; eSched += s.scheduled; }
+    }
+    if (mSched >= 3 && eSched >= 3) {
+      const morningRate = Math.round((mDone / mSched) * 100);
+      const eveningRate = Math.round((eDone / eSched) * 100);
+      if (Math.abs(morningRate - eveningRate) >= 20) {
+        timeOfDayInsight = t.weeklyTimeInsight(morningRate, eveningRate);
+      }
+    }
+  }
+
   return {
     completionRate,
     totalDone,
@@ -176,6 +214,8 @@ export function computeWeeklyReview(habits: Habit[], today: Date = new Date()): 
     dailyRates,
     moodAvg,
     dateRange: { start: dayKey(days[0]), end: dayKey(days[6]) },
+    weakDayInsight,
+    timeOfDayInsight,
   };
 }
 
@@ -203,6 +243,15 @@ export async function fetchAiReview(review: WeeklyReview, locale: Locale): Promi
         b: `${c.b.emoji} ${c.b.name}`,
         days: c.togetherDays,
       })),
+      weakDayInsight: review.weakDayInsight,
+      timeOfDayInsight: review.timeOfDayInsight,
+      missReasons: (() => {
+        const all = getMissReasons().filter((e) => e.day >= review.dateRange.start && e.day <= review.dateRange.end);
+        if (all.length === 0) return null;
+        const counts: Record<string, number> = {};
+        for (const e of all) counts[e.reason] = (counts[e.reason] || 0) + 1;
+        return counts;
+      })(),
     };
 
     const res = await fetch(COACH_WEBHOOK_URL, {

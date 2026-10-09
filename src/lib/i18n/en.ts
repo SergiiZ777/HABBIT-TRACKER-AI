@@ -395,4 +395,66 @@ export const en: Dictionary = {
   experimentVerdictSame: 'No real difference. Your call.',
   experimentKeep: "Keep new time",
   experimentRevert: "Revert",
+
+  // Miss reasons
+  missReasonPrompt: "Why did you miss this?",
+  missReasonTooTired: "Too tired",
+  missReasonNoTime: "No time",
+  missReasonForgot: "Forgot",
+  missReasonNoMotivation: "No motivation",
+  missReasonScheduleConflict: "Schedule conflict",
+  missReasonTooDifficult: "Too difficult",
+  missReasonSkip: "Skip",
+  missReasonWhyLink: "Why?",
+  missPatternInsight: (reason, count, total) => `${count} of ${total} recent misses were "${reason}" — that's your main blocker, not willpower.`,
+
+  // NBA dismiss & effectiveness
+  nbaDismiss: "Not now",
+  nbaEffectivenessLabel: (rate, applied) => `AI accuracy: ${rate}% (${applied} applied)`,
+
+  // Weekly pattern insights
+  weeklyPatternInsightsTitle: "Pattern Insights",
+  weeklyWeakDayInsight: (day, rate) => `${day} is your weakest day — only ${rate}% completion.`,
+  weeklyTimeInsight: (morningRate, eveningRate) => `Morning habits: ${morningRate}% · Evening habits: ${eveningRate}%.`,
+
+  // Recovery rest
+  nbaRecoveryRestHeadline: (emoji, name) => `Give ${emoji} ${name} a rest`,
+  nbaRecoveryRestReason: (name, consistency) => `${name} is at ${consistency}% and declining. A short pause prevents burnout and lets you come back stronger.`,
+  nbaRecoveryRestAction: "Pause habit",
+
+  // NBA card chrome
+  nbaEyebrow: "TODAY'S RECOMMENDATION",
+  nbaRoi: (pct) => `+${pct}% ROI`,
+  nbaApplied: "Applied ✓",
+
+  // NBA strategies
+  nbaTimeShiftHeadline: (emoji, name, from, to) => `Move your ${emoji} ${name} from ${from} → ${to}`,
+  nbaTimeShiftReason: (earlyRate, lateRate, time) => `You complete it ${earlyRate}% of the time when scheduled earlier, but only ${lateRate}% after ${time}.`,
+  nbaTimeShiftAction: (time) => `Move to ${time}`,
+  nbaReduceTargetHeadline: (emoji, name, fromDays, toDays) => `Scale ${emoji} ${name} from ${fromDays} days/week → ${toDays}`,
+  nbaReduceTargetReason: (name, consistency) => `Your consistency on ${name} is ${consistency}%. Fewer focused days reduce friction and rebuild momentum.`,
+  nbaReduceTargetAction: "Adjust Target",
+  nbaRoutineStackHeadline: (emoji1, name1, emoji2, name2) => `Pair ${emoji1} ${name1} right after ${emoji2} ${name2}`,
+  nbaRoutineStackReason: (consistency, anchorName) => `You have a ${consistency}% completion rate on ${anchorName}. Stacking them back-to-back leverages existing momentum.`,
+  nbaRoutineStackAction: (time) => `Pair at ${time}`,
+  nbaMilestoneHeadline: (emoji, name, milestone) => `Complete ${emoji} ${name} today to hit a ${milestone}-day streak!`,
+  nbaMilestoneReason: (milestone) => `You're just 1 session away from unlocking a ${milestone}-day consistency milestone.`,
+  nbaMilestoneAction: (name) => `Complete ${name}`,
+
+  nbaAppliedTimeShift: (from, to) => `Reminder moved from ${from} to ${to}`,
+  nbaAppliedReduceTarget: (days) => `Schedule reduced to ${days} days/week`,
+  nbaAppliedRoutineStack: (time) => `Paired at ${time}`,
+  nbaAppliedMilestone: "Marked as done!",
+  nbaAppliedPause: "Habit paused",
+
+  habitActionsTitle: (name) => `${name} — Actions`,
+
+  deleteHabitButton: "Delete Habit",
+  deleteHabitConfirm: (name) => `Are you sure you want to delete "${name}"? This cannot be undone.`,
+
+  lifeBalanceTrendsTitle: "BALANCE TRENDS",
+  balanceTrendMonthly: "Monthly",
+  balanceTrendQuarterly: "Quarterly",
+  balanceTrendYearly: "Yearly",
+  balanceTrendOverall: "Overall",
 };

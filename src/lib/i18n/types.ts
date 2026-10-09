@@ -400,4 +400,70 @@ export interface Dictionary {
   experimentVerdictSame: string;
   experimentKeep: string;
   experimentRevert: string;
+
+  // Miss reasons
+  missReasonPrompt: string;
+  missReasonTooTired: string;
+  missReasonNoTime: string;
+  missReasonForgot: string;
+  missReasonNoMotivation: string;
+  missReasonScheduleConflict: string;
+  missReasonTooDifficult: string;
+  missReasonSkip: string;
+  missReasonWhyLink: string;
+  missPatternInsight: (reason: string, count: number, total: number) => string;
+
+  // NBA dismiss & effectiveness
+  nbaDismiss: string;
+  nbaEffectivenessLabel: (rate: number, applied: number) => string;
+
+  // Weekly pattern insights
+  weeklyPatternInsightsTitle: string;
+  weeklyWeakDayInsight: (day: string, rate: number) => string;
+  weeklyTimeInsight: (morningRate: number, eveningRate: number) => string;
+
+  // Recovery rest
+  nbaRecoveryRestHeadline: (emoji: string, name: string) => string;
+  nbaRecoveryRestReason: (name: string, consistency: number) => string;
+  nbaRecoveryRestAction: string;
+
+  // NBA card chrome
+  nbaEyebrow: string;
+  nbaRoi: (pct: number) => string;
+  nbaApplied: string;
+
+  // NBA strategies
+  nbaTimeShiftHeadline: (emoji: string, name: string, from: string, to: string) => string;
+  nbaTimeShiftReason: (earlyRate: number, lateRate: number, time: string) => string;
+  nbaTimeShiftAction: (time: string) => string;
+  nbaReduceTargetHeadline: (emoji: string, name: string, fromDays: number, toDays: number) => string;
+  nbaReduceTargetReason: (name: string, consistency: number) => string;
+  nbaReduceTargetAction: string;
+  nbaRoutineStackHeadline: (emoji1: string, name1: string, emoji2: string, name2: string) => string;
+  nbaRoutineStackReason: (consistency: number, anchorName: string) => string;
+  nbaRoutineStackAction: (time: string) => string;
+  nbaMilestoneHeadline: (emoji: string, name: string, milestone: number) => string;
+  nbaMilestoneReason: (milestone: number) => string;
+  nbaMilestoneAction: (name: string) => string;
+
+  // NBA applied feedback
+  nbaAppliedTimeShift: (from: string, to: string) => string;
+  nbaAppliedReduceTarget: (days: number) => string;
+  nbaAppliedRoutineStack: (time: string) => string;
+  nbaAppliedMilestone: string;
+  nbaAppliedPause: string;
+
+  // Habit card actions (web)
+  habitActionsTitle: (name: string) => string;
+
+  // Delete habit
+  deleteHabitButton: string;
+  deleteHabitConfirm: (name: string) => string;
+
+  // Life balance trends
+  lifeBalanceTrendsTitle: string;
+  balanceTrendMonthly: string;
+  balanceTrendQuarterly: string;
+  balanceTrendYearly: string;
+  balanceTrendOverall: string;
 }

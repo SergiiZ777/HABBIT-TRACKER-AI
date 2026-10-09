@@ -13,6 +13,8 @@ import { LifeBalanceRadar } from '@/components/life-balance-radar';
 import { NextBestActionCard } from '@/components/next-best-action-card';
 import { computeHabitDependencies } from '@/lib/habit-dependencies';
 import { computeLifeBalance } from '@/lib/life-balance';
+import { computeBalanceHistory, type BalanceTrendRange } from '@/lib/life-balance-history';
+import { LifeBalanceTrend } from '@/components/life-balance-trend';
 import { areaLabel, habitArea, LIFE_AREA_EMOJI } from '@/lib/life-areas';
 import { computeNextBestAction } from '@/lib/next-best-action';
 import { evaluateOutcomes } from '@/lib/recommendation-log';
@@ -51,6 +53,7 @@ export default function DashboardScreen() {
   const today = new Date();
   const [range, setRange] = useState<TrendRange>('week');
   const [yearView, setYearView] = useState<'heatmap' | 'graph'>('heatmap');
+  const [balanceTrendRange, setBalanceTrendRange] = useState<BalanceTrendRange>('monthly');
   const nudgeEnabled = useDailyNudgeEnabled();
   const nudgeTime = useDailyNudgeTime();
   const recapEnabled = useWeeklyRecapEnabled();
@@ -94,6 +97,8 @@ export default function DashboardScreen() {
       : t.weeklyTrendFlat;
 
   const balance = computeLifeBalance(habits, t, today);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `today` and `localeTag` are stable within a single render
+  const balanceHistory = useMemo(() => computeBalanceHistory(habits, t, balanceTrendRange, today, localeTag), [habits, balanceTrendRange]);
   const nextAction = habits.length > 0 ? computeNextBestAction(habits, t, today) : null;
   evaluateOutcomes(habits, t, today);
 
@@ -144,6 +149,14 @@ export default function DashboardScreen() {
               <ImbalanceAlertCard key={alert.id} alert={alert} />
             ))}
           </View>
+        )}
+
+        {balance.areas.length >= 3 && (
+          <LifeBalanceTrend
+            snapshots={balanceHistory}
+            range={balanceTrendRange}
+            onRangeChange={setBalanceTrendRange}
+          />
         )}
 
         {balance.areas.length > 0 && (
