@@ -96,11 +96,15 @@ export async function askCoach(
   today: Date = new Date()
 ): Promise<CoachResponse> {
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
     const res = await fetch(COACH_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Habit-Coach-Key': COACH_WEBHOOK_KEY },
       body: JSON.stringify({ question, context: buildRichContext(habits, t, today), locale, deviceId: getDeviceId() }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as { answer?: unknown };
     if (typeof data.answer !== 'string' || !data.answer.trim()) throw new Error('Empty answer');

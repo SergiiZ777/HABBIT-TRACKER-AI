@@ -70,3 +70,20 @@ export function areaLabel(t: Dictionary, area: LifeArea): string {
       return t.areaFinance;
   }
 }
+
+export function areaDescription(t: Dictionary, area: LifeArea): string {
+  switch (area) {
+    case 'health':
+      return t.areaHealthDesc;
+    case 'learning':
+      return t.areaLearningDesc;
+    case 'productivity':
+      return t.areaProductivityDesc;
+    case 'relationships':
+      return t.areaRelationshipsDesc;
+    case 'mind':
+      return t.areaMindDesc;
+    case 'finance':
+      return t.areaFinanceDesc;
+  }
+}

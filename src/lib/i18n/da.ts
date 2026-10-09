@@ -280,6 +280,12 @@ export const da: Dictionary = {
   areaRelationships: 'Relationer',
   areaMind: 'Sind',
   areaFinance: 'Finans',
+  areaHealthDesc: 'Fitness, kost, søvn og velvære',
+  areaLearningDesc: 'Læsning, kurser, færdigheder og vækst',
+  areaProductivityDesc: 'Arbejde, fokus, planlægning og opgaver',
+  areaRelationshipsDesc: 'Familie, venner og sociale forbindelser',
+  areaMindDesc: 'Meditation, mindfulness og refleksion',
+  areaFinanceDesc: 'Budget, opsparing og investeringer',
 
   lifeBalanceTitle: 'LIVSBALANCE',
   lifeBalanceOverall: (score) => `Samlet balance: ${score}%`,

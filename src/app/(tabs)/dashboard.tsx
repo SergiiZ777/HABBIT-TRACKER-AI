@@ -15,7 +15,7 @@ import { computeHabitDependencies } from '@/lib/habit-dependencies';
 import { computeLifeBalance } from '@/lib/life-balance';
 import { computeBalanceHistory, type BalanceTrendRange } from '@/lib/life-balance-history';
 import { LifeBalanceTrend } from '@/components/life-balance-trend';
-import { areaLabel, habitArea, LIFE_AREA_EMOJI } from '@/lib/life-areas';
+import { areaDescription, areaLabel, habitArea, LIFE_AREA_EMOJI } from '@/lib/life-areas';
 import { computeNextBestAction } from '@/lib/next-best-action';
 import { evaluateOutcomes } from '@/lib/recommendation-log';
 import { TrendChart } from '@/components/trend-chart';
@@ -181,6 +181,9 @@ export default function DashboardScreen() {
                         <Text style={styles.areaEmoji}>{LIFE_AREA_EMOJI[ab.area]}</Text>
                         <View style={styles.flex}>
                           <Text style={[styles.areaName, { color: theme.text }]}>{areaLabel(t, ab.area)}</Text>
+                          <Text style={[styles.areaDesc, { color: theme.textSecondary }]}>
+                            {areaDescription(t, ab.area)}
+                          </Text>
                           <Text style={[styles.areaHint, { color: theme.textSecondary }]}>
                             {t.areaHabitCount(ab.habitCount)}
                           </Text>
@@ -569,7 +572,8 @@ const styles = StyleSheet.create({
   },
   areaEmoji: { fontSize: 22 },
   areaName: { fontSize: 15, fontWeight: '600' },
-  areaHint: { fontSize: 12 },
+  areaDesc: { fontSize: 11, lineHeight: 15, marginTop: 1 },
+  areaHint: { fontSize: 12, marginTop: 2 },
   areaScore: { fontSize: 14, fontWeight: '700', minWidth: 44, textAlign: 'right' },
   areaBar: { width: 48, height: 6, borderRadius: 3, overflow: 'hidden' },
   areaBarFill: { height: '100%', borderRadius: 3 },

@@ -281,6 +281,12 @@ export const en: Dictionary = {
   areaRelationships: 'Relationships',
   areaMind: 'Mind',
   areaFinance: 'Finance',
+  areaHealthDesc: 'Fitness, nutrition, sleep & well-being',
+  areaLearningDesc: 'Reading, courses, skills & growth',
+  areaProductivityDesc: 'Work, focus, planning & tasks',
+  areaRelationshipsDesc: 'Family, friends & social connections',
+  areaMindDesc: 'Meditation, mindfulness & reflection',
+  areaFinanceDesc: 'Budgeting, saving & investments',
 
   lifeBalanceTitle: 'LIFE BALANCE',
   lifeBalanceOverall: (score) => `Overall balance: ${score}%`,

@@ -289,6 +289,12 @@ export const ru: Dictionary = {
   areaRelationships: 'Отношения',
   areaMind: 'Разум и дух',
   areaFinance: 'Финансы',
+  areaHealthDesc: 'Фитнес, питание, сон и самочувствие',
+  areaLearningDesc: 'Чтение, курсы, навыки и развитие',
+  areaProductivityDesc: 'Работа, фокус, планирование и задачи',
+  areaRelationshipsDesc: 'Семья, друзья и социальные связи',
+  areaMindDesc: 'Медитация, осознанность и рефлексия',
+  areaFinanceDesc: 'Бюджет, сбережения и инвестиции',
 
   lifeBalanceTitle: 'БАЛАНС ЖИЗНИ',
   lifeBalanceOverall: (score) => `Общий баланс: ${score}%`,

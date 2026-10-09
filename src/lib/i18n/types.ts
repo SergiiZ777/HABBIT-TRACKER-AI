@@ -291,6 +291,12 @@ export interface Dictionary {
   areaRelationships: string;
   areaMind: string;
   areaFinance: string;
+  areaHealthDesc: string;
+  areaLearningDesc: string;
+  areaProductivityDesc: string;
+  areaRelationshipsDesc: string;
+  areaMindDesc: string;
+  areaFinanceDesc: string;
 
   // Life Balance
   lifeBalanceTitle: string;
